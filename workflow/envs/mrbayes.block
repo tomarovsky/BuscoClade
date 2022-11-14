@@ -1,0 +1,8 @@
+begin mrbayes;
+    Lset nst=26 rates=invgamma ngammacat=26;
+    unlink shape=(all) ratemultiplier=(all) statefreq=(all);
+    mcmcp ngen=2000000 relburnin=yes burninfrac=0.25  printfreq=1000  samplefreq=1000 nruns=4 nchains=4 savebrlens=yes;
+    mcmc;
+    sumt;
+    sump;
+    end;

@@ -1,0 +1,3 @@
+jobs: 30
+use-conda: true
+cluster: "sbatch -t {resources.time} --mem={resources.mem_mb} -c {resources.cpus} -o {log.cluster_log} -e {log.cluster_err}"

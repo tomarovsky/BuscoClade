@@ -1,0 +1,4 @@
+snakemake --snakefile workflow/Snakemake --profile profile/slurm/ --configfile config/default.yaml \
+    --config genome_dir=""  busco_path="" busco_dataset_path="" \
+    mafft_path="" trimal_path="" iqtree_path="" mrbayes_path="" \
+    --printshellcmds --latency-wait 60
