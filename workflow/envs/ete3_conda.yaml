@@ -1,0 +1,9 @@
+# ---- ETE3 Conda config ----
+name: buscoclade_ete3
+channels:
+  - conda-forge
+dependencies:
+  - python=3.8
+  - matplotlib
+  - numpy
+  - ete3

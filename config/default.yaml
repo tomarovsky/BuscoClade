@@ -1,85 +1,121 @@
-#---- Configuration files ----
 conda_config: "workflow/envs/conda.yaml"
+ete3_conda_config: "workflow/envs/ete3_conda.yaml"
+
+# ---- Pipeline configuration ----
+# ---- Alignment ---- (comment line to disable method)
+dna_alignment: 'prank'       # 'prank' or 'mafft'
+protein_alignment: 'mafft'   # 'prank' or 'mafft'
+# ---- Filtration ----
+dna_filtration: 'gblocks' # or 'trimal'
+protein_filtration: 'gblocks' # or 'trimal'
+# ---- Рhylogenetic tree inference ----
+iqtree_dna: True
+iqtree_protein: True
+mrbayes_dna: False
+mrbayes_protein: False
+astral: True # use iqtree for each dna alignment
+# ---- Рhylogenetic tree visualization ----
+draw_phylotrees: True
+
+# ---- Tool parameters ----
+# ---- BUSCO ----
+gene_prediction_tool: "metaeuk" # 'metaeuk' or 'augustus'
+augustus_species: "human" # used only if 'gene_prediction_tool' == 'augustus'
+busco_dataset_path: ""
+busco_mode: "genome"
+busco_params: ""
+# ---- Alignment ----
+prank_dna_params: "-codon"
+mafft_dna_params: ""
+prank_protein_params: ""
+mafft_protein_params: "--anysymbol"
+# ---- Filtration ----
+gblocks_dna_params: "-t=Codons"
+trimal_dna_params: "-automated1"
+gblocks_protein_params: "-t=Protein"
+trimal_protein_params: "-automated1"
+# ---- Concatenation of alignments ----
+alignment_file_prefix: "concat_alignment"
+# ---- Рhylogenetic tree inference ----
+# IQtree:
+iqtree_dna_params: "-m TESTNEW" # -bb 1000 -o homo_sapiens
+iqtree_protein_params: "-m TESTNEW" # -bb 1000 -o homo_sapiens
+# Astral III:
+iqtree_per_fna_params: "-m TESTNEW"
+nodes_filtrataion_by_support: 70
+astral_params: "--branch-annotate 2 --reps 1000"
+# MrBayes:
+mrbayes_dna_params: ""
+mrbayes_protein_params: ""
 mrbayes_block: "workflow/envs/mrbayes.block"
+mrbayes_path: # path of MrBayes binary file
+# ---- Рhylogenetic tree visualization ----
+iqtree_tree_visualization_params: "" # --outgroup homo_sapiens
 
-#---- Global variable ---- # to disable, change the config value to an empty string "" or "-", "not", "false"
-busco_version: 5 # 3 or 5. If busco_version 3 is used, specify busco_path.
-gene_prediction_tool: "metaeuk" # 'metaeuk' or 'augustus'. The parameter will only be used if busco_version is 5.
-alignment_tool: "prank" # 'mafft' or 'prank'. 'prank' tool is only used for DNA sequences! Protein sequences are processed with 'mafft' in both cases.
-iqtree_dna_method: "yes" # activated if 'yes', '+' or 'true'
-iqtree_protein_method: "yes"
-mrbayes_dna_method: "yes"
-mrbayes_protein_method: "yes"
-
-#---- Result file names ----
-alignment_file_prefix: "alignment.phylo"
-
-#---- Directory structure config ----
+# ---- Directory structure ----
 genome_dir: "genomes" # use an absolute path
 output_dir: "results"
-log_dir: "logs"
-cluster_log_dir: "cluster_logs"
 busco_dir: "busco"
 species_ids_dir: "ids/species_ids"
-common_ids_dir: "ids/common_ids"
+common_ids_dir: "ids/"
 merged_sequences_dir: "ids/merged_sequences"
-alignment_dir: "alignments/raw"
-trimal_dir: "alignments/trimal"
+alignments_dir: "alignments/raw/"
+filtered_alignments_dir: "alignments/filtered/"
+concat_alignments_dir: "concat_alignments"
 iqtree_dir: "phylogeny/iqtree"
 mrbayes_dir: "phylogeny/mrbayes"
-concat_alignments_dir: "concat_alignments"
+astral_dir: "phylogeny/astral"
+log_dir: "logs"
+cluster_log_dir: "cluster_logs"
 benchmark_dir: "benchmarks"
 
-#---- Tool threads ----
+# ---- Resources ----
+# ---- Tool threads ----
 busco_threads: 16
 species_ids_threads: 1
 common_ids_threads: 1
 merged_sequences_threads: 1
-mafft_threads: 4
+mafft_threads: 1
 prank_threads: 1
-trimal_threads: 4
-iqtree_threads: 20
-mrbayes_threads: 20
+gblocks_threads: 1
+trimal_threads: 1
+iqtree_threads: 16
+mrbayes_threads: 16
+iqtree_per_fna_threads: 4
+concat_newick_files_threads: 1
+astral_threads: 10
+visualization_threads: 1
 
-#---- Tool memory ----
-busco_mem_mb: 140000
+# ---- Tool memory ----
+busco_mem_mb: 40000
 species_ids_mem_mb: 5000
 common_ids_mem_mb: 5000
 merged_sequences_mem_mb: 5000
 mafft_mem_mb: 15000
 prank_mem_mb: 15000
+gblocks_mem_mb: 15000
 trimal_mem_mb: 15000
 iqtree_mem_mb: 50000
 mrbayes_mem_mb: 50000
+iqtree_per_fna_mem_mb: 15000
+concat_newick_files_mem_mb: 2000
+astral_mem_mb: 15000
+visualization_mem_mb: 2000
 
-#---- Tool time ----
-busco_time: "100:00:00"
+# ---- Tool time ----
+busco_time: "150:00:00"
 species_ids_time: "01:00:00"
 common_ids_time: "01:00:00"
 merged_sequences_time: "01:00:00"
-mafft_time: "60:00:00"
-prank_time: "60:00:00"
-trimal_time: "60:00:00"
-iqtree_time: "200:00:00"
-mrbayes_time: "200:00:00"
+mafft_time: "10:00:00"
+prank_time: "10:00:00"
+gblocks_time: "10:00:00"
+trimal_time: "10:00:00"
+iqtree_time: "100:00:00"
+mrbayes_time: "100:00:00"
+iqtree_per_fna_time: "10:00:00"
+concat_newick_files_time: "00:30:00"
+astral_time: "5:00:00"
+visualization_time: "00:30:00"
 
-#---- Tool paths ----
-busco_path: # set path to run_BUSCO.py script if using Busco 3
-busco_dataset_path:
-trimal_path:
-iqtree_path:
-mrbayes_path:
 
-#---- Tool variables ----
-busco_mode: "genome"
-augustus_species: "human"
-mafft_dna_params: ""
-mafft_protein_params: "--anysymbol"
-prank_dna_params: "-codon"
-trimal_dna_params: "-automated1"
-trimal_protein_params: "-automated1"
-iqtree_protein_params: "-m TESTNEW -bb 1000 -o homo_sapiens"
-iqtree_dna_params: "-m TESTNEW -bb 1000 -o homo_sapiens"
-mrbayes_dna_params: ""
-mrbayes_protein_params: ""
-split_size: 80 # job grouping
