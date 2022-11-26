@@ -1,0 +1,12 @@
+# Snakemake dir
+.snakemake/
+
+# results dir
+results/
+
+# logs dir
+cluster_logs/
+logs/
+
+# benchmarks dir
+benchmarks/
