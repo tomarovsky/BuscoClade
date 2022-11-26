@@ -100,7 +100,7 @@ if "astral" in config:
         threads:
             config["astral_threads"]
         shell:
-            "java -jar $CONDA_PREFIX/share/astral-tree-5.7.8-0/astral.5.7.8.jar " # 'astral' bin file is broken
+            "java -jar $CONDA_PREFIX/share/astral-tree-5.7.8-0/astral.5.7.8.jar " # 'astral' conda bin file is broken
             "-i {input} -o {output} {params} 1> {log.std} 2>&1"
 
 
