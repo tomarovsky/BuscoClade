@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+__author__ = 'tomarovsky'
 from collections import defaultdict
 from Bio import SeqIO
 import argparse
