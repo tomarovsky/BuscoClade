@@ -1,13 +1,16 @@
-#---- Сonda config ----
-name: buscophylo
+# ---- Conda config ----
+name: buscoclade
 channels:
   - conda-forge
   - bioconda
 dependencies:
-  - busco=5.4.2
+  - busco>=5.4.2
   - biopython
-  - mafft
   - prank
-#  - trimAl=1.2rev59
-#  - iqtree=2.1.3
-#  - mrbayes=v3.2.7
+  - mafft
+  - gblocks
+  - trimal
+  - iqtree
+  - astral-tree
+  - newick_utils
+#  - mrbayes
