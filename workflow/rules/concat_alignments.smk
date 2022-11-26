@@ -1,6 +1,6 @@
 rule concat_fasta_dna:
     input:
-        trimal_dir_path / "fna"
+        lambda w: expand_fna_from_merged_sequences(w, filtered_alignments_dir_path / "fna" / "{N}.fna")
     output:
         concat_alignments_dir_path / fasta_dna_filename
     log:
@@ -16,12 +16,12 @@ rule concat_fasta_dna:
         time=config["mafft_time"],
         mem_mb=config["mafft_mem_mb"]
     shell:
-        "workflow/scripts/concat_fasta.py -o {output} -i {input}/*.fna 1> {log.std} 2>&1"
+        "workflow/scripts/concat_fasta.py -i {input} -o {output} 1> {log.std} 2>&1"
 
 
 rule concat_fasta_protein:
     input:
-        trimal_dir_path / "faa"
+        lambda w: expand_fna_from_merged_sequences(w, filtered_alignments_dir_path / "faa" / "{N}.faa")
     output:
         concat_alignments_dir_path / fasta_protein_filename
     log:
@@ -37,12 +37,12 @@ rule concat_fasta_protein:
         time=config["mafft_time"],
         mem_mb=config["mafft_mem_mb"]
     shell:
-        "workflow/scripts/concat_fasta.py -o {output} -i {input}/*.faa 1> {log.std} 2>&1"
+        "workflow/scripts/concat_fasta.py -i {input} -o {output} 1> {log.std} 2>&1"
 
 
 rule concat_nexus_dna:
     input:
-        concat_alignments_dir_path / fasta_dna_filename
+        rules.concat_fasta_dna.output
     output:
         concat_alignments_dir_path / nexus_dna_filename
     params:
@@ -61,12 +61,13 @@ rule concat_nexus_dna:
         time=config["mafft_time"],
         mem_mb=config["mafft_mem_mb"]
     shell:
-        "workflow/scripts/fasta_to_nexus.py -i {input} -t {params.type} -b {params.block} -o {output} 1> {log.std} 2>&1"
+        "workflow/scripts/fasta_to_nexus_with_bayes_block.py -i {input} "
+        "-t {params.type} -b {params.block} -o {output} 1> {log.std} 2>&1"
 
 
 rule concat_nexus_protein:
     input:
-        concat_alignments_dir_path / fasta_protein_filename
+        rules.concat_fasta_protein.output
     output:
         concat_alignments_dir_path / nexus_protein_filename
     params:
@@ -85,4 +86,5 @@ rule concat_nexus_protein:
         time=config["mafft_time"],
         mem_mb=config["mafft_mem_mb"]
     shell:
-        "workflow/scripts/fasta_to_nexus.py -i {input} -t {params.type} -b {params.block} -o {output} 1> {log.std} 2>&1"
+        "workflow/scripts/fasta_to_nexus_with_bayes_block.py -i {input} "
+        "-t {params.type} -b {params.block} -o {output} 1> {log.std} 2>&1"
