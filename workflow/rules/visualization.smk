@@ -81,3 +81,26 @@ if config["draw_phylotrees"]:
             config["visualization_threads"]
         shell:
             "workflow/scripts/draw_phylotrees_from_astral.py -i {input} -o {params.prefix} > {log.std} 2>&1"
+
+
+rule species_ids_plot:
+    input:
+        expand(species_ids_dir_path / "{species}.ids", species=config["species_list"])
+    output:
+        png=species_ids_dir_path / "unique_species_ids.png",
+        csv=species_ids_dir_path / "unique_species_ids.csv"
+    log:
+        std=log_dir_path / "species_ids_plot.log",
+        cluster_log=cluster_log_dir_path / "species_ids_plot.cluster.log",
+        cluster_err=cluster_log_dir_path / "species_ids_plot.cluster.err"
+    conda:
+        "../../%s" % config["ete3_conda_config"]
+    benchmark:
+        benchmark_dir_path / "species_ids_plot.benchmark.txt"
+    resources:
+        cpus=config["species_ids_threads"],
+        time=config["species_ids_time"],
+        mem_mb=config["species_ids_mem_mb"]
+    shell:
+        "workflow/scripts/unique_ids_plot.py --species_ids_files {input} "
+        "--outplot {output.png} --outcsv {output.csv} > {log.std} 2>&1 "

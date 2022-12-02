@@ -57,6 +57,7 @@ output_files = [
         # ---- Merge sequences with common ids ----
         lambda w: expand_fna_from_merged_sequences(w, merged_sequences_dir_path / "{N}.fna"),
         lambda w: expand_faa_from_merged_sequences(w, merged_sequences_dir_path / "{N}.faa"),
+        species_ids_dir_path / "unique_species_ids.png",
 ]
 
 if "dna_alignment" in config:
