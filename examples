@@ -1,1 +1,4 @@
 snakemake --profile profile/slurm/ --configfile config/default.yaml --printshellcmds
+
+snakemake --profile profile/slurm/ --configfile config/default.yaml \
+    --config species_list="[mmar, mzib, mfoi, mfla]" --printshellcmds
