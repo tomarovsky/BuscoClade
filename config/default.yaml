@@ -1,14 +1,14 @@
 conda_config: "workflow/envs/conda.yaml"
 ete3_conda_config: "workflow/envs/ete3_conda.yaml"
 
-# ---- Pipeline configuration ----
-# ---- Alignment ---- (comment line to disable method)
+# ---- Pipeline configuration ---- (comment line to disable)
+# ---- Alignment ----
 dna_alignment: 'prank'       # 'prank' or 'mafft'
 protein_alignment: 'mafft'   # 'prank' or 'mafft'
 # ---- Filtration ----
 dna_filtration: 'gblocks' # or 'trimal'
 protein_filtration: 'gblocks' # or 'trimal'
-# ---- Рhylogenetic tree inference ----
+# ---- Рhylogenetic tree inference ---- (change to 'False' to disable)
 iqtree_dna: True
 iqtree_protein: True
 mrbayes_dna: False
