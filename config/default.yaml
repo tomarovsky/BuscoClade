@@ -38,10 +38,10 @@ trimal_protein_params: "-automated1"
 alignment_file_prefix: "concat_alignment"
 # ---- Рhylogenetic tree inference ----
 # IQtree:
-iqtree_dna_params: "-m TESTNEW" # -bb 1000 -o homo_sapiens
-iqtree_protein_params: "-m TESTNEW" # -bb 1000 -o homo_sapiens
+iqtree_dna_params: "-m TESTNEW -bb 1000" # -o homo_sapiens
+iqtree_protein_params: "-m TESTNEW -bb 1000" # -o homo_sapiens
 # Astral III:
-iqtree_per_fna_params: "-m TESTNEW"
+iqtree_per_fna_params: "-m TESTNEW -bb 1000"
 nodes_filtrataion_by_support: 70
 astral_params: "--branch-annotate 2 --reps 1000"
 # MrBayes:
