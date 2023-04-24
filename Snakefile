@@ -61,33 +61,39 @@ output_files = [
 ]
 
 if "dna_alignment" in config:
-    output_files.append(lambda w: expand_fna_from_merged_sequences(w, alignments_dir_path / "fna" / "{N}.fna"))
-    if "dna_filtration" in config:
-        output_files.append(lambda w: expand_fna_from_merged_sequences(w, filtered_alignments_dir_path / "fna" / "{N}.fna"))
-        output_files.append(concat_alignments_dir_path / fasta_dna_filename)
-        output_files.append(concat_alignments_dir_path / nexus_dna_filename)
-        if config["iqtree_dna"]:
-            output_files.append(iqtree_dir_path / "fna" / f"{fasta_dna_filename}.treefile")
-            if config["draw_phylotrees"]:
-                output_files.append(iqtree_dir_path / "fna" / f"{fasta_dna_filename}.length_and_support_tree.svg")
-        if config["astral"]:
-            output_files.append(astral_dir_path / astral_tree)
-            if config["draw_phylotrees"]:
-                output_files.append(astral_dir_path / f"{astral_tree}.svg")
+    if config["dna_alignment"]:
+        output_files.append(lambda w: expand_fna_from_merged_sequences(w, alignments_dir_path / "fna" / "{N}.fna"))
+        if "dna_filtration" in config:
+            if config["dna_filtration"]:
+                output_files.append(lambda w: expand_fna_from_merged_sequences(w, filtered_alignments_dir_path / "fna" / "{N}.fna"))
+                output_files.append(concat_alignments_dir_path / fasta_dna_filename)
+                output_files.append(concat_alignments_dir_path / nexus_dna_filename)
+                if config["iqtree_dna"]:
+                    output_files.append(iqtree_dir_path / "fna" / f"{fasta_dna_filename}.treefile")
+                    if config["draw_phylotrees"]:
+                        output_files.append(iqtree_dir_path / "fna" / f"{fasta_dna_filename}.length_and_support_tree.svg")
+                if config["astral"]:
+                    output_files.append(astral_dir_path / astral_tree)
+                    if config["draw_phylotrees"]:
+                        output_files.append(astral_dir_path / f"{astral_tree}.svg")
 if "protein_alignment" in config:
-    output_files.append(lambda w: expand_faa_from_merged_sequences(w, alignments_dir_path / "faa" / "{N}.faa"))
-    if "protein_filtration" in config:
-        output_files.append(lambda w: expand_fna_from_merged_sequences(w, filtered_alignments_dir_path / "faa" / "{N}.faa"))
-        output_files.append(concat_alignments_dir_path / fasta_protein_filename)
-        output_files.append(concat_alignments_dir_path / nexus_protein_filename)
-        if config["iqtree_protein"]:
-            output_files.append(iqtree_dir_path / "faa" / f"{fasta_protein_filename}.treefile")
-            if config["draw_phylotrees"]:
-                output_files.append(iqtree_dir_path / "faa" / f"{fasta_protein_filename}.length_and_support_tree.svg")
-if config["mrbayes_dna"]: # to-do: upgrade
-    output_files.append(mrbayes_dir_path / "fna")
-if config["mrbayes_protein"]:
-    output_files.append(mrbayes_dir_path / "faa")
+    if config["protein_alignment"]:
+        output_files.append(lambda w: expand_faa_from_merged_sequences(w, alignments_dir_path / "faa" / "{N}.faa"))
+        if "protein_filtration" in config:
+            if config["protein_filtration"]:
+                output_files.append(lambda w: expand_fna_from_merged_sequences(w, filtered_alignments_dir_path / "faa" / "{N}.faa"))
+                output_files.append(concat_alignments_dir_path / fasta_protein_filename)
+                output_files.append(concat_alignments_dir_path / nexus_protein_filename)
+                if config["iqtree_protein"]:
+                    output_files.append(iqtree_dir_path / "faa" / f"{fasta_protein_filename}.treefile")
+                    if config["draw_phylotrees"]:
+                        output_files.append(iqtree_dir_path / "faa" / f"{fasta_protein_filename}.length_and_support_tree.svg")
+if "mrbayes_dna" in config:
+    if config["mrbayes_dna"]: # to-do: upgrade
+        output_files.append(mrbayes_dir_path / "fna")
+if "mrbayes_protein" in config:
+    if config["mrbayes_protein"]:
+        output_files.append(mrbayes_dir_path / "faa")
 
 
 localrules: all
