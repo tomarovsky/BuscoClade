@@ -1,3 +1,9 @@
-jobs: 30
-use-conda: true
+jobs: 50
+reason: True
+use-conda: True
+latency-wait: 60
+printshellcmds: True
+show-failed-logs: True
+rerun-incomplete: True
+restart-times: 3
 cluster: "sbatch -t {resources.time} --mem={resources.mem_mb} -c {resources.cpus} -o {log.cluster_log} -e {log.cluster_err}"

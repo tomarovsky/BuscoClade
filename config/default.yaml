@@ -1,7 +1,7 @@
 conda_config: "workflow/envs/conda.yaml"
 ete3_conda_config: "workflow/envs/ete3_conda.yaml"
 
-# ---- Pipeline configuration ---- (comment line to disable)
+# ---- Pipeline configuration ---- (False to disable)
 # ---- Alignment ----
 dna_alignment: 'prank'       # 'prank' or 'mafft'
 protein_alignment: 'mafft'   # 'prank' or 'mafft'
