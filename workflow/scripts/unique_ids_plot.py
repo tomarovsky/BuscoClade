@@ -11,9 +11,8 @@ import argparse
 def unique_ids_plot(species_ids_countdict):
     df = pd.DataFrame({"Species": [len(v) for v in species_ids_countdict.values()]}, index=species_ids_countdict.keys())
     df.plot(kind="bar")
-    plt.xlabel("Species")
     plt.ylabel("Unique BUSCOs")
-    plt.xticks(rotation=45)
+    plt.xticks(rotation=45, ha='right', rotation_mode='anchor')
     plt.tight_layout()
     plt.savefig(args.outplot)
 
