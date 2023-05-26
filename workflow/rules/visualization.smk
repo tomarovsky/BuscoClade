@@ -24,7 +24,7 @@ if config["draw_phylotrees"]:
         threads:
             config["visualization_threads"]
         shell:
-            "workflow/scripts/draw_phylotrees.py -i {input} -o {params.prefix} {params.options} 1> {log.std} 2>&1"
+            "QT_QPA_PLATFORM=offscreen workflow/scripts/draw_phylotrees.py -i {input} -o {params.prefix} {params.options} 1> {log.std} 2>&1"
 
 
 if config["draw_phylotrees"]:
@@ -53,7 +53,7 @@ if config["draw_phylotrees"]:
         threads:
             config["visualization_threads"]
         shell:
-            "workflow/scripts/draw_phylotrees.py -i {input} -o {params.prefix} {params.options} 1> {log.std} 2>&1"
+            "QT_QPA_PLATFORM=offscreen workflow/scripts/draw_phylotrees.py -i {input} -o {params.prefix} {params.options} 1> {log.std} 2>&1"
 
 
 if config["draw_phylotrees"]:
@@ -80,7 +80,7 @@ if config["draw_phylotrees"]:
         threads:
             config["visualization_threads"]
         shell:
-            "workflow/scripts/draw_phylotrees_from_astral.py -i {input} -o {params.prefix} > {log.std} 2>&1"
+            "QT_QPA_PLATFORM=offscreen workflow/scripts/draw_phylotrees_from_astral.py -i {input} -o {params.prefix} > {log.std} 2>&1"
 
 
 rule species_ids_plot:
