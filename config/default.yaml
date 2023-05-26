@@ -83,7 +83,7 @@ iqtree_threads: 16
 mrbayes_threads: 16
 iqtree_per_fna_threads: 4
 concat_newick_files_threads: 1
-astral_threads: 10
+astral_threads: 4
 visualization_threads: 1
 
 # ---- Tool memory ----
@@ -99,7 +99,7 @@ iqtree_mem_mb: 50000
 mrbayes_mem_mb: 50000
 iqtree_per_fna_mem_mb: 15000
 concat_newick_files_mem_mb: 2000
-astral_mem_mb: 15000
+astral_mem_mb: 10000
 visualization_mem_mb: 2000
 
 # ---- Tool time ----
