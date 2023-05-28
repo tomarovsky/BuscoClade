@@ -23,7 +23,7 @@ mrbayes_dir_path = output_dir_path / config["mrbayes_dir"]
 astral_dir_path = output_dir_path / config["astral_dir"]
 
 if "species_list" not in config:
-    config["species_list"] = [f.name[:-6] for f in genome_dir_path.iterdir()
+    config["species_list"] = [f.stem for f in genome_dir_path.iterdir()
                               if f.is_file() and f.suffix in [".fasta", ".fna", ".fa"]]
 
 # ---- Setup filenames ----
