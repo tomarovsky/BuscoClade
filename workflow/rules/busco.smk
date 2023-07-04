@@ -3,9 +3,9 @@ if config['gene_prediction_tool'] == "metaeuk":
         input:
             genome_dir_path / "{species}.fasta"
         output:
-            busco_outdir=protected(directory(busco_dir_path / "{species}")),
-            single_copy_busco_sequences=protected(directory(busco_dir_path / "{species}/busco_sequences/single_copy_busco_sequences")),
-            summary=protected(busco_dir_path / "{species}/short_summary_{species}.txt")
+            busco_outdir=directory(busco_dir_path / "{species}"),
+            single_copy_busco_sequences=directory(busco_dir_path / "{species}/busco_sequences/single_copy_busco_sequences"),
+            summary=busco_dir_path / "{species}/short_summary_{species}.txt"
         params:
             mode=config["busco_mode"],
             busco_dataset_path=config["busco_dataset_path"],
@@ -41,10 +41,10 @@ elif config['gene_prediction_tool'] == "augustus":
         input:
             genome_dir_path / "{species}.fasta"
         output:
-            busco_outdir=protected(directory(busco_dir_path / "{species}")),
-            single_copy_busco_sequences=protected(directory(busco_dir_path / "{species}/single_copy_busco_sequences")),
-            augustus_gff=protected(directory(busco_dir_path / "{species}/augustus_output/gff")),
-            summary=protected(busco_dir_path / "{species}/short_summary_{species}.txt")
+            busco_outdir=directory(busco_dir_path / "{species}"),
+            single_copy_busco_sequences=directory(busco_dir_path / "{species}/single_copy_busco_sequences"),
+            augustus_gff=directory(busco_dir_path / "{species}/augustus_output/gff"),
+            summary=busco_dir_path / "{species}/short_summary_{species}.txt"
         params:
             mode=config["busco_mode"],
             species=config["augustus_species"],
