@@ -112,6 +112,6 @@ include: "workflow/rules/concat_alignments.smk"
 include: "workflow/rules/iqtree.smk"
 include: "workflow/rules/mrbayes.smk"
 include: "workflow/rules/visualization.smk"
-include: "workflow/rules/astral_tree.smk"
+include: "workflow/rules/astral.smk"
 
 
