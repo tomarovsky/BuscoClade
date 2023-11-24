@@ -13,8 +13,7 @@ def unique_ids_plot(species_ids_countdict):
     df.plot(kind="bar")
     plt.ylabel("Unique BUSCOs")
     plt.xticks(rotation=45, ha='right', rotation_mode='anchor')
-    plt.tight_layout()
-    plt.savefig(args.outplot)
+    plt.savefig(args.outplot, dpi = 300, bbox_inches='tight')
 
 
 def main():
