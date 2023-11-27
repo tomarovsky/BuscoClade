@@ -40,13 +40,16 @@ if "dna_filtration" in config:
                 cluster_err=cluster_log_dir_path / "trimal_dna.{N}.cluster.err"
             benchmark:
                 benchmark_dir_path / "trimal_dna.{N}.benchmark.txt"
+            conda:
+                "../../%s" % config["conda_config"]
             resources:
                 cpus=config["trimal_threads"],
                 time=config["trimal_time"],
                 mem_mb=config["trimal_mem_mb"]
             shell:
                 "trimal -in {input} -out {params.prefix} {params.options} > {log.std} 2>&1; "
-                "trimal -in {params.prefix} -out {params.prefix} -nogaps > {log.std} 2>&1; "
+                "trimal -in {params.prefix} -out {output} -nogaps > {log.std} 2>&1; "
+                "rm {params.prefix} > {log.std} 2>&1; "
 
 if "protein_filtration" in config:
     if config["protein_filtration"] == "gblocks":
@@ -90,10 +93,13 @@ if "protein_filtration" in config:
                 cluster_err=cluster_log_dir_path / "trimal_protein.{N}.cluster.err"
             benchmark:
                 benchmark_dir_path / "trimal_protein.{N}.benchmark.txt"
+            conda:
+                "../../%s" % config["conda_config"]
             resources:
                 cpus=config["trimal_threads"],
                 time=config["trimal_time"],
                 mem_mb=config["trimal_mem_mb"]
             shell:
                 "trimal -in {input} -out {params.prefix} {params.options} > {log.std} 2>&1; "
-                "trimal -in {params.prefix} -out {params.prefix} -nogaps > {log.std} 2>&1; "
+                "trimal -in {params.prefix} -out {output} -nogaps > {log.std} 2>&1; "
+                "rm {params.prefix} > {log.std} 2>&1; "
