@@ -22,6 +22,7 @@ iqtree_dir_path = output_dir_path / config["iqtree_dir"]
 mrbayes_dir_path = output_dir_path / config["mrbayes_dir"]
 astral_dir_path = output_dir_path / config["astral_dir"]
 rapidnj_dir_path = output_dir_path / config["rapidnj_dir"]
+phylip_dir_path = output_dir_path / config["phylip_dir"]
 
 if "species_list" not in config:
     config["species_list"] = [f.stem for f in genome_dir_path.iterdir()
@@ -38,8 +39,9 @@ stockholm_dna_filename = "{}.fna.sth".format(config["alignment_file_prefix"])
 stockholm_protein_filename = "{}.faa.sth".format(config["alignment_file_prefix"])
 astral_input_trees = "{}.iqtree_per_fna.concat.treefile".format(config["alignment_file_prefix"])
 astral_filtered_trees = "{0}.iqtree_per_fna.concat.{1}.treefile".format(config["alignment_file_prefix"], config["nodes_filtrataion_by_support"])
-astral_tree = "{0}.{1}.astral.treefile".format(config["alignment_file_prefix"], config["nodes_filtrataion_by_support"])
-rapidnj_tree = "{}.rapidnj.treefile".format(config["alignment_file_prefix"])
+astral_tree = "{0}.{1}.fna.astral.treefile".format(config["alignment_file_prefix"], config["nodes_filtrataion_by_support"])
+rapidnj_tree = "{}.fna.rapidnj.treefile".format(config["alignment_file_prefix"])
+phylip_tree = "{}.fna.phy.treefile".format(config["alignment_file_prefix"])
 
 # ---- Necessary functions ----
 def expand_fna_from_merged_sequences(wildcards, template):
@@ -88,6 +90,10 @@ if "dna_alignment" in config:
                     output_files.append(rapidnj_dir_path / rapidnj_tree)
                     if config["draw_phylotrees"]:
                         output_files.append(rapidnj_dir_path / f"{fasta_dna_filename}.only_tree.svg")
+                if config["phylip"]:
+                    output_files.append(phylip_dir_path / phylip_tree)
+                    if config["draw_phylotrees"]:
+                        output_files.append(phylip_dir_path / f"{fasta_dna_filename}.only_tree.svg")
 if "protein_alignment" in config:
     if config["protein_alignment"]:
         output_files.append(lambda w: expand_faa_from_merged_sequences(w, alignments_dir_path / "faa" / "{N}.faa"))
@@ -128,5 +134,6 @@ include: "workflow/rules/mrbayes.smk"
 include: "workflow/rules/visualization.smk"
 include: "workflow/rules/astral.smk"
 include: "workflow/rules/rapidnj.smk"
+include: "workflow/rules/phylip.smk"
 
 

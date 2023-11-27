@@ -6,8 +6,8 @@ ete3_conda_config: "workflow/envs/ete3_conda.yaml"
 dna_alignment: 'prank'       # 'prank' or 'mafft'
 protein_alignment: 'mafft'   # 'prank' or 'mafft'
 # ---- Filtration ----
-dna_filtration: 'gblocks' # or 'trimal'
-protein_filtration: 'gblocks' # or 'trimal'
+dna_filtration: 'gblocks' # 'gblocks' or 'trimal'
+protein_filtration: 'trimal' # 'gblocks' or 'trimal'
 # ---- Рhylogenetic tree inference ---- (change to 'False' to disable)
 iqtree_dna: True
 iqtree_protein: True
@@ -15,6 +15,7 @@ mrbayes_dna: False
 mrbayes_protein: False
 astral: True # use iqtree for each dna alignment
 rapidnj: True # use iqtree for each dna alignment
+phylip: True # use iqtree for each dna alignment
 # ---- Рhylogenetic tree visualization ----
 draw_phylotrees: True
 
@@ -52,9 +53,11 @@ mrbayes_block: "workflow/envs/mrbayes.block"
 mrbayes_path: # path of MrBayes binary file
 # RapidNJ
 rapidnj_params: "" # for bootstrapping use '-b 100'
+# PHYLIP
+phylip_dnadist_params: "D\n" # use 'D\n' to set model to 'Kimura 2-parameter'. F84 model (default) if "".
+phylip_neighbor_params: "" # use 'N\n' to set UPGMA. NJ (default) if "".
 # ---- Рhylogenetic tree visualization ----
-iqtree_tree_visualization_params: "" # --outgroup
-rapidnj_tree_visualization_params: "" # --outgroup
+tree_visualization_params: "" # --outgroup
 
 # ---- Directory structure ----
 genome_dir: "genomes" # use an absolute path
@@ -70,6 +73,7 @@ iqtree_dir: "phylogeny/iqtree"
 mrbayes_dir: "phylogeny/mrbayes"
 astral_dir: "phylogeny/astral"
 rapidnj_dir: "phylogeny/rapidnj"
+phylip_dir: "phylogeny/phylip"
 log_dir: "logs"
 cluster_log_dir: "cluster_logs"
 benchmark_dir: "benchmarks"
@@ -90,6 +94,7 @@ iqtree_per_fna_threads: 4
 concat_newick_files_threads: 1
 astral_threads: 4
 rapidnj_threads: 1
+phylip_threads: 1
 visualization_threads: 1
 
 # ---- Tool memory ----
@@ -107,6 +112,7 @@ iqtree_per_fna_mem_mb: 10000
 concat_newick_files_mem_mb: 2000
 astral_mem_mb: 10000
 rapidnj_mem_mb: 4000
+phylip_mem_mb: 4000
 visualization_mem_mb: 2000
 
 # ---- Tool time ----
@@ -124,6 +130,7 @@ iqtree_per_fna_time: "10:00:00"
 concat_newick_files_time: "00:30:00"
 astral_time: "5:00:00"
 rapidnj_time: "5:00:00"
+phylip_time: "5:00:00"
 visualization_time: "00:30:00"
 
 

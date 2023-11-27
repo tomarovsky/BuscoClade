@@ -4,7 +4,7 @@ channels:
   - conda-forge
   - bioconda
 dependencies:
-  - busco=5.5.0   # previos =5.4.2
+  - busco=5.5.0
   - biopython
   - prank
   - mafft
@@ -14,4 +14,5 @@ dependencies:
   - astral-tree
   - newick_utils
   - rapidnj
+  - phylip
 #  - mrbayes
