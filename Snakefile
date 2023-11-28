@@ -21,7 +21,6 @@ concat_alignments_dir_path = output_dir_path / config["concat_alignments_dir"]
 iqtree_dir_path = output_dir_path / config["iqtree_dir"]
 mrbayes_dir_path = output_dir_path / config["mrbayes_dir"]
 astral_dir_path = output_dir_path / config["astral_dir"]
-rapidnj_dir_path = output_dir_path / config["rapidnj_dir"]
 phylip_dir_path = output_dir_path / config["phylip_dir"]
 
 if "species_list" not in config:
@@ -40,7 +39,6 @@ stockholm_protein_filename = "{}.faa.sth".format(config["alignment_file_prefix"]
 astral_input_trees = "{}.iqtree_per_fna.concat.treefile".format(config["alignment_file_prefix"])
 astral_filtered_trees = "{0}.iqtree_per_fna.concat.{1}.treefile".format(config["alignment_file_prefix"], config["nodes_filtrataion_by_support"])
 astral_tree = "{0}.{1}.fna.astral.treefile".format(config["alignment_file_prefix"], config["nodes_filtrataion_by_support"])
-rapidnj_tree = "{}.fna.rapidnj.treefile".format(config["alignment_file_prefix"])
 phylip_tree = "{}.fna.phy.treefile".format(config["alignment_file_prefix"])
 
 # ---- Necessary functions ----
@@ -77,7 +75,6 @@ if "dna_alignment" in config:
                 output_files.append(concat_alignments_dir_path / fasta_dna_filename)
                 output_files.append(concat_alignments_dir_path / nexus_dna_filename)
                 output_files.append(concat_alignments_dir_path / phylip_dna_filename)
-                output_files.append(concat_alignments_dir_path / stockholm_dna_filename)
                 if config["iqtree_dna"]:
                     output_files.append(iqtree_dir_path / "fna" / f"{fasta_dna_filename}.treefile")
                     if config["draw_phylotrees"]:
@@ -86,10 +83,6 @@ if "dna_alignment" in config:
                     output_files.append(astral_dir_path / astral_tree)
                     if config["draw_phylotrees"]:
                         output_files.append(astral_dir_path / f"{astral_tree}.svg")
-                if config["rapidnj"]:
-                    output_files.append(rapidnj_dir_path / rapidnj_tree)
-                    if config["draw_phylotrees"]:
-                        output_files.append(rapidnj_dir_path / f"{fasta_dna_filename}.only_tree.svg")
                 if config["phylip"]:
                     output_files.append(phylip_dir_path / phylip_tree)
                     if config["draw_phylotrees"]:
@@ -103,7 +96,6 @@ if "protein_alignment" in config:
                 output_files.append(concat_alignments_dir_path / fasta_protein_filename)
                 output_files.append(concat_alignments_dir_path / nexus_protein_filename)
                 output_files.append(concat_alignments_dir_path / phylip_protein_filename)
-                output_files.append(concat_alignments_dir_path / stockholm_protein_filename)
                 if config["iqtree_protein"]:
                     output_files.append(iqtree_dir_path / "faa" / f"{fasta_protein_filename}.treefile")
                     if config["draw_phylotrees"]:
@@ -133,7 +125,6 @@ include: "workflow/rules/iqtree.smk"
 include: "workflow/rules/mrbayes.smk"
 include: "workflow/rules/visualization.smk"
 include: "workflow/rules/astral.smk"
-include: "workflow/rules/rapidnj.smk"
 include: "workflow/rules/phylip.smk"
 
 
