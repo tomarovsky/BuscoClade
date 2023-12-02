@@ -17,6 +17,7 @@ if "dna_filtration" in config:
             conda:
                 "../../%s" % config["conda_config"]
             resources:
+                queue=config["filtration_queue"],
                 cpus=config["gblocks_threads"],
                 time=config["gblocks_time"],
                 mem=config["gblocks_mem_mb"]
@@ -43,6 +44,7 @@ if "dna_filtration" in config:
             conda:
                 "../../%s" % config["conda_config"]
             resources:
+                queue=config["filtration_queue"],
                 cpus=config["trimal_threads"],
                 time=config["trimal_time"],
                 mem_mb=config["trimal_mem_mb"]
@@ -70,6 +72,7 @@ if "protein_filtration" in config:
             conda:
                 "../../%s" % config["conda_config"]
             resources:
+                queue=config["filtration_queue"],
                 cpus=config["gblocks_threads"],
                 time=config["gblocks_time"],
                 mem=config["gblocks_mem_mb"]
@@ -96,6 +99,7 @@ if "protein_filtration" in config:
             conda:
                 "../../%s" % config["conda_config"]
             resources:
+                queue=config["filtration_queue"],
                 cpus=config["trimal_threads"],
                 time=config["trimal_time"],
                 mem_mb=config["trimal_mem_mb"]

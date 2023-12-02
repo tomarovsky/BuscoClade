@@ -12,6 +12,7 @@ rule species_ids: # get files with IDs for each species
     benchmark:
         benchmark_dir_path / "species_ids.{species}.benchmark.txt"
     resources:
+        queue=config["common_ids_queue"],
         cpus=config["species_ids_threads"],
         time=config["species_ids_time"],
         mem_mb=config["species_ids_mem_mb"]
@@ -33,6 +34,7 @@ rule common_ids: # get common IDs for all species and split them into files
     benchmark:
         benchmark_dir_path / "common_ids.benchmark.txt"
     resources:
+        queue=config["common_ids_queue"],
         cpus=config["common_ids_threads"],
         time=config["common_ids_time"],
         mem_mb=config["common_ids_mem_mb"]
@@ -54,6 +56,7 @@ checkpoint merged_sequences: # get merged sequences by common IDs
     benchmark:
         benchmark_dir_path / "merged_sequences.benchmark.txt"
     resources:
+        queue=config["common_ids_queue"],
         cpus=config["merged_sequences_threads"],
         time=config["merged_sequences_time"],
         mem_mb=config["merged_sequences_mem_mb"]

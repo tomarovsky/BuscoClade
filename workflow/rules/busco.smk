@@ -19,6 +19,7 @@ if config['gene_prediction_tool'] == "metaeuk":
         conda:
             "../../%s" % config["conda_config"]
         resources:
+            queue=config["busco_queue"],
             cpus=config["busco_threads"],
             time=config["busco_time"],
             mem_mb=config["busco_mem_mb"],
@@ -59,6 +60,7 @@ elif config['gene_prediction_tool'] == "augustus":
         conda:
             "../../%s" % config["conda_config"]
         resources:
+            queue=config["busco_queue"],
             cpus=config["busco_threads"],
             time=config["busco_time"],
             mem_mb=config["busco_mem_mb"],

@@ -12,9 +12,10 @@ rule concat_fasta_dna:
     conda:
         "../../%s" % config["conda_config"]
     resources:
-        cpus=config["mafft_threads"],
-        time=config["mafft_time"],
-        mem_mb=config["mafft_mem_mb"]
+        queue=config["concat_alignments_queue"],
+        cpus=config["concat_alignments_threads"],
+        time=config["concat_alignments_time"],
+        mem_mb=config["concat_alignments_mem_mb"]
     shell:
         "workflow/scripts/concat_fasta.py -i {input} -o {output} 1> {log.std} 2>&1"
 
@@ -33,9 +34,10 @@ rule concat_fasta_protein:
     conda:
         "../../%s" % config["conda_config"]
     resources:
-        cpus=config["mafft_threads"],
-        time=config["mafft_time"],
-        mem_mb=config["mafft_mem_mb"]
+        queue=config["concat_alignments_queue"],
+        cpus=config["concat_alignments_threads"],
+        time=config["concat_alignments_time"],
+        mem_mb=config["concat_alignments_mem_mb"]
     shell:
         "workflow/scripts/concat_fasta.py -i {input} -o {output} 1> {log.std} 2>&1"
 
@@ -57,9 +59,10 @@ rule concat_nexus_dna:
     conda:
         "../../%s" % config["conda_config"]
     resources:
-        cpus=config["mafft_threads"],
-        time=config["mafft_time"],
-        mem_mb=config["mafft_mem_mb"]
+        queue=config["concat_alignments_queue"],
+        cpus=config["concat_alignments_threads"],
+        time=config["concat_alignments_time"],
+        mem_mb=config["concat_alignments_mem_mb"]
     shell:
         "workflow/scripts/fasta_to_nexus_with_bayes_block.py -i {input} "
         "-t {params.type} -b {params.block} -o {output} 1> {log.std} 2>&1"
@@ -82,9 +85,10 @@ rule concat_nexus_protein:
     conda:
         "../../%s" % config["conda_config"]
     resources:
-        cpus=config["mafft_threads"],
-        time=config["mafft_time"],
-        mem_mb=config["mafft_mem_mb"]
+        queue=config["concat_alignments_queue"],
+        cpus=config["concat_alignments_threads"],
+        time=config["concat_alignments_time"],
+        mem_mb=config["concat_alignments_mem_mb"]
     shell:
         "workflow/scripts/fasta_to_nexus_with_bayes_block.py -i {input} "
         "-t {params.type} -b {params.block} -o {output} 1> {log.std} 2>&1"
@@ -106,9 +110,10 @@ rule concat_phylip_dna:
     conda:
         "../../%s" % config["conda_config"]
     resources:
-        cpus=config["mafft_threads"],
-        time=config["mafft_time"],
-        mem_mb=config["mafft_mem_mb"]
+        queue=config["concat_alignments_queue"],
+        cpus=config["concat_alignments_threads"],
+        time=config["concat_alignments_time"],
+        mem_mb=config["concat_alignments_mem_mb"]
     shell:
         " workflow/scripts/fasta_to_phylip.py -i {input} "
         " -t {params.type} -o {output} 1> {log.std} 2>&1; "
@@ -130,51 +135,12 @@ rule concat_phylip_protein:
     conda:
         "../../%s" % config["conda_config"]
     resources:
-        cpus=config["mafft_threads"],
-        time=config["mafft_time"],
-        mem_mb=config["mafft_mem_mb"]
+        queue=config["concat_alignments_queue"],
+        cpus=config["concat_alignments_threads"],
+        time=config["concat_alignments_time"],
+        mem_mb=config["concat_alignments_mem_mb"]
     shell:
         " workflow/scripts/fasta_to_phylip.py -i {input} "
         " -t {params.type} -o {output} 1> {log.std} 2>&1; "
 
 
-rule concat_stockholm_dna:
-    input:
-        rules.concat_fasta_dna.output
-    output:
-        concat_alignments_dir_path / stockholm_dna_filename
-    log:
-        std=log_dir_path / "concat_stockholm_dna.log",
-        cluster_log=cluster_log_dir_path / "concat_stockholm_dna.cluster.log",
-        cluster_err=cluster_log_dir_path / "concat_stockholm_dna.cluster.err"
-    benchmark:
-        benchmark_dir_path / "concat_stockholm_dna.benchmark.txt"
-    conda:
-        "../../%s" % config["conda_config"]
-    resources:
-        cpus=config["mafft_threads"],
-        time=config["mafft_time"],
-        mem_mb=config["mafft_mem_mb"]
-    shell:
-        " workflow/scripts/fasta_to_stockholm.py -i {input} -o {output} 1> {log.std} 2>&1; "
-
-
-rule concat_stockholm_protein:
-    input:
-        rules.concat_fasta_protein.output
-    output:
-        concat_alignments_dir_path / stockholm_protein_filename
-    log:
-        std=log_dir_path / "concat_stockholm_protein.log",
-        cluster_log=cluster_log_dir_path / "concat_stockholm_protein.cluster.log",
-        cluster_err=cluster_log_dir_path / "concat_stockholm_protein.cluster.err"
-    benchmark:
-        benchmark_dir_path / "concat_stockholm_protein.benchmark.txt"
-    conda:
-        "../../%s" % config["conda_config"]
-    resources:
-        cpus=config["mafft_threads"],
-        time=config["mafft_time"],
-        mem_mb=config["mafft_mem_mb"]
-    shell:
-        " workflow/scripts/fasta_to_stockholm.py -i {input} -o {output} 1> {log.std} 2>&1; "

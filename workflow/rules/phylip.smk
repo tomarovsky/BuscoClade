@@ -18,6 +18,7 @@ rule phylip_tree:
     conda:
         "../../%s" % config["conda_config"]
     resources:
+        queue=config["phylip_queue"],
         cpus=config["phylip_threads"],
         time=config["phylip_time"],
         mem_mb=config["phylip_mem_mb"]

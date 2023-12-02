@@ -14,6 +14,7 @@ if config["mrbayes_dna"]:
         benchmark:
             benchmark_dir_path / "mrbayes_dna.benchmark.txt"
         resources:
+            queue=config["mrbayes_queue"],
             cpus=config["mrbayes_threads"],
             time=config["mrbayes_time"],
             mem_mb=config["mrbayes_mem_mb"]
@@ -38,6 +39,7 @@ if config["mrbayes_protein"]:
         benchmark:
             benchmark_dir_path / "mrbayes_protein.benchmark.txt"
         resources:
+            queue=config["mrbayes_queue"],
             cpus=config["mrbayes_threads"],
             time=config["mrbayes_time"],
             mem_mb=config["mrbayes_mem_mb"]

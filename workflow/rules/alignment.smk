@@ -17,6 +17,7 @@ if "dna_alignment" in config:
             conda:
                 "../../%s" % config["conda_config"]
             resources:
+                queue=config["alignment_queue"],
                 cpus=config["prank_threads"],
                 time=config["prank_time"],
                 mem_mb=config["prank_mem_mb"]
@@ -43,6 +44,7 @@ if "dna_alignment" in config:
             conda:
                 "../../%s" % config["conda_config"]
             resources:
+                queue=config["alignment_queue"],
                 cpus=config["mafft_threads"],
                 time=config["mafft_time"],
                 mem_mb=config["mafft_mem_mb"]
@@ -70,6 +72,7 @@ if "protein_alignment" in config:
             conda:
                 "../../%s" % config["conda_config"]
             resources:
+                queue=config["alignment_queue"],
                 cpus=config["prank_threads"],
                 time=config["prank_time"],
                 mem_mb=config["prank_mem_mb"]
@@ -96,6 +99,7 @@ if "protein_alignment" in config:
             conda:
                 "../../%s" % config["conda_config"]
             resources:
+                queue=config["alignment_queue"],
                 cpus=config["mafft_threads"],
                 time=config["mafft_time"],
                 mem_mb=config["mafft_mem_mb"]

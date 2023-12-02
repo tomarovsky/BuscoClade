@@ -23,6 +23,7 @@ if "astral" in config:
         conda:
             "../../%s" % config["conda_config"]
         resources:
+            queue=config["astral_queue"],
             cpus=config["iqtree_per_fna_threads"],
             time=config["iqtree_per_fna_time"],
             mem_mb=config["iqtree_per_fna_mem_mb"]
@@ -46,6 +47,7 @@ if "astral" in config:
         conda:
             "../../%s" % config["conda_config"]
         resources:
+            queue=config["astral_queue"],
             cpus=config["concat_newick_files_threads"],
             time=config["concat_newick_files_time"],
             mem_mb=config["concat_newick_files_mem_mb"]
@@ -70,9 +72,10 @@ if "astral" in config:
         conda:
             "../../%s" % config["conda_config"]
         resources:
-            cpus=config["concat_newick_files_threads"],
-            time=config["concat_newick_files_time"],
-            mem_mb=config["concat_newick_files_mem_mb"]
+            queue=config["astral_queue"],
+            cpus=config["nodes_filtrataion_by_support_threads"],
+            time=config["nodes_filtrataion_by_support_time"],
+            mem_mb=config["nodes_filtrataion_by_support_mem_mb"]
         threads:
             config["concat_newick_files_threads"]
         shell:
@@ -94,6 +97,7 @@ if "astral" in config:
         conda:
             "../../%s" % config["conda_config"]
         resources:
+            queue=config["astral_queue"],
             cpus=config["astral_threads"],
             time=config["astral_time"],
             mem_mb=config["astral_mem_mb"]

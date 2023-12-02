@@ -18,6 +18,7 @@ if config["draw_phylotrees"]:
         conda:
             "../../%s" % config["ete3_conda_config"]
         resources:
+            queue=config["visualization_queue"],
             cpus=config["visualization_threads"],
             time=config["visualization_time"],
             mem_mb=config["visualization_mem_mb"]
@@ -47,6 +48,7 @@ if config["draw_phylotrees"]:
         conda:
             "../../%s" % config["ete3_conda_config"]
         resources:
+            queue=config["visualization_queue"],
             cpus=config["visualization_threads"],
             time=config["visualization_time"],
             mem_mb=config["visualization_mem_mb"]
@@ -74,6 +76,7 @@ if config["draw_phylotrees"]:
         conda:
             "../../%s" % config["ete3_conda_config"]
         resources:
+            queue=config["visualization_queue"],
             cpus=config["visualization_threads"],
             time=config["visualization_time"],
             mem_mb=config["visualization_mem_mb"]
@@ -103,6 +106,7 @@ if config["draw_phylotrees"]:
         conda:
             "../../%s" % config["ete3_conda_config"]
         resources:
+            queue=config["visualization_queue"],
             cpus=config["visualization_threads"],
             time=config["visualization_time"],
             mem_mb=config["visualization_mem_mb"]
@@ -127,9 +131,12 @@ rule species_ids_plot:
     benchmark:
         benchmark_dir_path / "species_ids_plot.benchmark.txt"
     resources:
-        cpus=config["species_ids_threads"],
-        time=config["species_ids_time"],
-        mem_mb=config["species_ids_mem_mb"]
+        queue=config["visualization_queue"],
+        cpus=config["visualization_threads"],
+        time=config["visualization_time"],
+        mem_mb=config["visualization_mem_mb"]
     shell:
         " workflow/scripts/unique_ids_plot.py --species_ids_files {input} "
         " --outplot {output.png} --outcsv {output.csv} > {log.std} 2>&1 "
+
+

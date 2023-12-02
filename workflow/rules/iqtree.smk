@@ -23,6 +23,7 @@ if config["iqtree_dna"]:
         conda:
             "../../%s" % config["conda_config"]
         resources:
+            queue=config["iqtree_queue"],
             cpus=config["iqtree_threads"],
             time=config["iqtree_time"],
             mem_mb=config["iqtree_mem_mb"]
@@ -57,6 +58,7 @@ if config["iqtree_protein"]:
         conda:
             "../../%s" % config["conda_config"]
         resources:
+            queue=config["iqtree_queue"],
             cpus=config["iqtree_threads"],
             time=config["iqtree_time"],
             mem_mb=config["iqtree_mem_mb"]
