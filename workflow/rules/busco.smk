@@ -25,17 +25,17 @@ if config['gene_prediction_tool'] == "metaeuk":
         threads:
             config["busco_threads"]
         shell:
-            " mkdir -p {output.busco_outdir}; cd {output.busco_outdir}; "
+            " MYPWD=$(pwd); mkdir -p {output.busco_outdir}; cd {output.busco_outdir}; "
             " busco -m {params.mode} -i {input} -c {threads} "
-            " -l {params.busco_dataset_path} -o {params.output_prefix} 1>../../../{log.std} 2>&1; "
-            " mv {params.output_prefix}/* . 1>../../../{log.std} 2>&1; "
-            " rm -r {params.output_prefix}/ 1>../../../{log.std} 2>&1; "
-            " rm -r busco_sequences/ 1>../../../{log.std} 2>&1; " # empty directory
-            " mv run*/* . 1>../../../{log.std} 2>&1; "
-            " rm -r run* 1>../../../{log.std} 2>&1; "
-            " mv full_table.tsv full_table_{params.output_prefix}.tsv 1>../../../{log.std} 2>&1; "
-            " mv missing_busco_list.tsv missing_busco_list_{params.output_prefix}.tsv 1>../../../{log.std} 2>&1; "
-            " mv short_summary.txt short_summary_{params.output_prefix}.txt 1>../../../{log.std} 2>&1; "
+            " -l {params.busco_dataset_path} -o {params.output_prefix} 1> $MYPWD/{log.std} 2>&1; "
+            " mv {params.output_prefix}/* . 1> $MYPWD/{log.std} 2>&1; "
+            " rm -r {params.output_prefix}/ 1> $MYPWD/{log.std} 2>&1; "
+            " rm -r busco_sequences/ 1> $MYPWD/{log.std} 2>&1; " # empty directory
+            " mv run*/* . 1> $MYPWD/{log.std} 2>&1; "
+            " rm -r run* 1> $MYPWD/{log.std} 2>&1; "
+            " mv full_table.tsv full_table_{params.output_prefix}.tsv 1> $MYPWD/{log.std} 2>&1; "
+            " mv missing_busco_list.tsv missing_busco_list_{params.output_prefix}.tsv 1> $MYPWD/{log.std} 2>&1; "
+            " mv short_summary.txt short_summary_{params.output_prefix}.txt 1> $MYPWD/{log.std} 2>&1; "
 elif config['gene_prediction_tool'] == "augustus":
     rule busco_augustus:
         input:
@@ -65,14 +65,15 @@ elif config['gene_prediction_tool'] == "augustus":
         threads:
             config["busco_threads"]
         shell:
-            " mkdir -p {output.busco_outdir}; cd {output.busco_outdir}; "
+            " MYPWD=$(pwd); mkdir -p {output.busco_outdir}; cd {output.busco_outdir}; "
             " busco --augustus --augustus_species {params.species} -m {params.mode} "
-            " -i {input} -c {threads} -l {params.busco_dataset_path} -o {params.output_prefix} 1>../../../{log.std} 2>&1; "
-            " mv {params.output_prefix}/* ./ ; rm -r {params.output_prefix}/ ; "
-            " rm -r augustus_output/ ; " # empty directory
-            " mv run*/* . ; rm -r run* ; "
-            " mv full_table.tsv full_table_{params.output_prefix}.tsv ; "
-            " mv missing_busco_list.tsv missing_busco_list_{params.output_prefix}.tsv ; "
-            " mv short_summary.txt short_summary_{params.output_prefix}.txt ; "
+            " -i {input} -c {threads} -l {params.busco_dataset_path} -o {params.output_prefix} 1> $MYPWD/{log.std} 2>&1; "
+            " mv {params.output_prefix}/* ./ 1> $MYPWD/{log.std} 2>&1; "
+            " rm -r {params.output_prefix}/ 1> $MYPWD/{log.std} 2>&1; "
+            " rm -r augustus_output/ 1> $MYPWD/{log.std} 2>&1; " # empty directory
+            " mv run*/* . ; rm -r run* 1> $MYPWD/{log.std} 2>&1; "
+            " mv full_table.tsv full_table_{params.output_prefix}.tsv 1> $MYPWD/{log.std} 2>&1; "
+            " mv missing_busco_list.tsv missing_busco_list_{params.output_prefix}.tsv 1> $MYPWD/{log.std} 2>&1; "
+            " mv short_summary.txt short_summary_{params.output_prefix}.txt 1> $MYPWD/{log.std} 2>&1; "
 
 
