@@ -29,8 +29,8 @@ if config["iqtree_dna"]:
         threads:
             config["iqtree_threads"]
         shell:
-            "mkdir -p {params.outdir}; iqtree -nt {threads} -s {input} "
-            "--prefix {params.outdir}/{params.prefix} {params.options} 1> {log.std} 2>&1; "
+            " mkdir -p {params.outdir}; iqtree -nt {threads} -s {input} "
+            " --prefix {params.outdir}/{params.prefix} {params.options} 1> {log.std} 2>&1; "
 
 if config["iqtree_protein"]:
     rule iqtree_protein:
@@ -63,7 +63,7 @@ if config["iqtree_protein"]:
         threads:
             config["iqtree_threads"]
         shell:
-            "mkdir -p {params.outdir}; iqtree -nt {threads} -s {input} "
-            "--prefix {params.outdir}/{params.prefix} {params.options} 1> {log.std} 2>&1; "
+            " mkdir -p {params.outdir}; iqtree -nt {threads} -s {input} "
+            " --prefix {params.outdir}/{params.prefix} {params.options} 1> {log.std} 2>&1; "
 
 

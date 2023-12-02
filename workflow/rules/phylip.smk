@@ -24,19 +24,19 @@ rule phylip_tree:
     threads:
         config["phylip_threads"]
     shell:
-        "MYPWD=$(pwd); cd {params.outdir} 2> $MYPWD/{log.std}; "
-        "echo -e \"$MYPWD/{input}\n{params.dnadist_params}Y\n\" | dnadist > $MYPWD/{log.std} 2>&1; "
-        "mv outfile $MYPWD/ 2> $MYPWD/{log.std}; "
-        "cd $MYPWD 2> $MYPWD/{log.std}; "
-        "mv outfile {output.dnadist} 2> $MYPWD/{log.std}; "
-        "cd {params.outdir} 2> $MYPWD/{log.std}; "
-        "echo -e \"$MYPWD/{output.dnadist}\n{params.neighbor_params}Y\n\" | neighbor > $MYPWD/{log.std} 2>&1; "
-        "mv outfile $MYPWD/ 2> $MYPWD/{log.std}; "
-        "cd $MYPWD 2> $MYPWD/{log.std}; "
-        "mv outfile {output.outfile} 2> $MYPWD/{log.std}; "
-        "cd {params.outdir} 2> $MYPWD/{log.std}; "
-        "mv outtree $MYPWD/ 2> $MYPWD/{log.std}; "
-        "cd $MYPWD 2> $MYPWD/{log.std}; "
-        "mv outtree {output.treefile} 2> $MYPWD/{log.std}; "
+        " MYPWD=$(pwd); cd {params.outdir} 2> $MYPWD/{log.std}; "
+        " echo -e \"$MYPWD/{input}\n{params.dnadist_params}Y\n\" | dnadist > $MYPWD/{log.std} 2>&1; "
+        " mv outfile $MYPWD/ 2> $MYPWD/{log.std}; "
+        " cd $MYPWD 2> $MYPWD/{log.std}; "
+        " mv outfile {output.dnadist} 2> $MYPWD/{log.std}; "
+        " cd {params.outdir} 2> $MYPWD/{log.std}; "
+        " echo -e \"$MYPWD/{output.dnadist}\n{params.neighbor_params}Y\n\" | neighbor > $MYPWD/{log.std} 2>&1; "
+        " mv outfile $MYPWD/ 2> $MYPWD/{log.std}; "
+        " cd $MYPWD 2> $MYPWD/{log.std}; "
+        " mv outfile {output.outfile} 2> $MYPWD/{log.std}; "
+        " cd {params.outdir} 2> $MYPWD/{log.std}; "
+        " mv outtree $MYPWD/ 2> $MYPWD/{log.std}; "
+        " cd $MYPWD 2> $MYPWD/{log.std}; "
+        " mv outtree {output.treefile} 2> $MYPWD/{log.std}; "
 
 

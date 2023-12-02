@@ -21,9 +21,9 @@ if "dna_filtration" in config:
                 time=config["gblocks_time"],
                 mem=config["gblocks_mem_mb"]
             shell:
-                "mkdir -p {params.outdir}; set +e; " # Gblocks always returns 1 exit code
-                "Gblocks {input} {params.options} 1> {log.std} 2>&1; "
-                "rm -r {input}-gb.htm; mv {input}-gb {output} " # If Gblocks exits with an error, the output files will not exist
+                " mkdir -p {params.outdir}; set +e; " # Gblocks always returns 1 exit code
+                " Gblocks {input} {params.options} 1> {log.std} 2>&1; "
+                " rm -r {input}-gb.htm; mv {input}-gb {output} " # If Gblocks exits with an error, the output files will not exist
 
     if config["dna_filtration"] == "trimal":
         rule trimal_dna:
@@ -47,9 +47,9 @@ if "dna_filtration" in config:
                 time=config["trimal_time"],
                 mem_mb=config["trimal_mem_mb"]
             shell:
-                "trimal -in {input} -out {params.prefix} {params.options} > {log.std} 2>&1; "
-                "trimal -in {params.prefix} -out {output} -nogaps > {log.std} 2>&1; "
-                "rm {params.prefix} > {log.std} 2>&1; "
+                " trimal -in {input} -out {params.prefix} {params.options} > {log.std} 2>&1; "
+                " trimal -in {params.prefix} -out {output} -nogaps > {log.std} 2>&1; "
+                " rm {params.prefix} > {log.std} 2>&1; "
 
 if "protein_filtration" in config:
     if config["protein_filtration"] == "gblocks":
@@ -74,9 +74,9 @@ if "protein_filtration" in config:
                 time=config["gblocks_time"],
                 mem=config["gblocks_mem_mb"]
             shell:
-                "mkdir -p {params.outdir}; set +e; " # Gblocks always returns 1 exit code
-                "Gblocks {input} {params.options} 1> {log.std} 2>&1; "
-                "rm -r {input}-gb.htm; mv {input}-gb {output} " # If Gblocks exits with an error, the output files will not exist
+                " mkdir -p {params.outdir}; set +e; " # Gblocks always returns 1 exit code
+                " Gblocks {input} {params.options} 1> {log.std} 2>&1; "
+                " rm -r {input}-gb.htm; mv {input}-gb {output} " # If Gblocks exits with an error, the output files will not exist
 
     if config["protein_filtration"] == "trimal":
         rule trimal_protein:
@@ -100,6 +100,6 @@ if "protein_filtration" in config:
                 time=config["trimal_time"],
                 mem_mb=config["trimal_mem_mb"]
             shell:
-                "trimal -in {input} -out {params.prefix} {params.options} > {log.std} 2>&1; "
-                "trimal -in {params.prefix} -out {output} -nogaps > {log.std} 2>&1; "
-                "rm {params.prefix} > {log.std} 2>&1; "
+                " trimal -in {input} -out {params.prefix} {params.options} > {log.std} 2>&1; "
+                " trimal -in {params.prefix} -out {output} -nogaps > {log.std} 2>&1; "
+                " rm {params.prefix} > {log.std} 2>&1; "

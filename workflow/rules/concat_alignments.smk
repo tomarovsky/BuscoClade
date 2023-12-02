@@ -110,8 +110,8 @@ rule concat_phylip_dna:
         time=config["mafft_time"],
         mem_mb=config["mafft_mem_mb"]
     shell:
-        "workflow/scripts/fasta_to_phylip.py -i {input} "
-        "-t {params.type} -o {output} 1> {log.std} 2>&1"
+        " workflow/scripts/fasta_to_phylip.py -i {input} "
+        " -t {params.type} -o {output} 1> {log.std} 2>&1; "
 
 
 rule concat_phylip_protein:
@@ -134,8 +134,8 @@ rule concat_phylip_protein:
         time=config["mafft_time"],
         mem_mb=config["mafft_mem_mb"]
     shell:
-        "workflow/scripts/fasta_to_phylip.py -i {input} "
-        "-t {params.type} -o {output} 1> {log.std} 2>&1"
+        " workflow/scripts/fasta_to_phylip.py -i {input} "
+        " -t {params.type} -o {output} 1> {log.std} 2>&1; "
 
 
 rule concat_stockholm_dna:
@@ -156,7 +156,7 @@ rule concat_stockholm_dna:
         time=config["mafft_time"],
         mem_mb=config["mafft_mem_mb"]
     shell:
-        "workflow/scripts/fasta_to_stockholm.py -i {input} -o {output} 1> {log.std} 2>&1"
+        " workflow/scripts/fasta_to_stockholm.py -i {input} -o {output} 1> {log.std} 2>&1; "
 
 
 rule concat_stockholm_protein:
@@ -177,4 +177,4 @@ rule concat_stockholm_protein:
         time=config["mafft_time"],
         mem_mb=config["mafft_mem_mb"]
     shell:
-        "workflow/scripts/fasta_to_stockholm.py -i {input} -o {output} 1> {log.std} 2>&1"
+        " workflow/scripts/fasta_to_stockholm.py -i {input} -o {output} 1> {log.std} 2>&1; "

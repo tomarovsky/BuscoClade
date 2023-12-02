@@ -18,9 +18,9 @@ if config["mrbayes_dna"]:
             time=config["mrbayes_time"],
             mem_mb=config["mrbayes_mem_mb"]
         shell:
-            "mkdir -p {output}; "
-            "mpirun -np {resources.cpus} {params.mrbayes_path}/mb-mpi {input} {params.options} 1> {log.std} 2>&1; "
-            "mv {input}.* {output}/; "
+            " mkdir -p {output}; "
+            " mpirun -np {resources.cpus} {params.mrbayes_path}/mb-mpi {input} {params.options} 1> {log.std} 2>&1; "
+            " mv {input}.* {output}/; "
 
 if config["mrbayes_protein"]:
     rule mrbayes_protein:
@@ -42,8 +42,8 @@ if config["mrbayes_protein"]:
             time=config["mrbayes_time"],
             mem_mb=config["mrbayes_mem_mb"]
         shell:
-            "mkdir -p {output}; "
-            "mpirun -np {resources.cpus} {params.mrbayes_path}/mb-mpi {input} {params.options} 1> {log.std} 2>&1; "
-            "mv {input}.* {output}/; "
+            " mkdir -p {output}; "
+            " mpirun -np {resources.cpus} {params.mrbayes_path}/mb-mpi {input} {params.options} 1> {log.std} 2>&1; "
+            " mv {input}.* {output}/; "
 
 

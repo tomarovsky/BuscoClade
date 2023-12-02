@@ -16,7 +16,7 @@ rule species_ids: # get files with IDs for each species
         time=config["species_ids_time"],
         mem_mb=config["species_ids_mem_mb"]
     shell:
-        "ls {input} | grep -P '.fna$' | sed 's/.fna//' > {output} 2> {log.std}"
+        " ls {input} | grep -P '.fna$' | sed 's/.fna//' > {output} 2> {log.std}; "
 
 
 rule common_ids: # get common IDs for all species and split them into files
@@ -37,7 +37,7 @@ rule common_ids: # get common IDs for all species and split them into files
         time=config["common_ids_time"],
         mem_mb=config["common_ids_mem_mb"]
     shell:
-        "cat {input} | sort | uniq -c | awk '{{if($1=={params.nfiles}){{print $2}}}}' > {output} 2> {log.std}; "
+        " cat {input} | sort | uniq -c | awk '{{if($1=={params.nfiles}){{print $2}}}}' > {output} 2> {log.std}; "
 
 
 checkpoint merged_sequences: # get merged sequences by common IDs
@@ -58,5 +58,4 @@ checkpoint merged_sequences: # get merged sequences by common IDs
         time=config["merged_sequences_time"],
         mem_mb=config["merged_sequences_mem_mb"]
     shell:
-        "workflow/scripts/merge_common_ids.py --common_ids {input} "
-        "--single_copy_files {params.single_copy_files} --outdir {output} 1> {log.std} 2>&1"
+        " workflow/scripts/merge_common_ids.py -c {input} -s {params.single_copy_files} -o {output} 1> {log.std} 2>&1; "

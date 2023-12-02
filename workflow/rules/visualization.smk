@@ -24,7 +24,7 @@ if config["draw_phylotrees"]:
         threads:
             config["visualization_threads"]
         shell:
-            "QT_QPA_PLATFORM=offscreen workflow/scripts/draw_phylotrees.py -i {input} -o {params.prefix} {params.options} 1> {log.std} 2>&1"
+            " QT_QPA_PLATFORM=offscreen workflow/scripts/draw_phylotrees.py -i {input} -o {params.prefix} {params.options} 1> {log.std} 2>&1"
 
 
 if config["draw_phylotrees"]:
@@ -53,7 +53,7 @@ if config["draw_phylotrees"]:
         threads:
             config["visualization_threads"]
         shell:
-            "QT_QPA_PLATFORM=offscreen workflow/scripts/draw_phylotrees.py -i {input} -o {params.prefix} {params.options} 1> {log.std} 2>&1"
+            " QT_QPA_PLATFORM=offscreen workflow/scripts/draw_phylotrees.py -i {input} -o {params.prefix} {params.options} 1> {log.std} 2>&1"
 
 
 if config["draw_phylotrees"]:
@@ -80,7 +80,7 @@ if config["draw_phylotrees"]:
         threads:
             config["visualization_threads"]
         shell:
-            "QT_QPA_PLATFORM=offscreen workflow/scripts/draw_phylotrees_from_astral.py -i {input} -o {params.prefix} > {log.std} 2>&1"
+            " QT_QPA_PLATFORM=offscreen workflow/scripts/draw_phylotrees_from_astral.py -i {input} -o {params.prefix} > {log.std} 2>&1"
 
 
 if config["draw_phylotrees"]:
@@ -109,7 +109,7 @@ if config["draw_phylotrees"]:
         threads:
             config["visualization_threads"]
         shell:
-            "QT_QPA_PLATFORM=offscreen workflow/scripts/draw_phylotrees.py -i {input} -o {params.prefix} {params.options} 1> {log.std} 2>&1"
+            " QT_QPA_PLATFORM=offscreen workflow/scripts/draw_phylotrees.py -i {input} -o {params.prefix} {params.options} 1> {log.std} 2>&1"
 
 
 rule species_ids_plot:
@@ -131,5 +131,5 @@ rule species_ids_plot:
         time=config["species_ids_time"],
         mem_mb=config["species_ids_mem_mb"]
     shell:
-        "workflow/scripts/unique_ids_plot.py --species_ids_files {input} "
-        "--outplot {output.png} --outcsv {output.csv} > {log.std} 2>&1 "
+        " workflow/scripts/unique_ids_plot.py --species_ids_files {input} "
+        " --outplot {output.png} --outcsv {output.csv} > {log.std} 2>&1 "
