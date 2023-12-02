@@ -57,7 +57,7 @@ phylip_neighbor_params: "" # use 'N\n' to set UPGMA. NJ (default) if "".
 tree_visualization_params: "" # --outgroup
 
 # ---- Directory structure ----
-genome_dir: "genomes" # use an absolute path
+genome_dir: "genomes"
 output_dir: "results"
 busco_dir: "busco"
 species_ids_dir: "ids/species_ids"

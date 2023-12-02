@@ -6,7 +6,7 @@ configfile: "config/default.yaml"
 
 # ---- Setup paths ----
 cluster_log_dir_path = Path(config["cluster_log_dir"])
-genome_dir_path = Path(config["genome_dir"])
+genome_dir_path = Path(config["genome_dir"]).resolve() # Busco requires an absolute path
 log_dir_path = Path(config["log_dir"])
 benchmark_dir_path = Path(config["benchmark_dir"])
 output_dir_path = Path(config["output_dir"])
