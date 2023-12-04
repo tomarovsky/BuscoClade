@@ -28,6 +28,8 @@ def main():
         nstyle = NodeStyle()
         nstyle["fgcolor"] = "Blue"
         nstyle["size"] = 0
+        nstyle["vt_line_width"] = 1
+        nstyle["hz_line_width"] = 1
         n.set_style(nstyle)
 
     ts.show_branch_length = True
