@@ -20,13 +20,14 @@ rule species_ids: # get files with IDs for each species
         " ls {input} | grep -P '.fna$' | sed 's/.fna//' > {output} 2> {log.std}; "
 
 
-rule common_ids: # get common IDs for all species and split them into files
+rule common_ids: # get common IDs for all species given config["gene_blacklist"] and split them into files
     input:
         expand(species_ids_dir_path / "{species}.ids", species=config["species_list"])
     output:
         common_ids_dir_path / "common_ids.ids"
     params:
-        nfiles=len(config["species_list"])
+        nfiles=len(config["species_list"]),
+        gene_blacklist=config["gene_blacklist"]
     log:
         std=log_dir_path / "common_ids.log",
         cluster_log=cluster_log_dir_path / "common_ids.cluster.log",
@@ -40,6 +41,7 @@ rule common_ids: # get common IDs for all species and split them into files
         mem_mb=config["common_ids_mem_mb"]
     shell:
         " cat {input} | sort | uniq -c | awk '{{if($1=={params.nfiles}){{print $2}}}}' > {output} 2> {log.std}; "
+        " for id in {params.gene_blacklist}; do sed -i \"/$id$/d\" {output}; done 2> {log.std}; "
 
 
 checkpoint merged_sequences: # get merged sequences by common IDs

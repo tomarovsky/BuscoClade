@@ -25,6 +25,9 @@ augustus_species: "human" # used only if 'gene_prediction_tool' == 'augustus'
 busco_dataset_path: ""
 busco_mode: "genome"
 busco_params: ""
+# ---- Common IDs ----
+gene_blacklist: # IDs of genes to be deleted from common_ids
+  - 1155at40674
 # ---- Alignment ----
 prank_dna_params: "-codon"
 mafft_dna_params: ""
@@ -108,14 +111,14 @@ visualization_threads: 1
 
 # ---- Tool memory ----
 busco_mem_mb: 10000
-species_ids_mem_mb: 4000
-common_ids_mem_mb: 4000
-merged_sequences_mem_mb: 4000
-mafft_mem_mb: 4000
-prank_mem_mb: 6000
-gblocks_mem_mb: 6000
-trimal_mem_mb: 6000
-concat_alignments_mem_mb: 6000
+species_ids_mem_mb: 2000
+common_ids_mem_mb: 2000
+merged_sequences_mem_mb: 2000
+mafft_mem_mb: 2000
+prank_mem_mb: 2000
+gblocks_mem_mb: 2000
+trimal_mem_mb: 2000
+concat_alignments_mem_mb: 4000
 iqtree_mem_mb: 10000
 mrbayes_mem_mb: 10000
 iqtree_per_fna_mem_mb: 10000
@@ -131,7 +134,7 @@ species_ids_time: "01:00:00"
 common_ids_time: "01:00:00"
 merged_sequences_time: "01:00:00"
 mafft_time: "10:00:00"
-prank_time: "10:00:00"
+prank_time: "100:00:00"
 gblocks_time: "10:00:00"
 trimal_time: "10:00:00"
 concat_alignments_time: "02:00:00"
