@@ -50,8 +50,8 @@ if "dna_filtration" in config:
                 mem_mb=config["trimal_mem_mb"]
             shell:
                 " trimal -in {input} -out {params.prefix} {params.options} > {log.std} 2>&1; "
-                " trimal -in {params.prefix} -out {output} -nogaps > {log.std} 2>&1; "
-                " rm {params.prefix} > {log.std} 2>&1; "
+                " trimal -in {params.prefix} -out {output} -nogaps >> {log.std} 2>&1; "
+                " rm {params.prefix} >> {log.std} 2>&1; "
 
 if "protein_filtration" in config:
     if config["protein_filtration"] == "gblocks":
@@ -105,5 +105,5 @@ if "protein_filtration" in config:
                 mem_mb=config["trimal_mem_mb"]
             shell:
                 " trimal -in {input} -out {params.prefix} {params.options} > {log.std} 2>&1; "
-                " trimal -in {params.prefix} -out {output} -nogaps > {log.std} 2>&1; "
-                " rm {params.prefix} > {log.std} 2>&1; "
+                " trimal -in {params.prefix} -out {output} -nogaps >> {log.std} 2>&1; "
+                " rm {params.prefix} >> {log.std} 2>&1; "

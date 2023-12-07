@@ -63,4 +63,4 @@ checkpoint merged_sequences: # get merged sequences by common IDs
         time=config["merged_sequences_time"],
         mem_mb=config["merged_sequences_mem_mb"]
     shell:
-        " workflow/scripts/merge_common_ids.py -c {input} -s {params.single_copy_files} -o {output} 1> {log.std} 2>&1; "
+        " workflow/scripts/merge_common_ids.py -c {input} -s {params.single_copy_files} -o {output} > {log.std} 2>&1; "

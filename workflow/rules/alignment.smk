@@ -24,8 +24,8 @@ if "dna_alignment" in config:
             threads:
                 config["prank_threads"]
             shell:
-                " prank -d={input} -o={params.prefix} {params.options} > {log.std} 2>&1; "
-                " mv {params.prefix}.best.fas {output}; "
+                " prank -d={input} -o={params.prefix} {params.options} 1> {log.std} 2>&1; "
+                " mv {params.prefix}.best.fas {output} >> {log.std} 2>&1; "
 
     if config["dna_alignment"] == "mafft":
         rule mafft_dna:
@@ -79,8 +79,8 @@ if "protein_alignment" in config:
             threads:
                 config["prank_threads"]
             shell:
-                " prank -d={input} -o={params.prefix} {params.options} > {log.std} 2>&1; "
-                " mv {params.prefix}.best.fas {output}; "
+                " prank -d={input} -o={params.prefix} {params.options} 1> {log.std} 2>&1; "
+                " mv {params.prefix}.best.fas {output} >> {log.std} 2>&1; "
 
     if config["protein_alignment"] == "mafft":
         rule mafft_protein:

@@ -31,7 +31,7 @@ if "astral" in config:
             config["iqtree_per_fna_threads"]
         shell:
             " mkdir -p {params.outdir}; "
-            " iqtree -nt {threads} -s {input} --prefix {params.prefix} {params.options} 1> {log.std} 2>&1; "
+            " iqtree -nt {threads} -s {input} --prefix {params.prefix} {params.options} > {log.std} 2>&1; "
 
     rule concat_newick_files:
         input:
@@ -105,6 +105,6 @@ if "astral" in config:
             config["astral_threads"]
         shell:
             " java -jar $CONDA_PREFIX/share/astral-tree-5.7.8-0/astral.5.7.8.jar " # 'astral' conda bin file is broken
-            " -i {input} -o {output} {params} 1> {log.std} 2>&1"
+            " -i {input} -o {output} {params} > {log.std} 2>&1"
 
 
