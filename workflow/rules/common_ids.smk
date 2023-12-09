@@ -1,4 +1,4 @@
-localrules: species_ids, common_ids, merged_sequences
+localrules: species_ids, common_ids
 
 rule species_ids: # get files with IDs for each species
     input:
