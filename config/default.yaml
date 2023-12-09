@@ -6,7 +6,7 @@ ete3_conda_config: "workflow/envs/ete3_conda.yaml"
 dna_alignment: 'prank'       # 'prank' or 'mafft'
 protein_alignment: 'mafft'   # 'prank' or 'mafft'
 # ---- Filtration ----
-dna_filtration: 'gblocks' # 'gblocks' or 'trimal'
+dna_filtration: 'gblocks'    # 'gblocks' or 'trimal'
 protein_filtration: 'trimal' # 'gblocks' or 'trimal'
 # ---- Рhylogenetic tree inference ---- (change to 'False' to disable)
 iqtree_dna: True
