@@ -1,33 +1,37 @@
 conda_config: "workflow/envs/conda.yaml"
 ete3_conda_config: "workflow/envs/ete3_conda.yaml"
 
-# ---- Pipeline configuration ---- (False to disable)
+# +------------------------+
+# | Pipeline configuration | # False or comment line to disable
+# +------------------------+
 # ---- Alignment ----
 dna_alignment: 'prank'       # 'prank' or 'mafft'
-protein_alignment: 'mafft'   # 'prank' or 'mafft'
+protein_alignment: False     # 'prank' or 'mafft'
 # ---- Filtration ----
 dna_filtration: 'gblocks'    # 'gblocks' or 'trimal'
-protein_filtration: 'trimal' # 'gblocks' or 'trimal'
-# ---- Рhylogenetic tree inference ---- (change to 'False' to disable)
+protein_filtration: False    # 'gblocks' or 'trimal'
+# ---- Рhylogenetic tree inference ----
 iqtree_dna: True
 iqtree_protein: True
 mrbayes_dna: False
 mrbayes_protein: False
 astral: True # use iqtree for each dna alignment
-phylip: True # use iqtree for each dna alignment
+phylip: True
 # ---- Рhylogenetic tree visualization ----
 draw_phylotrees: True
 
-# ---- Tool parameters ----
+# +-----------------+
+# | Tool parameters |
+# +-----------------+
 # ---- BUSCO ----
 gene_prediction_tool: "metaeuk" # 'metaeuk' or 'augustus'
 augustus_species: "human" # used only if 'gene_prediction_tool' == 'augustus'
 busco_dataset_path: ""
+busco_params: "--offline"
 busco_mode: "genome"
-busco_params: ""
 # ---- Common IDs ----
 gene_blacklist: # IDs of genes to be deleted from common_ids
-  - 1155at40674
+  - 1155at40674 # long sequences
 # ---- Alignment ----
 prank_dna_params: "-codon"
 mafft_dna_params: ""
@@ -57,9 +61,11 @@ mrbayes_path: # path of MrBayes binary file
 phylip_dnadist_params: "D\n" # use 'D\n' to set model to 'Kimura 2-parameter'. F84 model (default) if "".
 phylip_neighbor_params: "" # use 'N\n' to set UPGMA. NJ (default) if "".
 # ---- Рhylogenetic tree visualization ----
-tree_visualization_params: "" # --outgroup
+tree_visualization_params: "" # --outgroup 'Species'
 
-# ---- Directory structure ----
+# +---------------------+
+# | Directory structure |
+# +---------------------+
 genome_dir: "genomes"
 output_dir: "results"
 busco_dir: "busco"
@@ -77,7 +83,9 @@ log_dir: "logs"
 cluster_log_dir: "cluster_logs"
 benchmark_dir: "benchmarks"
 
-# ---- Resources ----
+# +-----------+
+# | Resources |
+# +-----------+
 # ---- Tool node queue ----
 busco_queue: "common"
 common_ids_queue: "common"

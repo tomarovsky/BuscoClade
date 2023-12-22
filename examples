@@ -1,4 +1,0 @@
-snakemake --profile profile/slurm/ --configfile config/default.yaml --use-conda --printshellcmds
-
-snakemake --profile profile/slurm/ --configfile config/default.yaml --use-conda \
-    --config species_list="[mmar, mzib, mfoi, mfla]" --printshellcmds
