@@ -64,7 +64,7 @@ rule concat_nexus_dna:
         time=config["concat_alignments_time"],
         mem_mb=config["concat_alignments_mem_mb"]
     shell:
-        "workflow/scripts/fasta_to_nexus_with_bayes_block.py -i {input} "
+        "workflow/scripts/fasta_to_nexus.py -i {input} "
         "-t {params.type} -b {params.block} -o {output} 1> {log.std} 2>&1"
 
 
@@ -90,7 +90,7 @@ rule concat_nexus_protein:
         time=config["concat_alignments_time"],
         mem_mb=config["concat_alignments_mem_mb"]
     shell:
-        "workflow/scripts/fasta_to_nexus_with_bayes_block.py -i {input} "
+        "workflow/scripts/fasta_to_nexus.py -i {input} "
         "-t {params.type} -b {params.block} -o {output} 1> {log.std} 2>&1"
 
 
