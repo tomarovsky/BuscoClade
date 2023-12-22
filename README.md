@@ -34,7 +34,7 @@ git clone https://github.com/tomarovsky/BuscoClade.git
 
 ### Step 2. Add species genomes
 
-Add the unpacked FASTA genome assemblies to the 'genomes/' directory. Please note that the file prefixes will be used in the output phylogeny.
+Add the unpacked FASTA genome assemblies to the `genomes/` directory. Please note that the file prefixes will be used in the output phylogeny.
 
 ### Step 3. Configure workflow
 
@@ -47,26 +47,6 @@ This section outlines the workflow. By default, it includes alignments, nucleoti
 This section contains parameters for each tool. Key considerations are:
   - `busco_dataset_path`: Download the BUSCO dataset beforehand and specify its path here.
   - `busco_params`: Use the --offline flag and the --download_path parameter, indicating the path to the busco_downloads/ directory.
-
-- **Directory Structure:**
-Define the structure of directories for output files. The default structure is as follows:
-
-```
-results/
-    busco/
-    ids/
-        species_ids/
-        merged_sequences/
-        common_ids.ids
-    alignments/
-        raw/
-        filtered/
-    concat_alignments/
-    phylogeny/
-        astral/
-        iqtree/
-        phylip/
-```
 
 - **Resources:**
 Specify the Slurm queue and resources for each tool that will be used during execution.
