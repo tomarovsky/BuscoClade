@@ -6,7 +6,7 @@ configfile: "config/default.yaml"
 
 # ---- Setup paths ----
 cluster_log_dir_path = Path(config["cluster_log_dir"])
-genome_dir_path = Path(config["genome_dir"]).resolve() # Busco requires an absolute path
+genome_dir_path = Path(config["genome_dir"]).resolve()
 log_dir_path = Path(config["log_dir"])
 benchmark_dir_path = Path(config["benchmark_dir"])
 output_dir_path = Path(config["output_dir"])
@@ -53,9 +53,9 @@ def expand_faa_from_merged_sequences(wildcards, template):
     return expand(str(template), N=N)
 
 
-############################
-# ---- the "All" rule ---- #
-############################
+# +-----------------+
+# |  the "All" rule |
+# +-----------------+
 
 output_files = [
         # ---- Busco ----
