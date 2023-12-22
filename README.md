@@ -14,7 +14,7 @@ Pipeline to construct species phylogenies using [BUSCO](https://busco.ezlab.org/
 
 ## Dependencies
 
-### Snakemake
+Install Snakemake:
 
 ```
 conda install -n base -c conda-forge mamba
@@ -41,9 +41,8 @@ This section outlines the workflow. By default, it includes alignments, nucleoti
 
 - **Tool Parameters:**
 This section contains parameters for each tool. Key considerations are:
-
-busco_dataset_path: Download the BUSCO dataset beforehand and specify its path here.
-busco_params: Use the --offline flag and the --download_path parameter, indicating the path to the busco_downloads/ directory.
+  - `busco_dataset_path`: Download the BUSCO dataset beforehand and specify its path here.
+  - `busco_params`: Use the --offline flag and the --download_path parameter, indicating the path to the busco_downloads/ directory.
 
 - **Directory Structure:**
 Define the structure of directories for output files. The default structure is as follows:
@@ -81,6 +80,7 @@ Snakemake will print all the rules that will be executed. To initiate the actual
 ### FAQ
 
 **1. How to run workflow if i have done BUSCOs?**
+
 First, move the genome assemblies to the "genomes/" directory or create empty files with corresponding names. Then, create a "busco/" directory in the "results/" directory and move the BUSCO output directories into it. Note that BUSCO output must be formatted. Thus, for "Ailurus_fulgens.fasta" the output should look like this:
 
 ```
@@ -91,10 +91,10 @@ results/
                 fragmented_busco_sequences/
                 multi_copy_busco_sequences/
                 single_copy_busco_sequences/
+            hmmer_output/
+            logs/
+            metaeuk_output/
             full_table_Ailurus_fulgens.tsv
-            hmmer_output
-            logs
-            metaeuk_output
             missing_busco_list_Ailurus_fulgens.tsv
             short_summary_Ailurus_fulgens_DNAzoo.txt
             short_summary.json
@@ -105,7 +105,6 @@ results/
 **2. Why does the tree visualization from PHYLIP give an error?**
 
 This is because PHYLIP crops the species names to the first 10 characters by default. To perform visualization, you must manually edit the output tree and restart workflow. This will be fixed soon.
-
 
 ## Contact
 
