@@ -32,9 +32,13 @@ If you simply want to use this workflow, download and extract the [latest releas
 git clone https://github.com/tomarovsky/BuscoClade.git
 ```
 
-### Step 2. Configure workflow
+### Step 2. Add species genomes
 
-To set up the workflow, customize the config/default.yaml file according to your requirements, using the explanations provided below.
+Add the unpacked FASTA genome assemblies to the 'genomes/' directory. Please note that the file prefixes will be used in the output phylogeny.
+
+### Step 3. Configure workflow
+
+To set up the workflow, customize the config/default.yaml file according to your needs, following the explanations provided below.
 
 - **Pipeline Configuration:**
 This section outlines the workflow. By default, it includes alignments, nucleotide sequence filtering, and all tools for phylogeny reconstruction, except for MrBayes (it is recommended to run the GPU compiled version separately). To disable a tool, set its value to `False` or comment out the corresponding line.
@@ -67,7 +71,7 @@ results/
 - **Resources:**
 Specify the Slurm queue and resources for each tool that will be used during execution.
 
-### Step 3. Execute workflow
+### Step 4. Execute workflow
 
 To perform a dry run of the pipeline, execute the following command:
 
