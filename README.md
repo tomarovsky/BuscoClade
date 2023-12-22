@@ -37,7 +37,7 @@ git clone https://github.com/tomarovsky/BuscoClade.git
 To set up the workflow, customize the config/default.yaml file according to your requirements, using the explanations provided below.
 
 - **Pipeline Configuration:**
-This section outlines the workflow. By default, it includes alignments, nucleotide sequence filtering, and all tools for phylogeny reconstruction, except for MrBayes (it is recommended to run the GPU compiled version separately). To disable a tool, set its value to False or comment out the corresponding line.
+This section outlines the workflow. By default, it includes alignments, nucleotide sequence filtering, and all tools for phylogeny reconstruction, except for MrBayes (it is recommended to run the GPU compiled version separately). To disable a tool, set its value to `False` or comment out the corresponding line.
 
 - **Tool Parameters:**
 This section contains parameters for each tool. Key considerations are:
@@ -79,7 +79,7 @@ Snakemake will print all the rules that will be executed. To initiate the actual
 
 ### FAQ
 
-**1. How to run workflow if i have done BUSCOs?**
+**1. How to run the workflow if I have completed BUSCOs?**
 
 First, move the genome assemblies to the "genomes/" directory or create empty files with corresponding names. Then, create a "busco/" directory in the "results/" directory and move the BUSCO output directories into it. Note that BUSCO output must be formatted. Thus, for "Ailurus_fulgens.fasta" the output should look like this:
 
@@ -102,9 +102,9 @@ results/
             short_summary.specific.mammalia_odb10.Ailurus_fulgens.txt
 ```
 
-**2. Why does the tree visualization from PHYLIP give an error?**
+**2. Why does the tree visualization from PHYLIP return an error?**
 
-This is because PHYLIP crops the species names to the first 10 characters by default. To perform visualization, you must manually edit the output tree and restart workflow. This will be fixed soon.
+This issue arises because PHYLIP crops the species names to the first 10 characters by default. To perform visualization, you must manually edit the output NEWICK tree and restart workflow. This will be fixed soon.
 
 ## Contact
 
