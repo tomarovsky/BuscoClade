@@ -3,6 +3,11 @@
 
 # genomes dir
 gonomes/
+genomes/ailurus_fulgens.fasta
+genomes/erignathus_barbatus.fasta
+genomes/felis_catus.fasta
+genomes/neomonachus_schauinslandi.fasta
+genomes/ursus_arctos.fasta
 
 # results dir
 results/
@@ -13,3 +18,5 @@ logs/
 
 # benchmarks dir
 benchmarks/
+
+
