@@ -12,21 +12,11 @@ Pipeline to construct species phylogenies using [BUSCO](https://busco.ezlab.org/
 - Phylogenetic tree constraction: [IQTree](http://www.iqtree.org/), [MrBayes](https://nbisweden.github.io/MrBayes/), [ASTRAL III](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-018-2129-y), [PHYLIP](https://phylipweb.github.io/phylip/).
 - Visualization: [Etetoolkit](http://etetoolkit.org/).
 
-## Dependencies
-
-Install Snakemake:
-
-```
-conda install -n base -c conda-forge mamba
-mamba create -c conda-forge -c bioconda -n snakemake snakemake
-mamba activate snakemake
-```
-
 ## Usage
 
 ### Step 1. Deploy workflow
 
-If you simply want to use this workflow, download and extract the [latest release](https://github.com/tomarovsky/BuscoClade/releases). Or clone the repository:
+To use this workflow, you can either download and extract the [latest release](https://github.com/tomarovsky/BuscoClade/releases) or clone the repository:
 
 ```
 git clone https://github.com/tomarovsky/BuscoClade.git
@@ -34,38 +24,41 @@ git clone https://github.com/tomarovsky/BuscoClade.git
 
 ### Step 2. Add species genomes
 
-Add the unpacked FASTA genome assemblies to the `genomes/` directory. Please note that the file prefixes will be used in the output phylogeny.
+Place your unpacked FASTA genome assemblies into the `genomes/` directory. Keep in mind that the file prefixes will influence the output phylogeny. Ensure that your files have a `.fasta`, `.fna`, or `.fa` extension.
 
 ### Step 3. Configure workflow
 
-To set up the workflow, customize the config/default.yaml file according to your needs, following the explanations provided below.
+To set up the workflow, customize the `config/default.yaml`:
 
 - **Pipeline Configuration:**
-This section outlines the workflow. By default, it includes alignments, nucleotide sequence filtering, and all tools for phylogeny reconstruction, except for MrBayes (it is recommended to run the GPU compiled version separately). To disable a tool, set its value to `False` or comment out the corresponding line.
+This section outlines the workflow. By default, it includes alignments and following filtration of nucleotide sequences, and all tools for phylogeny reconstruction, except for MrBayes (it is recommended to run the GPU compiled version separately). To disable a tool, set its value to `False` or comment out the corresponding line.
 
 - **Tool Parameters:**
-This section contains parameters for each tool. Key considerations are:
+Specify parameters for each tool. To perform BUSCO, it is important to specify:
   - `busco_dataset_path`: Download the BUSCO dataset beforehand and specify its path here.
-  - `busco_params`: Use the --offline flag and the --download_path parameter, indicating the path to the busco_downloads/ directory.
+  - `busco_params`: Use the `--offline` flag and the `--download_path` parameter, indicating the path to the `busco_downloads/` directory.
+
+- **Directory structure:**
+Define output file structure in the `results/` directory. It is recommended to leave it unchanged.
 
 - **Resources:**
-Specify the Slurm queue and resources for each tool that will be used during execution.
+Specify Slurm queue, threads, memory, and runtime for each tool.
 
 ### Step 4. Execute workflow
 
-To perform a dry run of the pipeline, execute the following command:
+For a dry run:
 
 ```
 snakemake --profile profile/slurm/ --configfile config/default.yaml --dry-run
 ```
 
-Snakemake will print all the rules that will be executed. To initiate the actual run, remove the `--dry-run` flag.
+Snakemake will print all the rules that will be executed. Remove `--dry-run` to initiate the actual run.
 
 ### FAQ
 
 **1. How to run the workflow if I have completed BUSCOs?**
 
-First, move the genome assemblies to the "genomes/" directory or create empty files with corresponding names. Then, create a "busco/" directory in the "results/" directory and move the BUSCO output directories into it. Note that BUSCO output must be formatted. Thus, for "Ailurus_fulgens.fasta" the output should look like this:
+First, move the genome assemblies to the ` genomes/` directory or create empty files with corresponding names. Then, create a `results/busco/` directory and move the BUSCO output directories into it. Note that BUSCO output must be formatted. Thus, for `Ailurus_fulgens.fasta` the output should look like this:
 
 ```
 results/
