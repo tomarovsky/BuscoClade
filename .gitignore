@@ -1,6 +1,9 @@
 # Snakemake dir
 .snakemake/
 
+# genomes dir
+gonomes/
+
 # results dir
 results/
 
