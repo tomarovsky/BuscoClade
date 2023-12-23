@@ -16,3 +16,5 @@ dependencies:
   - rapidnj
   - phylip
 #  - mrbayes
+  - pip:
+    - "--editable=git+https://github.com/tomarovsky/Biocrutch.git#egg=Biocrutch"

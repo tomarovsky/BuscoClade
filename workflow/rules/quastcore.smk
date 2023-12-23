@@ -1,0 +1,24 @@
+rule quastcore:
+    input:
+        expand(genome_dir_path / "{species}.fasta", species=config["species_list"])
+    output:
+        quastcore_dir_path / "assembly_stats.csv"
+    params:
+        config["quastcore_params"]
+    log:
+        std=log_dir_path / "quastcore.log",
+        cluster_log=cluster_log_dir_path / "quastcore.cluster.log",
+        cluster_err=cluster_log_dir_path / "quastcore.cluster.err"
+    benchmark:
+        benchmark_dir_path / "quastcore.benchmark.txt"
+    conda:
+        "../../%s" % config["conda_config"]
+    resources:
+        queue=config["quastcore_queue"],
+        cpus=config["quastcore_threads"],
+        time=config["quastcore_time"],
+        mem_mb=config["quastcore_mem_mb"],
+    threads:
+        config["quastcore_threads"]
+    shell:
+        " quast_core.py -i {input} {params} -b 10000000 -o {output} > {log.std} 2>&1; "
