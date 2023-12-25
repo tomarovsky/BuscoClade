@@ -61,7 +61,20 @@ def export_legend(palette, filename, dpi=400):
 def main():
     t = Tree(newick_to_nhx(args.input))
     if args.outgroup:
-        t.set_outgroup(args.outgroup)
+        outgroup = args.outgroup.replace("_", " ")
+        if "," in args.outgroup:
+            try:
+                nodes_to_root = args.outgroup.split(",")
+                common_ancestor = t.get_common_ancestor(*nodes_to_root)
+                t.set_outgroup(common_ancestor)
+            except:
+                R = t.get_midpoint_outgroup()
+                t.set_outgroup(R)
+                nodes_to_root = args.outgroup.split(",")
+                common_ancestor = t.get_common_ancestor(*nodes_to_root)
+                t.set_outgroup(common_ancestor)
+        else:
+            t.set_outgroup(args.outgroup)
     else:
         t.unroot()
     ts = TreeStyle()
@@ -137,7 +150,7 @@ if __name__ == "__main__":
     group_additional.add_argument('--width', type=int, default=1500, help="width for result rendering")
     group_additional.add_argument('--show', action="store_true", help="option to show tree using GUI")
     group_additional.add_argument("-e", "--output_formats", dest="output_formats", type=lambda s: s.split(","),
-                    default=("png", "svg"), help="Comma-separated list of formats (supported by ete3) of output figure. Default: svg,png")
+                    default=("svg"), help="Comma-separated list of formats (supported by ete3) of output figure. Default: svg,png")
     args = parser.parse_args()
     main()
 

@@ -13,9 +13,25 @@ def mylayout(node):
         node.img_style["fgcolor"] = "Black"
 
 def main():
-    t = Tree(args.input)
+    tree = "".join(open(args.input).readlines()).strip()
+    if "'" in tree:
+        tree = tree.replace("'", "")
+    t = Tree(tree)
     if args.outgroup:
-        t.set_outgroup(args.outgroup)
+        outgroup = args.outgroup.replace("_", " ")
+        if "," in args.outgroup:
+            try:
+                nodes_to_root = args.outgroup.split(",")
+                common_ancestor = t.get_common_ancestor(*nodes_to_root)
+                t.set_outgroup(common_ancestor)
+            except:
+                R = t.get_midpoint_outgroup()
+                t.set_outgroup(R)
+                nodes_to_root = args.outgroup.split(",")
+                common_ancestor = t.get_common_ancestor(*nodes_to_root)
+                t.set_outgroup(common_ancestor)
+        else:
+            t.set_outgroup(args.outgroup)
     else:
         t.unroot()
     for i in t.get_leaves(): # 'Homo_sapiens' -> 'Homo sapiens'
