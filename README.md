@@ -28,7 +28,7 @@ Place your unpacked FASTA genome assemblies into the `genomes/` directory. Keep 
 
 ### Step 3. Configure workflow
 
-To set up the workflow, customize the `config/default.yaml`:
+To set up the workflow, modify `config/default.yaml`. I recommend to copy config gile and do all modifications in this copy. Some of the options (all nonested options from default.yaml) could also be set via command line using `--config` flag. Sections of config file:
 
 - **Pipeline Configuration:**
 This section outlines the workflow. By default, it includes alignments and following filtration of nucleotide sequences, and all tools for phylogeny reconstruction, except for MrBayes (it is recommended to run the GPU compiled version separately). To disable a tool, set its value to `False` or comment out the corresponding line.
