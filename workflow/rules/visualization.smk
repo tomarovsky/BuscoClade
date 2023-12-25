@@ -63,7 +63,6 @@ if config["draw_phylotrees"]:
         input:
             astral_dir_path / astral_tree
         output:
-            astral_dir_path / f"{astral_tree}.png",
             astral_dir_path / f"{astral_tree}.svg",
         params:
             prefix=astral_dir_path / astral_tree,
@@ -150,7 +149,7 @@ rule species_ids_plot:
     input:
         expand(species_ids_dir_path / "{species}.ids", species=config["species_list"])
     output:
-        png=species_ids_dir_path / "unique_species_ids.svg",
+        pic=species_ids_dir_path / "unique_species_ids.svg",
         csv=species_ids_dir_path / "unique_species_ids.csv"
     log:
         std=log_dir_path / "species_ids_plot.log",
@@ -167,6 +166,48 @@ rule species_ids_plot:
         mem_mb=config["visualization_mem_mb"]
     shell:
         " workflow/scripts/unique_ids_plot.py --species_ids_files {input} "
-        " --outplot {output.png} --outcsv {output.csv} > {log.std} 2>&1 "
+        " --outplot {output.pic} --outcsv {output.csv} > {log.std} 2>&1 "
 
 
+rule busco_summaries_to_tsv:
+    input:
+        expand(busco_dir_path / "{species}/short_summary_{species}.txt", species=config["species_list"])
+    output:
+        busco_dir_path / "busco_summaries.tsv"
+    log:
+        std=log_dir_path / "busco_summaries_to_tsv.log",
+        cluster_log=cluster_log_dir_path / "busco_summaries_to_tsv.cluster.log",
+        cluster_err=cluster_log_dir_path / "busco_summaries_to_tsv.cluster.err"
+    benchmark:
+        benchmark_dir_path / "busco_summaries_to_tsv.benchmark.txt"
+    resources:
+        queue=config["common_ids_queue"],
+        cpus=config["common_ids_threads"],
+        time=config["common_ids_time"],
+        mem_mb=config["common_ids_mem_mb"],
+    threads:
+        config["common_ids_threads"]
+    shell:
+        " workflow/scripts/busco_summaries_to_tsv.py -i {input} -o {output} > {log.std} 2>&1; "
+
+
+rule busco_histogram:
+    input:
+        busco_dir_path / "busco_summaries.tsv"
+    output:
+        busco_dir_path / "busco_summaries.svg"
+    log:
+        std=log_dir_path / "busco_histogram.log",
+        cluster_log=cluster_log_dir_path / "busco_histogram.cluster.log",
+        cluster_err=cluster_log_dir_path / "busco_histogram.cluster.err"
+    benchmark:
+        benchmark_dir_path / "busco_histogram.benchmark.txt"
+    resources:
+        queue=config["common_ids_queue"],
+        cpus=config["common_ids_threads"],
+        time=config["common_ids_time"],
+        mem_mb=config["common_ids_mem_mb"],
+    threads:
+        config["common_ids_threads"]
+    shell:
+        " workflow/scripts/busco_histogram.py -i {input} -o {output} "

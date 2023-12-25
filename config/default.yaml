@@ -19,7 +19,7 @@ mrbayes_dna: False
 mrbayes_protein: False
 astral: True # use iqtree for each dna alignment
 rapidnj: True
-phylip: True
+# phylip: True
 # ---- Рhylogenetic tree visualization ----
 draw_phylotrees: True
 
@@ -68,7 +68,7 @@ rapidnj_params: "-b 1000"
 phylip_dnadist_params: "D\n" # use 'D\n' to set model to 'Kimura 2-parameter'. F84 model (default) if "".
 phylip_neighbor_params: "" # use 'N\n' to set UPGMA. NJ (default) if "".
 # ---- Рhylogenetic tree visualization ----
-tree_visualization_params: "" # --outgroup 'Species'
+tree_visualization_params: "--outgroup neomonachus_schauinslandi,erignathus_barbatus" # "--outgroup Homo_sapiens" or "--outgroup species_1,species_2"
 
 # +---------------------+
 # | Directory structure |
