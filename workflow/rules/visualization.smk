@@ -25,7 +25,8 @@ if config["draw_phylotrees"]:
         threads:
             config["visualization_threads"]
         shell:
-            " QT_QPA_PLATFORM=offscreen workflow/scripts/draw_phylotrees.py -i {input} -o {params.prefix} {params.options} 1> {log.std} 2>&1; "
+            " QT_QPA_PLATFORM=offscreen workflow/scripts/draw_phylotrees.py -i {input} "
+            " -o {params.prefix} {params.options} 1> {log.std} 2>&1; "
 
 
 if config["draw_phylotrees"]:
@@ -55,13 +56,15 @@ if config["draw_phylotrees"]:
         threads:
             config["visualization_threads"]
         shell:
-            " QT_QPA_PLATFORM=offscreen workflow/scripts/draw_phylotrees.py -i {input} -o {params.prefix} {params.options} 1> {log.std} 2>&1; "
+            " QT_QPA_PLATFORM=offscreen workflow/scripts/draw_phylotrees.py -i {input} "
+            " -o {params.prefix} {params.options} 1> {log.std} 2>&1; "
 
 
 if config["draw_phylotrees"]:
     rule astral_tree_visualization:
         input:
-            astral_dir_path / astral_tree
+            treefile = astral_dir_path / astral_tree,
+            common_ids = common_ids_dir_path / "common_ids.ids"
         output:
             astral_dir_path / f"{astral_tree}.svg",
         params:
@@ -82,7 +85,8 @@ if config["draw_phylotrees"]:
         threads:
             config["visualization_threads"]
         shell:
-            " QT_QPA_PLATFORM=offscreen workflow/scripts/draw_phylotrees_from_astral.py -i {input} -o {params.prefix} > {log.std} 2>&1; "
+            " QT_QPA_PLATFORM=offscreen workflow/scripts/draw_phylotrees_from_astral.py "
+            " -i {input.treefile} -o {params.prefix} -n $(cat {input.common_ids} | wc -l) > {log.std} 2>&1; "
 
 
 if config["draw_phylotrees"]:
@@ -112,7 +116,8 @@ if config["draw_phylotrees"]:
         threads:
             config["visualization_threads"]
         shell:
-            " QT_QPA_PLATFORM=offscreen workflow/scripts/draw_phylotrees.py -i {input} -o {params.prefix} {params.options} 1> {log.std} 2>&1; "
+            " QT_QPA_PLATFORM=offscreen workflow/scripts/draw_phylotrees.py -i {input} "
+            " -o {params.prefix} {params.options} 1> {log.std} 2>&1; "
 
 
 if config["draw_phylotrees"]:
@@ -142,7 +147,8 @@ if config["draw_phylotrees"]:
         threads:
             config["visualization_threads"]
         shell:
-            " QT_QPA_PLATFORM=offscreen workflow/scripts/draw_phylotrees.py -i {input} -o {params.prefix} {params.options} 1> {log.std} 2>&1; "
+            " QT_QPA_PLATFORM=offscreen workflow/scripts/draw_phylotrees.py -i {input} "
+            " -o {params.prefix} {params.options} 1> {log.std} 2>&1; "
 
 
 rule species_ids_plot:
@@ -210,4 +216,6 @@ rule busco_histogram:
     threads:
         config["common_ids_threads"]
     shell:
-        " workflow/scripts/busco_histogram.py -i {input} -o {output} "
+        " workflow/scripts/busco_histogram.py -i {input} -o {output} > {log.std} 2>&1; "
+
+
