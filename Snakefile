@@ -42,7 +42,7 @@ astral_input_trees = "{}.iqtree_per_fna.concat.treefile".format(config["alignmen
 astral_filtered_trees = "{0}.iqtree_per_fna.concat.{1}.treefile".format(config["alignment_file_prefix"], config["nodes_filtrataion_by_support"])
 astral_tree = "{0}.{1}.fna.astral.treefile".format(config["alignment_file_prefix"], config["nodes_filtrataion_by_support"])
 rapidnj_tree = "{}.fna.rapidnj.treefile".format(config["alignment_file_prefix"])
-phylip_tree = "{}.fna.phy.treefile".format(config["alignment_file_prefix"])
+phylip_tree = "{}.fna.phy.namefix.treefile".format(config["alignment_file_prefix"])
 
 # ---- Necessary functions ----
 def expand_fna_from_merged_sequences(wildcards, template):

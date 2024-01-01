@@ -33,6 +33,8 @@ To set up the workflow, modify `config/default.yaml`. I recommend to copy config
 - **Pipeline Configuration:**
 This section outlines the workflow. By default, it includes alignments and following filtration of nucleotide sequences, and all tools for phylogeny reconstruction, except for MrBayes (it is recommended to run the GPU compiled version separately). To disable a tool, set its value to `False` or comment out the corresponding line.
 
+  **NB!** When constructing a phylogeny using the Neighbor-Joining (NJ) method with PHYLIP, ensure that the first 10 characters of each species name are unique and distinct from one another.
+
 - **Tool Parameters:**
 Specify parameters for each tool. To perform BUSCO, it is important to specify:
   - `busco_dataset_path`: Download the BUSCO dataset beforehand and specify its path here.
@@ -56,7 +58,7 @@ Snakemake will print all the rules that will be executed. Remove `--dry-run` to 
 
 ### FAQ
 
-**1. How to run the workflow if I have completed BUSCOs?**
+**How to run the workflow if I have completed BUSCOs?**
 
 First, move the genome assemblies to the ` genomes/` directory or create empty files with corresponding names. Then, create a `results/busco/` directory and move the BUSCO output directories into it. Note that BUSCO output must be formatted. Thus, for `Ailurus_fulgens.fasta` the output should look like this:
 
@@ -78,10 +80,6 @@ results/
             short_summary.specific.mammalia_odb10.Ailurus_fulgens.json
             short_summary.specific.mammalia_odb10.Ailurus_fulgens.txt
 ```
-
-**2. Why does the tree visualization from PHYLIP return an error?**
-
-This issue arises because PHYLIP crops the species names to the first 10 characters by default. To perform visualization, you must manually edit the output NEWICK tree and restart workflow. This will be fixed soon.
 
 ## Contact
 
