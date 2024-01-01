@@ -47,12 +47,12 @@ if "astral" in config:
         conda:
             "../../%s" % config["conda_config"]
         resources:
-            queue=config["astral_queue"],
-            cpus=config["concat_newick_files_threads"],
-            time=config["concat_newick_files_time"],
-            mem_mb=config["concat_newick_files_mem_mb"]
+            queue=config["processing_queue"],
+            cpus=config["processing_threads"],
+            time=config["processing_time"],
+            mem_mb=config["processing_mem_mb"]
         threads:
-            config["concat_newick_files_threads"]
+            config["processing_threads"]
         shell:
             " cat {input} > {output} 2> {log.std}; "
 
@@ -72,12 +72,12 @@ if "astral" in config:
         conda:
             "../../%s" % config["conda_config"]
         resources:
-            queue=config["astral_queue"],
-            cpus=config["nodes_filtrataion_by_support_threads"],
-            time=config["nodes_filtrataion_by_support_time"],
-            mem_mb=config["nodes_filtrataion_by_support_mem_mb"]
+            queue=config["processing_queue"],
+            cpus=config["processing_threads"],
+            time=config["processing_time"],
+            mem_mb=config["processing_mem_mb"]
         threads:
-            config["concat_newick_files_threads"]
+            config["processing_threads"]
         shell:
             " nw_ed {input} 'i & b<{params.support}' o > {output} 2> {log.std}; "
 

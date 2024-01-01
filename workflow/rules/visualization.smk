@@ -18,12 +18,12 @@ if config["draw_phylotrees"]:
         conda:
             "../../%s" % config["ete3_conda_config"]
         resources:
-            queue=config["visualization_queue"],
-            cpus=config["visualization_threads"],
-            time=config["visualization_time"],
-            mem_mb=config["visualization_mem_mb"]
+            queue=config["processing_queue"],
+            cpus=config["processing_threads"],
+            time=config["processing_time"],
+            mem_mb=config["processing_mem_mb"]
         threads:
-            config["visualization_threads"]
+            config["processing_threads"]
         shell:
             " QT_QPA_PLATFORM=offscreen workflow/scripts/draw_phylotrees.py -i {input} "
             " -o {params.prefix} {params.options} 1> {log.std} 2>&1; "
@@ -49,12 +49,12 @@ if config["draw_phylotrees"]:
         conda:
             "../../%s" % config["ete3_conda_config"]
         resources:
-            queue=config["visualization_queue"],
-            cpus=config["visualization_threads"],
-            time=config["visualization_time"],
-            mem_mb=config["visualization_mem_mb"]
+            queue=config["processing_queue"],
+            cpus=config["processing_threads"],
+            time=config["processing_time"],
+            mem_mb=config["processing_mem_mb"]
         threads:
-            config["visualization_threads"]
+            config["processing_threads"]
         shell:
             " QT_QPA_PLATFORM=offscreen workflow/scripts/draw_phylotrees.py -i {input} "
             " -o {params.prefix} {params.options} 1> {log.std} 2>&1; "
@@ -64,7 +64,7 @@ if config["draw_phylotrees"]:
     rule astral_tree_visualization:
         input:
             treefile = astral_dir_path / astral_tree,
-            common_ids = common_ids_dir_path / "common_ids.ids"
+            common_ids = rules.common_ids.output
         output:
             astral_dir_path / f"{astral_tree}.svg",
         params:
@@ -78,12 +78,12 @@ if config["draw_phylotrees"]:
         conda:
             "../../%s" % config["ete3_conda_config"]
         resources:
-            queue=config["visualization_queue"],
-            cpus=config["visualization_threads"],
-            time=config["visualization_time"],
-            mem_mb=config["visualization_mem_mb"]
+            queue=config["processing_queue"],
+            cpus=config["processing_threads"],
+            time=config["processing_time"],
+            mem_mb=config["processing_mem_mb"]
         threads:
-            config["visualization_threads"]
+            config["processing_threads"]
         shell:
             " QT_QPA_PLATFORM=offscreen workflow/scripts/draw_phylotrees_from_astral.py "
             " -i {input.treefile} -o {params.prefix} -n $(cat {input.common_ids} | wc -l) > {log.std} 2>&1; "
@@ -109,12 +109,12 @@ if config["draw_phylotrees"]:
         conda:
             "../../%s" % config["ete3_conda_config"]
         resources:
-            queue=config["visualization_queue"],
-            cpus=config["visualization_threads"],
-            time=config["visualization_time"],
-            mem_mb=config["visualization_mem_mb"]
+            queue=config["processing_queue"],
+            cpus=config["processing_threads"],
+            time=config["processing_time"],
+            mem_mb=config["processing_mem_mb"]
         threads:
-            config["visualization_threads"]
+            config["processing_threads"]
         shell:
             " QT_QPA_PLATFORM=offscreen workflow/scripts/draw_phylotrees.py -i {input} "
             " -o {params.prefix} {params.options} 1> {log.std} 2>&1; "
@@ -140,12 +140,12 @@ if config["draw_phylotrees"]:
         conda:
             "../../%s" % config["ete3_conda_config"]
         resources:
-            queue=config["visualization_queue"],
-            cpus=config["visualization_threads"],
-            time=config["visualization_time"],
-            mem_mb=config["visualization_mem_mb"]
+            queue=config["processing_queue"],
+            cpus=config["processing_threads"],
+            time=config["processing_time"],
+            mem_mb=config["processing_mem_mb"]
         threads:
-            config["visualization_threads"]
+            config["processing_threads"]
         shell:
             " QT_QPA_PLATFORM=offscreen workflow/scripts/draw_phylotrees.py -i {input} "
             " -o {params.prefix} {params.options} 1> {log.std} 2>&1; "
@@ -166,10 +166,12 @@ rule species_ids_plot:
     benchmark:
         benchmark_dir_path / "species_ids_plot.benchmark.txt"
     resources:
-        queue=config["visualization_queue"],
-        cpus=config["visualization_threads"],
-        time=config["visualization_time"],
-        mem_mb=config["visualization_mem_mb"]
+        queue=config["processing_queue"],
+        cpus=config["processing_threads"],
+        time=config["processing_time"],
+        mem_mb=config["processing_mem_mb"]
+    threads:
+        config["processing_threads"]
     shell:
         " workflow/scripts/unique_ids_plot.py --species_ids_files {input} "
         " --outplot {output.pic} --outcsv {output.csv} > {log.std} 2>&1 "
@@ -187,12 +189,12 @@ rule busco_summaries_to_tsv:
     benchmark:
         benchmark_dir_path / "busco_summaries_to_tsv.benchmark.txt"
     resources:
-        queue=config["common_ids_queue"],
-        cpus=config["common_ids_threads"],
-        time=config["common_ids_time"],
-        mem_mb=config["common_ids_mem_mb"],
+        queue=config["processing_queue"],
+        cpus=config["processing_threads"],
+        time=config["processing_time"],
+        mem_mb=config["processing_mem_mb"],
     threads:
-        config["common_ids_threads"]
+        config["processing_threads"]
     shell:
         " workflow/scripts/busco_summaries_to_tsv.py -i {input} -o {output} > {log.std} 2>&1; "
 
@@ -208,13 +210,15 @@ rule busco_histogram:
         cluster_err=cluster_log_dir_path / "busco_histogram.cluster.err"
     benchmark:
         benchmark_dir_path / "busco_histogram.benchmark.txt"
+    conda:
+        "../../%s" % config["conda_config"]
     resources:
-        queue=config["common_ids_queue"],
-        cpus=config["common_ids_threads"],
-        time=config["common_ids_time"],
-        mem_mb=config["common_ids_mem_mb"],
+        queue=config["processing_queue"],
+        cpus=config["processing_threads"],
+        time=config["processing_time"],
+        mem_mb=config["processing_mem_mb"],
     threads:
-        config["common_ids_threads"]
+        config["processing_threads"]
     shell:
         " workflow/scripts/busco_histogram.py -i {input} -o {output} > {log.std} 2>&1; "
 

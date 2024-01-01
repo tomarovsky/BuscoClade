@@ -12,10 +12,12 @@ rule species_ids: # get files with IDs for each species
     benchmark:
         benchmark_dir_path / "species_ids.{species}.benchmark.txt"
     resources:
-        queue=config["common_ids_queue"],
-        cpus=config["species_ids_threads"],
-        time=config["species_ids_time"],
-        mem_mb=config["species_ids_mem_mb"]
+        queue=config["processing_queue"],
+        cpus=config["processing_threads"],
+        time=config["processing_time"],
+        mem_mb=config["processing_mem_mb"]
+    threads:
+        config["processing_threads"]
     shell:
         " ls {input} | grep -P '.fna$' | sed 's/.fna//' > {output} 2> {log.std}; "
 
@@ -24,7 +26,7 @@ rule common_ids: # get common IDs for all species given config["gene_blacklist"]
     input:
         expand(species_ids_dir_path / "{species}.ids", species=config["species_list"])
     output:
-        common_ids_dir_path / "common_ids.ids"
+        common_ids_dir_path / "common.ids"
     params:
         nfiles=len(config["species_list"]),
         gene_blacklist=config["gene_blacklist"]
@@ -35,10 +37,12 @@ rule common_ids: # get common IDs for all species given config["gene_blacklist"]
     benchmark:
         benchmark_dir_path / "common_ids.benchmark.txt"
     resources:
-        queue=config["common_ids_queue"],
-        cpus=config["common_ids_threads"],
-        time=config["common_ids_time"],
-        mem_mb=config["common_ids_mem_mb"]
+        queue=config["processing_queue"],
+        cpus=config["processing_threads"],
+        time=config["processing_time"],
+        mem_mb=config["processing_mem_mb"]
+    threads:
+        config["processing_threads"]
     shell:
         " cat {input} | sort | uniq -c | awk '{{if($1=={params.nfiles}){{print $2}}}}' > {output} 2> {log.std}; "
         " for id in {params.gene_blacklist}; do sed -i \"/$id$/d\" {output}; done 2> {log.std}; "
@@ -58,9 +62,11 @@ checkpoint merged_sequences: # get merged sequences by common IDs
     benchmark:
         benchmark_dir_path / "merged_sequences.benchmark.txt"
     resources:
-        queue=config["common_ids_queue"],
-        cpus=config["merged_sequences_threads"],
-        time=config["merged_sequences_time"],
-        mem_mb=config["merged_sequences_mem_mb"]
+        queue=config["processing_queue"],
+        cpus=config["processing_threads"],
+        time=config["processing_time"],
+        mem_mb=config["processing_mem_mb"]
+    threads:
+        config["processing_threads"]
     shell:
         " workflow/scripts/merge_common_ids.py -c {input} -s {params.single_copy_files} -o {output} > {log.std} 2>&1; "

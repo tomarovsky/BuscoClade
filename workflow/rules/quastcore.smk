@@ -14,11 +14,11 @@ rule quastcore:
     conda:
         "../../%s" % config["conda_config"]
     resources:
-        queue=config["quastcore_queue"],
-        cpus=config["quastcore_threads"],
-        time=config["quastcore_time"],
-        mem_mb=config["quastcore_mem_mb"],
+        queue=config["processing_queue"],
+        cpus=config["processing_threads"],
+        time=config["processing_time"],
+        mem_mb=config["processing_mem_mb"],
     threads:
-        config["quastcore_threads"]
+        config["processing_threads"]
     shell:
         " quast_core.py -i {input} {params} -b 10000000 -o {output} > {log.std} 2>&1; "

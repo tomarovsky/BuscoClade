@@ -12,10 +12,10 @@ rule concat_fasta_dna:
     conda:
         "../../%s" % config["conda_config"]
     resources:
-        queue=config["concat_alignments_queue"],
-        cpus=config["concat_alignments_threads"],
-        time=config["concat_alignments_time"],
-        mem_mb=config["concat_alignments_mem_mb"]
+        queue=config["processing_queue"],
+        cpus=config["processing_threads"],
+        time=config["processing_time"],
+        mem_mb=config["processing_mem_mb"]
     shell:
         " workflow/scripts/concat_fasta.py -i {input} -o {output} 1> {log.std} 2>&1; "
 
@@ -34,10 +34,10 @@ rule concat_fasta_protein:
     conda:
         "../../%s" % config["conda_config"]
     resources:
-        queue=config["concat_alignments_queue"],
-        cpus=config["concat_alignments_threads"],
-        time=config["concat_alignments_time"],
-        mem_mb=config["concat_alignments_mem_mb"]
+        queue=config["processing_queue"],
+        cpus=config["processing_threads"],
+        time=config["processing_time"],
+        mem_mb=config["processing_mem_mb"]
     shell:
         " workflow/scripts/concat_fasta.py -i {input} -o {output} 1> {log.std} 2>&1; "
 
@@ -59,10 +59,10 @@ rule concat_nexus_dna:
     conda:
         "../../%s" % config["conda_config"]
     resources:
-        queue=config["concat_alignments_queue"],
-        cpus=config["concat_alignments_threads"],
-        time=config["concat_alignments_time"],
-        mem_mb=config["concat_alignments_mem_mb"]
+        queue=config["processing_queue"],
+        cpus=config["processing_threads"],
+        time=config["processing_time"],
+        mem_mb=config["processing_mem_mb"]
     shell:
         " workflow/scripts/fasta_to_nexus.py -i {input} "
         " -t {params.type} -b {params.block} -o {output} 1> {log.std} 2>&1; "
@@ -85,10 +85,10 @@ rule concat_nexus_protein:
     conda:
         "../../%s" % config["conda_config"]
     resources:
-        queue=config["concat_alignments_queue"],
-        cpus=config["concat_alignments_threads"],
-        time=config["concat_alignments_time"],
-        mem_mb=config["concat_alignments_mem_mb"]
+        queue=config["processing_queue"],
+        cpus=config["processing_threads"],
+        time=config["processing_time"],
+        mem_mb=config["processing_mem_mb"]
     shell:
         " workflow/scripts/fasta_to_nexus.py -i {input} "
         " -t {params.type} -b {params.block} -o {output} 1> {log.std} 2>&1; "
@@ -108,10 +108,10 @@ rule concat_stockholm_dna:
     conda:
         "../../%s" % config["conda_config"]
     resources:
-        queue=config["concat_alignments_queue"],
-        cpus=config["mafft_threads"],
-        time=config["mafft_time"],
-        mem_mb=config["mafft_mem_mb"]
+        queue=config["processing_queue"],
+        cpus=config["processing_threads"],
+        time=config["processing_time"],
+        mem_mb=config["processing_mem_mb"]
     shell:
         " workflow/scripts/fasta_to_stockholm.py -i {input} -o {output} 1> {log.std} 2>&1 "
 
@@ -130,10 +130,10 @@ rule concat_stockholm_protein:
     conda:
         "../../%s" % config["conda_config"]
     resources:
-        queue=config["concat_alignments_queue"],
-        cpus=config["mafft_threads"],
-        time=config["mafft_time"],
-        mem_mb=config["mafft_mem_mb"]
+        queue=config["processing_queue"],
+        cpus=config["processing_threads"],
+        time=config["processing_time"],
+        mem_mb=config["processing_mem_mb"]
     shell:
         " workflow/scripts/fasta_to_stockholm.py -i {input} -o {output} 1> {log.std} 2>&1; "
 
@@ -154,10 +154,10 @@ rule concat_phylip_dna:
     conda:
         "../../%s" % config["conda_config"]
     resources:
-        queue=config["concat_alignments_queue"],
-        cpus=config["concat_alignments_threads"],
-        time=config["concat_alignments_time"],
-        mem_mb=config["concat_alignments_mem_mb"]
+        queue=config["processing_queue"],
+        cpus=config["processing_threads"],
+        time=config["processing_time"],
+        mem_mb=config["processing_mem_mb"]
     shell:
         " workflow/scripts/fasta_to_phylip.py -i {input} "
         " -t {params.type} -o {output} 1> {log.std} 2>&1; "
@@ -179,10 +179,10 @@ rule concat_phylip_protein:
     conda:
         "../../%s" % config["conda_config"]
     resources:
-        queue=config["concat_alignments_queue"],
-        cpus=config["concat_alignments_threads"],
-        time=config["concat_alignments_time"],
-        mem_mb=config["concat_alignments_mem_mb"]
+        queue=config["processing_queue"],
+        cpus=config["processing_threads"],
+        time=config["processing_time"],
+        mem_mb=config["processing_mem_mb"]
     shell:
         " workflow/scripts/fasta_to_phylip.py -i {input} "
         " -t {params.type} -o {output} 1> {log.std} 2>&1; "

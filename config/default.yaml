@@ -96,80 +96,56 @@ benchmark_dir: "benchmarks"
 # | Resources |
 # +-----------+
 # ---- Tool node queue ----
-quastcore_queue: "common"
 busco_queue: "common"
-common_ids_queue: "common"
 alignment_queue: "common"
 filtration_queue: "common"
-concat_alignments_queue: "common"
 iqtree_queue: "common"
 mrbayes_queue: "common"
 astral_queue: "common"
 rapidnj_queue: "common"
 phylip_queue: "common"
-visualization_queue: "common"
+processing_queue: "common"
 
 # ---- Tool threads ----
-quastcore_threads: 1
 busco_threads: 8
-species_ids_threads: 1
-common_ids_threads: 1
-merged_sequences_threads: 1
 mafft_threads: 1
 prank_threads: 1
 gblocks_threads: 1
 trimal_threads: 1
-concat_alignments_threads: 1
 iqtree_threads: 8
 mrbayes_threads: 8
 iqtree_per_fna_threads: 4
-concat_newick_files_threads: 1
-nodes_filtrataion_by_support_threads: 1
 astral_threads: 4
 rapidnj_threads: 4
 phylip_threads: 1
-visualization_threads: 1
+processing_threads: 1
 
 # ---- Tool memory ----
-quastcore_mem_mb: 4000
 busco_mem_mb: 10000
-species_ids_mem_mb: 2000
-common_ids_mem_mb: 2000
-merged_sequences_mem_mb: 2000
 mafft_mem_mb: 2000
 prank_mem_mb: 2000
 gblocks_mem_mb: 2000
 trimal_mem_mb: 2000
-concat_alignments_mem_mb: 4000
 iqtree_mem_mb: 10000
 mrbayes_mem_mb: 10000
 iqtree_per_fna_mem_mb: 10000
-concat_newick_files_mem_mb: 2000
-nodes_filtrataion_by_support_mem_mb: 2000
 astral_mem_mb: 10000
 rapidnj_mem_mb: 8000
 phylip_mem_mb: 4000
-visualization_mem_mb: 2000
+processing_mem_mb: 2000
 
 # ---- Tool time ----
-quastcore_time: "5:00:00"
 busco_time: "150:00:00"
-species_ids_time: "01:00:00"
-common_ids_time: "01:00:00"
-merged_sequences_time: "01:00:00"
 mafft_time: "10:00:00"
 prank_time: "100:00:00"
 gblocks_time: "10:00:00"
 trimal_time: "10:00:00"
-concat_alignments_time: "02:00:00"
 iqtree_time: "100:00:00"
 mrbayes_time: "100:00:00"
 iqtree_per_fna_time: "10:00:00"
-concat_newick_files_time: "00:30:00"
-nodes_filtrataion_by_support_time: "00:30:00"
 astral_time: "5:00:00"
 rapidnj_time: "5:00:00"
 phylip_time: "5:00:00"
-visualization_time: "00:30:00"
+processing_time: "5:00:00"
 
 
