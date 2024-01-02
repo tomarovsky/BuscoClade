@@ -7,6 +7,8 @@
 
 Pipeline to construct species phylogenies using [BUSCO](https://busco.ezlab.org/).
 
+![Workflow scheme](./workflow.png)
+
 - Alignment: [PRANK](http://wasabiapp.org/software/prank/), [MAFFT](https://mafft.cbrc.jp/alignment/software/).
 - Trimming: [GBlocks](https://academic.oup.com/mbe/article/17/4/540/1127654), [TrimAl](http://trimal.cgenomics.org/).
 - Phylogenetic tree constraction: [IQTree](http://www.iqtree.org/), [MrBayes](https://nbisweden.github.io/MrBayes/), [ASTRAL III](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-018-2129-y), [RapidNJ](https://birc.au.dk/software/rapidnj), [PHYLIP](https://phylipweb.github.io/phylip/).
@@ -56,11 +58,9 @@ snakemake --profile profile/slurm/ --configfile config/default.yaml --dry-run
 
 Snakemake will print all the rules that will be executed. Remove `--dry-run` to initiate the actual run.
 
-### FAQ
-
 **How to run the workflow if I have completed BUSCOs?**
 
-First, move the genome assemblies to the ` genomes/` directory or create empty files with corresponding names. Then, create a `results/busco/` directory and move the BUSCO output directories into it. Note that BUSCO output must be formatted. Thus, for `Ailurus_fulgens.fasta` the output should look like this:
+First, move the genome assemblies to the ` genomes/` directory or create empty files with corresponding names. Then, create a `results/busco/` directory and move the BUSCO output directories into it. Note that BUSCO output must be formatted. Thus, for `Ailurus_fulgens.fasta` BUSCO output should look like this:
 
 ```
 results/
