@@ -204,6 +204,8 @@ rule busco_histogram:
         busco_dir_path / "busco_summaries.tsv"
     output:
         busco_dir_path / "busco_summaries.svg"
+    params:
+        colors=config["busco_histogram_colors"]
     log:
         std=log_dir_path / "busco_histogram.log",
         cluster_log=cluster_log_dir_path / "busco_histogram.cluster.log",
@@ -220,6 +222,6 @@ rule busco_histogram:
     threads:
         config["processing_threads"]
     shell:
-        " workflow/scripts/busco_histogram.py -i {input} -o {output} > {log.std} 2>&1; "
+        " workflow/scripts/busco_histogram.py -i {input} -o {output} -c '{params.colors}' > {log.std} 2>&1; "
 
 

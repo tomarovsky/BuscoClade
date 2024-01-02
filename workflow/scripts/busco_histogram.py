@@ -13,10 +13,10 @@ def main():
 
     position = range(len(data))
     bar_width = 0.8
-    plt.barh(position, data['S'], height=bar_width, label='Complete and single-copy BUSCOs (S)', color='#23b4e8')
-    plt.barh(position, data['D'], height=bar_width, left=data['S'], label='Complete and duplicated BUSCOs (D)', color='#008dbf')
-    plt.barh(position, data['F'], height=bar_width, left=data['S'] + data['D'], label='Fragmented BUSCOs (F)', color='#fbbc04')
-    plt.barh(position, data['M'], height=bar_width, left=data['S'] + data['D'] + data['F'], label='Missing BUSCOs (M)', color='#ea4335')
+    plt.barh(position, data['S'], height=bar_width, label='Complete and single-copy BUSCOs (S)', color=args.colors[0])
+    plt.barh(position, data['D'], height=bar_width, left=data['S'], label='Complete and duplicated BUSCOs (D)', color=args.colors[1])
+    plt.barh(position, data['F'], height=bar_width, left=data['S'] + data['D'], label='Fragmented BUSCOs (F)', color=args.colors[2])
+    plt.barh(position, data['M'], height=bar_width, left=data['S'] + data['D'] + data['F'], label='Missing BUSCOs (M)', color=args.colors[3])
 
     plt.legend(ncol=4, loc=(-0.005, 0.97), handlelength=0.8, frameon=False)
 
@@ -41,5 +41,9 @@ if __name__ == "__main__":
     group_required = parser.add_argument_group('Required options')
     group_required.add_argument('-i', '--input', type=str, help="input TSV file from busco_summaries_to_tsv.py")
     group_required.add_argument('-o', '--output', type=str, help="output SVG file name")
+    group_additional = parser.add_argument_group('Additional options')
+    group_additional.add_argument('-c', '--colors', type=lambda s: list(map(str, s.split(","))),
+                                  default=['#23b4e8', '#008dbf', '#fbbc04', '#ea4335'],
+                                  help="comma-separated list of colors per BUSCO metrics")
     args = parser.parse_args()
     main()
