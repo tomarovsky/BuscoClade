@@ -1,4 +1,4 @@
-if config['gene_prediction_tool'] == "metaeuk":
+if config['busco_gene_prediction_tool'] == "metaeuk":
     rule busco_metaeuk:
         input:
             genome_dir_path / "{species}.fasta"
@@ -37,7 +37,7 @@ if config['gene_prediction_tool'] == "metaeuk":
             " mv full_table.tsv full_table_{params.output_prefix}.tsv 1> $MYPWD/{log.std} 2>&1; "
             " mv missing_busco_list.tsv missing_busco_list_{params.output_prefix}.tsv 1> $MYPWD/{log.std} 2>&1; "
             " mv short_summary.txt short_summary_{params.output_prefix}.txt 1> $MYPWD/{log.std} 2>&1; "
-elif config['gene_prediction_tool'] == "augustus":
+elif config['busco_gene_prediction_tool'] == "augustus":
     rule busco_augustus:
         input:
             genome_dir_path / "{species}.fasta"
@@ -48,7 +48,7 @@ elif config['gene_prediction_tool'] == "augustus":
             summary=busco_dir_path / "{species}/short_summary_{species}.txt"
         params:
             mode=config["busco_mode"],
-            species=config["augustus_species"],
+            species=config["busco_augustus_species"],
             busco_dataset_path=config["busco_dataset_path"],
             output_prefix="{species}"
         log:

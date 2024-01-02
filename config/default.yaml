@@ -26,14 +26,15 @@ draw_phylotrees: True
 # +-----------------+
 # | Tool parameters |
 # +-----------------+
-# ---- Assembly statistics
+# ---- Assembly statistics ----
 quastcore_params: "-m 0 150 500 1000" # сutoffs by minimum scaffold length
 # ---- BUSCO ----
-gene_prediction_tool: "metaeuk" # 'metaeuk' or 'augustus'
-augustus_species: "human" # used only if gene_prediction_tool == 'augustus'
+busco_gene_prediction_tool: "metaeuk" # 'metaeuk' or 'augustus'
+busco_augustus_species: "human" # used only if gene_prediction_tool == 'augustus'
 busco_dataset_path: ""
 busco_params: "--offline"
 busco_mode: "genome"
+busco_histogram_colors: "#23b4e8,#008dbf,#fbbc04,#ea4335" # per S, D, F, M BUSCOs
 # ---- Common IDs ----
 gene_blacklist: # IDs of genes to be deleted from common_ids
   - 1155at40674 # long sequences
@@ -44,8 +45,8 @@ prank_protein_params: ""
 mafft_protein_params: "--anysymbol"
 # ---- Filtration ----
 gblocks_dna_params: "-t=Codons"
-trimal_dna_params: "-automated1"
 gblocks_protein_params: "-t=Protein"
+trimal_dna_params: "-automated1"
 trimal_protein_params: "-automated1"
 # ---- Concatenation of alignments ----
 alignment_file_prefix: "concat_alignment"
@@ -53,7 +54,7 @@ alignment_file_prefix: "concat_alignment"
 # IQtree:
 iqtree_dna_params: "-m TESTNEW -bb 1000" # -o homo_sapiens
 iqtree_protein_params: "-m TESTNEW -bb 1000" # -o homo_sapiens
-# Astral III:
+# Astral:
 iqtree_per_fna_params: "-m TESTNEW -bb 1000"
 nodes_filtrataion_by_support: 70
 astral_params: "--branch-annotate 2 --reps 1000"
