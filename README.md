@@ -88,15 +88,15 @@ results/
 
 - [ ] **Make it stable and working in most conditions**
     - [ ] Implement blacklists for commonly used lineages: Carnivora, Laurasiatheria, Mammals, Vertebrata, Actinopterygii, Aves, Squamata.
-    - [ ] For each lineage, create a test set and measure execution times (prank) for each BUSCO.
+    - [ ] For each lineage, create a test set and measure execution times (PRANK) for each BUSCO.
 
 - [ ] **Check if extension of the blacklist is possible on the fly**
-    - [ ] Determine if it's possible to terminate prank jobs running longer than an adjustable threshold and exclude the corresponding BUSCO without breaking the pipeline.
+    - [ ] Determine if it's possible to terminate PRANK jobs running longer than an adjustable threshold and exclude the corresponding BUSCO without breaking the pipeline.
     - [ ] Potential workaround: Develop a wrapper script, which may also address issue 3.
 
-- [ ] **Handle failed prank jobs on the fly**
-    - [ ] Implement a solution to handle failed prank jobs without breaking the pipeline.
-    - [ ] If not feasible with Snakemake, create a wrapper Python script to run prank, manage errors, and generate a flag file for failed jobs.
+- [ ] **Handle failed PRANK jobs on the fly**
+    - [ ] Implement a solution to handle failed PRANK jobs without breaking the pipeline.
+    - [ ] If not feasible with Snakemake, create a wrapper Python script to run PRANK, manage errors, and generate a flag file for failed jobs.
 
 - [ ] **Include simple test data in the repository**
     - [ ] Suggestion: Use yeasts as test data.
