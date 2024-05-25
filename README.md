@@ -81,6 +81,41 @@ results/
             short_summary.specific.mammalia_odb10.Ailurus_fulgens.txt
 ```
 
+## To Do List
+
+- [x] **Add the ability to root trees by a preset outgroup (one or more species)**
+    - Use the `--outgroup` (`-g`) option in the `tree_visualization_params` parameter of the configfile to set species as an outgroup.
+
+- [ ] **Make it stable and working in most conditions**
+    - [ ] Implement blacklists for commonly used lineages: Carnivora, Laurasiatheria, Mammals, Vertebrata, Actinopterygii, Aves, Squamata.
+    - [ ] For each lineage, create a test set and measure execution times (prank) for each BUSCO.
+
+- [ ] **Check if extension of the blacklist is possible on the fly**
+    - [ ] Determine if it's possible to terminate prank jobs running longer than an adjustable threshold and exclude the corresponding BUSCO without breaking the pipeline.
+    - [ ] Potential workaround: Develop a wrapper script, which may also address issue 3.
+
+- [ ] **Handle failed prank jobs on the fly**
+    - [ ] Implement a solution to handle failed prank jobs without breaking the pipeline.
+    - [ ] If not feasible with Snakemake, create a wrapper Python script to run prank, manage errors, and generate a flag file for failed jobs.
+
+- [ ] **Include simple test data in the repository**
+    - [ ] Suggestion: Use yeasts as test data.
+
+- [ ] **Containerize the pipeline**
+    - [ ] Use Apptainer or Docker.
+    - [ ] Write a simple wrapper Python script with a limited set of options to run the pipeline via the container.
+
+- [ ] **Add feature for genomes reconstructed from SNPs**
+    - [ ] Run BUSCO only once for the reference genome and use coordinates to extract sequences from other genomes.
+
+- [ ] **Add the possibility to specify a VCF file for some genomes**
+    - [ ] Implement reconstruction of new genomes from SNPs within the pipeline.
+
+- [ ] **Write a comprehensive README and/or Wiki**
+
+- [ ] **Write a manuscript for Bioinformatics (Application Note)**
+
+
 ## Contact
 
 Please email me at: <andrey.tomarovsky@gmail.com> for any questions or feedback.
