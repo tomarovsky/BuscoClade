@@ -102,7 +102,7 @@ results/
     - [ ] Suggestion: Use yeasts as test data.
 
 - [ ] **Containerize the pipeline**
-    - [ ] Use Apptainer or Docker.
+    - [ ] Use Singularity or Docker.
     - [ ] Write a simple wrapper Python script with a limited set of options to run the pipeline via the container.
 
 - [ ] **Add feature for genomes reconstructed from SNPs**
