@@ -1,8 +1,10 @@
 from pathlib import Path
 import os
 
+
 # ---- Setup config ----
 configfile: "config/default.yaml"
+
 
 # ---- Setup paths ----
 cluster_log_dir_path = Path(config["cluster_log_dir"])
@@ -26,8 +28,7 @@ rapidnj_dir_path = output_dir_path / config["rapidnj_dir"]
 phylip_dir_path = output_dir_path / config["phylip_dir"]
 
 if "species_list" not in config:
-    config["species_list"] = [f.stem for f in genome_dir_path.iterdir()
-                              if f.is_file() and f.suffix == ".fasta"]
+    config["species_list"] = [f.stem for f in genome_dir_path.iterdir() if f.is_file() and f.suffix == ".fasta"]
 
 # ---- Setup filenames ----
 fasta_dna_filename = "{}.fna".format(config["alignment_file_prefix"])
@@ -44,11 +45,13 @@ astral_tree = "{0}.{1}.fna.astral.treefile".format(config["alignment_file_prefix
 rapidnj_tree = "{}.fna.rapidnj.treefile".format(config["alignment_file_prefix"])
 phylip_tree = "{}.fna.phy.namefix.treefile".format(config["alignment_file_prefix"])
 
+
 # ---- Necessary functions ----
 def expand_fna_from_merged_sequences(wildcards, template):
     checkpoint_output = checkpoints.merged_sequences.get(**wildcards).output[0]
     N = glob_wildcards(os.path.join(checkpoint_output, "{N}.fna")).N
     return expand(str(template), N=N)
+
 
 def expand_faa_from_merged_sequences(wildcards, template):
     checkpoint_output = checkpoints.merged_sequences.get(**wildcards).output[0]
@@ -61,13 +64,13 @@ def expand_faa_from_merged_sequences(wildcards, template):
 # +-----------------+
 
 output_files = [
-        # ---- Busco ----
-        expand(busco_dir_path / "{species}/short_summary_{species}.txt",species=config["species_list"]),
-        # ---- Merge sequences with common ids ----
-        lambda w: expand_fna_from_merged_sequences(w, merged_sequences_dir_path / "{N}.fna"),
-        lambda w: expand_faa_from_merged_sequences(w, merged_sequences_dir_path / "{N}.faa"),
-        species_ids_dir_path / "unique_species_ids.svg",
-        busco_dir_path / "busco_summaries.svg",
+    # ---- Busco ----
+    expand(busco_dir_path / "{species}/short_summary_{species}.txt", species=config["species_list"]),
+    # ---- Merge sequences with common ids ----
+    lambda w: expand_fna_from_merged_sequences(w, merged_sequences_dir_path / "{N}.fna"),
+    lambda w: expand_faa_from_merged_sequences(w, merged_sequences_dir_path / "{N}.faa"),
+    species_ids_dir_path / "unique_species_ids.svg",
+    busco_dir_path / "busco_summaries.svg",
 ]
 if "quastcore" in config:
     if config["quastcore"]:
@@ -123,18 +126,20 @@ if "protein_alignment" in config:
                             if config["draw_phylotrees"]:
                                 output_files.append(iqtree_dir_path / "faa" / f"{fasta_protein_filename}.length_and_support_tree.svg")
 if "mrbayes_dna" in config:
-    if config["mrbayes_dna"]: # to-do: upgrade
+    if config["mrbayes_dna"]:  # to-do: upgrade
         output_files.append(mrbayes_dir_path / "fna")
 if "mrbayes_protein" in config:
     if config["mrbayes_protein"]:
         output_files.append(mrbayes_dir_path / "faa")
 
 
-localrules: all
+localrules:
+    all,
+
 
 rule all:
     input:
-        output_files
+        output_files,
 
 
 # ---- Load rules ----
@@ -150,5 +155,3 @@ include: "workflow/rules/visualization.smk"
 include: "workflow/rules/astral.smk"
 include: "workflow/rules/rapidnj.smk"
 include: "workflow/rules/phylip.smk"
-
-
