@@ -4,7 +4,6 @@ from ete3 import TextFace, Tree, faces, AttrFace, TreeStyle, NodeStyle
 from argparse import ArgumentParser
 from matplotlib.patches import Patch
 import matplotlib.pyplot as plt
-import numpy as np
 
 
 def newick_to_nhx(newick_file) -> str:

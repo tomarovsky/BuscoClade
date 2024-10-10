@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-__author__ = 'tomarovsky'
-from ete3 import TextFace, Tree, faces, AttrFace, TreeStyle, NodeStyle
+__author__ = "tomarovsky"
+from ete3 import Tree, faces, AttrFace, TreeStyle, NodeStyle
 from argparse import ArgumentParser
 
 
@@ -11,6 +11,7 @@ def mylayout(node):
         node.img_style["size"] = 1
         node.img_style["shape"] = "circle"
         node.img_style["fgcolor"] = "Black"
+
 
 def main():
     tree = "".join(open(args.input).readlines()).strip()
@@ -34,7 +35,7 @@ def main():
             t.set_outgroup(outgroup)
     else:
         t.unroot()
-    for i in t.get_leaves(): # 'Homo_sapiens' -> 'Homo sapiens'
+    for i in t.get_leaves():  # 'Homo_sapiens' -> 'Homo sapiens'
         i.name = i.name.replace("_", " ")
     ts = TreeStyle()
     ts.mode = "r"
@@ -63,14 +64,14 @@ def main():
     if args.show:
         t.show(tree_style=ts)
 
+
 if __name__ == "__main__":
     parser = ArgumentParser(description="script to visualize phylogenetic trees using ete3 (required python < 3.10)")
-    group_required = parser.add_argument_group('Required options')
-    group_required.add_argument('-i', '--input', type=str, help="NEWICK file")
-    group_required.add_argument('-o', '--output', type=str, help="outfile prefix")
-    group_additional = parser.add_argument_group('Additional options')
-    group_additional.add_argument('-g', '--outgroup', type=str, default=False, help="outgroup species name (default = unrooted)")
-    group_additional.add_argument('--show', action="store_true", help="option to show tree using GUI")
+    group_required = parser.add_argument_group("Required options")
+    group_required.add_argument("-i", "--input", type=str, help="NEWICK file")
+    group_required.add_argument("-o", "--output", type=str, help="outfile prefix")
+    group_additional = parser.add_argument_group("Additional options")
+    group_additional.add_argument("-g", "--outgroup", type=str, default=False, help="outgroup species name (default = unrooted)")
+    group_additional.add_argument("--show", action="store_true", help="option to show tree using GUI")
     args = parser.parse_args()
     main()
-
