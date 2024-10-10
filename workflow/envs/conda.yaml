@@ -4,7 +4,7 @@ channels:
   - conda-forge
   - bioconda
 dependencies:
-  - busco=5.5.0
+  - busco=5.7.1
   - biopython
   - prank
   - mafft
