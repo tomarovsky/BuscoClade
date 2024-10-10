@@ -35,8 +35,8 @@ busco_dataset_path: "" # path to orthodb directory
 busco_params: "--offline"
 busco_mode: "genome"
 busco_histogram_colors: "#23b4e8,#008dbf,#fbbc04,#ea4335" # per S, D, F, M BUSCOs
-# ---- Common IDs ----
-gene_blacklist: # IDs of genes to be deleted from common_ids
+# ---- main IDs ----
+gene_blacklist: # IDs of genes to be deleted from main_ids
   - 1155at40674 # long sequences
 # ---- Alignment ----
 prank_dna_params: "-codon"
@@ -79,7 +79,7 @@ output_dir: "results"
 quastcore_dir: "assembly_stats"
 busco_dir: "busco"
 species_ids_dir: "ids/species_ids"
-common_ids_dir: "ids/"
+main_ids_dir: "ids/"
 merged_sequences_dir: "ids/merged_sequences"
 alignments_dir: "alignments/raw/"
 filtered_alignments_dir: "alignments/filtered/"
@@ -96,16 +96,16 @@ benchmark_dir: "benchmarks"
 # +-----------+
 # | Resources |
 # +-----------+
-# ---- Tool node queue ----
-busco_queue: "common"
-alignment_queue: "common"
-filtration_queue: "common"
-iqtree_queue: "common"
-mrbayes_queue: "common"
-astral_queue: "common"
-rapidnj_queue: "common"
-phylip_queue: "common"
-processing_queue: "common"
+# ---- Slurm partition ----
+busco_queue: "main"
+alignment_queue: "main"
+filtration_queue: "main"
+iqtree_queue: "main"
+mrbayes_queue: "main"
+astral_queue: "main"
+rapidnj_queue: "main"
+phylip_queue: "main"
+processing_queue: "main"
 
 # ---- Tool threads ----
 busco_threads: 8
