@@ -32,7 +32,7 @@ quastcore_params: "-m 0 150 500 1000" # сutoffs by minimum scaffold length
 busco_gene_prediction_tool: "metaeuk" # 'metaeuk' or 'augustus'
 busco_augustus_species: "human" # used only if gene_prediction_tool == 'augustus'
 busco_dataset_path: "" # path to orthodb directory
-busco_params: "--offline"
+busco_options: "--offline"
 busco_mode: "genome"
 busco_histogram_colors: "#23b4e8,#008dbf,#fbbc04,#ea4335" # per S, D, F, M BUSCOs
 # ---- main IDs ----
