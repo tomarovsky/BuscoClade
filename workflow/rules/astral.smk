@@ -101,5 +101,4 @@ if "astral" in config:
             mem_mb=config["astral_mem_mb"],
         threads: config["astral_threads"]
         shell:
-            " java -jar $CONDA_PREFIX/share/astral-tree-5.7.8-0/astral.5.7.8.jar "
-            " -i {input} -o {output} {params} > {log.std} 2>&1"  # 'astral' conda bin file is broken
+            " astral -i {input} -o {output} {params} > {log.std} 2>&1"
