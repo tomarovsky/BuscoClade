@@ -10,6 +10,7 @@ if config["busco_gene_prediction_tool"] == "metaeuk":
         params:
             mode=config["busco_mode"],
             busco_dataset_path=config["busco_dataset_path"],
+            busco_options=config["busco_options"],
             output_prefix="{species}",
         log:
             std=log_dir_path / "busco.{species}.log",
@@ -27,8 +28,8 @@ if config["busco_gene_prediction_tool"] == "metaeuk":
         threads: config["busco_threads"]
         shell:
             " MYPWD=$(pwd); mkdir -p {output.busco_outdir}; cd {output.busco_outdir}; "
-            " busco -m {params.mode} -i {input} -c {threads} "
-            " -l {params.busco_dataset_path} -o {params.output_prefix} 1> $MYPWD/{log.std} 2>&1; "
+            " busco --metaeuk -m {params.mode} -i {input} -c {threads} -l {params.busco_dataset_path} "
+            " -o {params.output_prefix} {params.busco_options} 1> $MYPWD/{log.std} 2>&1; "
             " mv {params.output_prefix}/* . 1> $MYPWD/{log.std} 2>&1; "
             " rm -r {params.output_prefix}/ 1> $MYPWD/{log.std} 2>&1; "
             " rm -r busco_sequences/ 1> $MYPWD/{log.std} 2>&1; "
@@ -37,7 +38,7 @@ if config["busco_gene_prediction_tool"] == "metaeuk":
             " mv full_table.tsv full_table_{params.output_prefix}.tsv 1> $MYPWD/{log.std} 2>&1; "
             " mv missing_busco_list.tsv missing_busco_list_{params.output_prefix}.tsv 1> $MYPWD/{log.std} 2>&1; "
             " mv short_summary.txt short_summary_{params.output_prefix}.txt 1> $MYPWD/{log.std} 2>&1; "
-            # empty directory
+
 
 elif config["busco_gene_prediction_tool"] == "augustus":
 
@@ -47,12 +48,12 @@ elif config["busco_gene_prediction_tool"] == "augustus":
         output:
             busco_outdir=directory(busco_dir_path / "{species}"),
             single_copy_busco_sequences=directory(busco_dir_path / "{species}/single_copy_busco_sequences"),
-            augustus_gff=directory(busco_dir_path / "{species}/augustus_output/gff"),
             summary=busco_dir_path / "{species}/short_summary_{species}.txt",
         params:
             mode=config["busco_mode"],
             species=config["busco_augustus_species"],
             busco_dataset_path=config["busco_dataset_path"],
+            busco_options=config["busco_options"],
             output_prefix="{species}",
         log:
             std=log_dir_path / "busco.{species}.log",
@@ -70,8 +71,8 @@ elif config["busco_gene_prediction_tool"] == "augustus":
         threads: config["busco_threads"]
         shell:
             " MYPWD=$(pwd); mkdir -p {output.busco_outdir}; cd {output.busco_outdir}; "
-            " busco --augustus --augustus_species {params.species} -m {params.mode} "
-            " -i {input} -c {threads} -l {params.busco_dataset_path} -o {params.output_prefix} 1> $MYPWD/{log.std} 2>&1; "
+            " busco --augustus --augustus_species {params.species} -m {params.mode} -i {input} -c {threads} "
+            " -l {params.busco_dataset_path} -o {params.output_prefix} {params.busco_options} 1> $MYPWD/{log.std} 2>&1; "
             " mv {params.output_prefix}/* ./ 1> $MYPWD/{log.std} 2>&1; "
             " rm -r {params.output_prefix}/ 1> $MYPWD/{log.std} 2>&1; "
             " rm -r augustus_output/ 1> $MYPWD/{log.std} 2>&1; "
@@ -79,4 +80,3 @@ elif config["busco_gene_prediction_tool"] == "augustus":
             " mv full_table.tsv full_table_{params.output_prefix}.tsv 1> $MYPWD/{log.std} 2>&1; "
             " mv missing_busco_list.tsv missing_busco_list_{params.output_prefix}.tsv 1> $MYPWD/{log.std} 2>&1; "
             " mv short_summary.txt short_summary_{params.output_prefix}.txt 1> $MYPWD/{log.std} 2>&1; "
-            # empty directory
