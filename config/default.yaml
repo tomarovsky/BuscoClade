@@ -55,7 +55,7 @@ alignment_file_prefix: "concat_alignment"
 iqtree_dna_params: "-m TESTNEW -bb 1000" # -o homo_sapiens
 iqtree_protein_params: "-m TESTNEW -bb 1000" # -o homo_sapiens
 # Astral:
-iqtree_per_fna_params: "-m TESTNEW -bb 1000"
+iqtree_per_fna_params: "-m TESTNEW -bb 1000 -keep-ident"
 nodes_filtrataion_by_support: 70
 astral_params: "--branch-annotate 2 --reps 1000"
 # MrBayes:
