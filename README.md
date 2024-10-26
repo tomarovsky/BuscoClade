@@ -75,7 +75,7 @@ results/
             metaeuk_output/
             full_table_Ailurus_fulgens.tsv
             missing_busco_list_Ailurus_fulgens.tsv
-            short_summary_Ailurus_fulgens_DNAzoo.txt
+            short_summary_Ailurus_fulgens.txt
             short_summary.json
             short_summary.specific.mammalia_odb10.Ailurus_fulgens.json
             short_summary.specific.mammalia_odb10.Ailurus_fulgens.txt
