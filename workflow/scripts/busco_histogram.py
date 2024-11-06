@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 __author__ = "tomarovsky"
+import argparse
+
 import matplotlib.pyplot as plt
 import pandas as pd
-import argparse
 
 
 def main():
-    data = pd.read_csv(args.input, sep="\t")[::-1].reset_index(drop=True)
+    data = pd.read_csv(args.input, sep="\t").sort_values(by=['M', 'F', 'D'], ascending=False).reset_index(drop=True)
 
     fig_height = len(data) * 0.3
     plt.figure(figsize=(13, fig_height), dpi=300)
