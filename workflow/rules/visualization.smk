@@ -156,7 +156,6 @@ rule species_ids_plot:
         expand(species_ids_dir_path / "{species}.ids", species=config["species_list"]),
     output:
         pic=species_ids_dir_path / "unique_species_ids.svg",
-        csv=species_ids_dir_path / "unique_species_ids.csv",
     log:
         std=log_dir_path / "species_ids_plot.log",
         cluster_log=cluster_log_dir_path / "species_ids_plot.cluster.log",
@@ -173,7 +172,7 @@ rule species_ids_plot:
     threads: config["processing_threads"]
     shell:
         " workflow/scripts/unique_ids_plot.py --species_ids_files {input} "
-        " --outplot {output.pic} --outcsv {output.csv} > {log.std} 2>&1 "
+        " --outplot {output.pic} > {log.std} 2>&1 "
 
 
 rule busco_summaries_to_tsv:
