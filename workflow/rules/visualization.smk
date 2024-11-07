@@ -153,9 +153,10 @@ if config["draw_phylotrees"]:
 
 rule species_ids_plot:
     input:
-        expand(species_ids_dir_path / "{species}.ids", species=config["species_list"]),
+        single_copy_ids=expand(species_ids_dir_path / "single_copy/{species}.ids", species=config["species_list"]),
+        multi_copy_ids=expand(species_ids_dir_path / "multi_copy/{species}.ids", species=config["species_list"]),
     output:
-        pic=species_ids_dir_path / "unique_species_ids.svg",
+        species_ids_dir_path / "unique_species_ids.png",
     log:
         std=log_dir_path / "species_ids_plot.log",
         cluster_log=cluster_log_dir_path / "species_ids_plot.cluster.log",
@@ -171,8 +172,8 @@ rule species_ids_plot:
         mem_mb=config["processing_mem_mb"],
     threads: config["processing_threads"]
     shell:
-        " workflow/scripts/unique_ids_plot.py --species_ids_files {input} "
-        " --outplot {output.pic} > {log.std} 2>&1 "
+        " workflow/scripts/unique_ids_plot.py --single_copy_ids_files {input.single_copy_ids} --multi_copy_ids_files {input.multi_copy_ids}"
+        " --outplot {output} > {log.std} 2>&1 "
 
 
 rule busco_summaries_to_tsv:
