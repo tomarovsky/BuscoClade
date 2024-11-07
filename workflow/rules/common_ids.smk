@@ -3,11 +3,32 @@ localrules:
     common_ids,
 
 
-rule species_ids:  # get files with IDs for each species
+rule species_single_copy_ids:  # get single copy ids for each species
     input:
         busco_dir_path / "{species}/busco_sequences/single_copy_busco_sequences",
     output:
-        species_ids_dir_path / "{species}.ids",
+        species_ids_dir_path / "single_copy/{species}.ids",
+    log:
+        std=log_dir_path / "species_ids.{species}.log",
+        cluster_log=cluster_log_dir_path / "species_ids.{species}.cluster.log",
+        cluster_err=cluster_log_dir_path / "species_ids.{species}.cluster.err",
+    benchmark:
+        benchmark_dir_path / "species_ids.{species}.benchmark.txt"
+    resources:
+        queue=config["processing_queue"],
+        cpus=config["processing_threads"],
+        time=config["processing_time"],
+        mem_mb=config["processing_mem_mb"],
+    threads: config["processing_threads"]
+    shell:
+        " ls {input} | grep -P '.fna$' | sed 's/.fna//' > {output} 2> {log.std}; "
+
+
+rule species_multi_copy_ids:  # get multi copy ids for each species
+    input:
+        busco_dir_path / "{species}/busco_sequences/multi_copy_busco_sequences",
+    output:
+        species_ids_dir_path / "multi_copy/{species}.ids",
     log:
         std=log_dir_path / "species_ids.{species}.log",
         cluster_log=cluster_log_dir_path / "species_ids.{species}.cluster.log",
@@ -26,7 +47,7 @@ rule species_ids:  # get files with IDs for each species
 
 rule common_ids:  # get common IDs for all species given config["gene_blacklist"] and split them into files
     input:
-        expand(species_ids_dir_path / "{species}.ids", species=config["species_list"]),
+        expand(species_ids_dir_path / "single_copy/{species}.ids", species=config["species_list"]),
     output:
         common_ids_dir_path / "common.ids",
     params:
