@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 __author__ = "tomarovsky"
 import os
+
 import matplotlib.pyplot as plt
 from supervenn import supervenn
 
@@ -14,24 +15,36 @@ def read_species_ids(file_path):
 
 
 def main():
-    sets = [read_species_ids(file) for file in args.species_ids_files]
-    labels = [os.path.splitext(os.path.basename(file))[0] for file in args.species_ids_files]
-    fig, ax = plt.subplots(1, 1, figsize=(20, 10), dpi=300)
+    labels = [os.path.splitext(os.path.basename(file))[0] for file in args.single_copy_ids_files]
+    single_copy_sets = [read_species_ids(file) for file in args.single_copy_ids_files]
+    multi_copy_sets = [read_species_ids(file) for file in args.multi_copy_ids_files]
+    fig, ax = plt.subplots(2, 1, figsize=(30, 20), dpi=300)
 
-    supervenn(sets,
+    supervenn(single_copy_sets,
               labels,
-              ax=ax,
-              sets_ordering='minimize gaps',
-              chunks_ordering='minimize gaps',
-              )
+              ax=ax[0],
+              sets_ordering='size',
+              chunks_ordering='size',
+              min_width_for_annotation=50,
+              rotate_col_annotations=True)
 
+    supervenn(multi_copy_sets,
+              labels,
+              ax=ax[1],
+              sets_ordering='size',
+              chunks_ordering='size',
+              min_width_for_annotation=10,
+              rotate_col_annotations=True)
+
+    plt.tight_layout()
     plt.savefig(args.outplot)
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="script to get plot and csv file of unique species ids")
     group_required = parser.add_argument_group("Required options")
-    group_required.add_argument("-s", "--species_ids_files", type=str, nargs="+", help="space separated list of species_ids_files")
+    group_required.add_argument("-s", "--single_copy_ids_files", type=str, nargs="+", help="space separated list of single copy_ids_files")
+    group_required.add_argument("-m", "--multi_copy_ids_files", type=str, nargs="+", help="space separated list of multi copy ids_files")
     group_required.add_argument("--outplot", type=str, help="output plot file name")
     args = parser.parse_args()
     main()
