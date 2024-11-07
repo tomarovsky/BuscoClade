@@ -1,5 +1,6 @@
 localrules:
-    species_ids,
+    species_single_copy_ids,
+    species_multi_copy_ids,
     common_ids,
 
 
