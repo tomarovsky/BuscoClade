@@ -6,6 +6,7 @@ if config["busco_gene_prediction_tool"] == "metaeuk":
         output:
             busco_outdir=directory(busco_dir_path / "{species}"),
             single_copy_busco_sequences=directory(busco_dir_path / "{species}/busco_sequences/single_copy_busco_sequences"),
+            multi_copy_busco_sequences=directory(busco_dir_path / "{species}/busco_sequences/multi_copy_busco_sequences"),
             summary=busco_dir_path / "{species}/short_summary_{species}.txt",
         params:
             mode=config["busco_mode"],
@@ -48,6 +49,7 @@ elif config["busco_gene_prediction_tool"] == "augustus":
         output:
             busco_outdir=directory(busco_dir_path / "{species}"),
             single_copy_busco_sequences=directory(busco_dir_path / "{species}/single_copy_busco_sequences"),
+            multi_copy_busco_sequences=directory(busco_dir_path / "{species}/multi_copy_busco_sequences"),
             summary=busco_dir_path / "{species}/short_summary_{species}.txt",
         params:
             mode=config["busco_mode"],
