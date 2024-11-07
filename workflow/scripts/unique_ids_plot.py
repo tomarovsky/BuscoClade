@@ -18,7 +18,7 @@ def main():
     labels = [os.path.splitext(os.path.basename(file))[0] for file in args.single_copy_ids_files]
     single_copy_sets = [read_species_ids(file) for file in args.single_copy_ids_files]
     multi_copy_sets = [read_species_ids(file) for file in args.multi_copy_ids_files]
-    fig, ax = plt.subplots(2, 1, figsize=(30, 20), dpi=300)
+    fig, ax = plt.subplots(2, 1, figsize=(30, len(labels) * 2), dpi=300)
 
     supervenn(single_copy_sets,
               labels,
@@ -26,7 +26,9 @@ def main():
               sets_ordering='size',
               chunks_ordering='size',
               min_width_for_annotation=50,
-              rotate_col_annotations=True)
+              rotate_col_annotations=True,
+              col_annotations_area_height=1.2,
+              )
 
     supervenn(multi_copy_sets,
               labels,
@@ -34,7 +36,12 @@ def main():
               sets_ordering='size',
               chunks_ordering='size',
               min_width_for_annotation=10,
-              rotate_col_annotations=True)
+              rotate_col_annotations=True,
+              col_annotations_area_height=1.2,
+              )
+
+    ax[0].set_title("Single copy BUSCOs", fontsize=16, fontweight='bold')
+    ax[1].set_title("Multi copy BUSCOs", fontsize=16, fontweight='bold')
 
     plt.tight_layout()
     plt.savefig(args.outplot)
