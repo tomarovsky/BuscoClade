@@ -25,10 +25,10 @@ def main():
               ax=ax[0],
               sets_ordering=None,
               chunks_ordering='size',
-              min_width_for_annotation=10,
+              min_width_for_annotation=50,
               rotate_col_annotations=True,
               col_annotations_area_height=1.4,
-              widths_minmax_ratio=0.005,
+              # widths_minmax_ratio=0.005,
               )
 
     supervenn(multi_copy_sets,
