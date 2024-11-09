@@ -18,7 +18,7 @@ def main():
     labels = [os.path.splitext(os.path.basename(file))[0] for file in args.single_copy_ids_files]
     single_copy_sets = [read_species_ids(file) for file in args.single_copy_ids_files]
     multi_copy_sets = [read_species_ids(file) for file in args.multi_copy_ids_files]
-    fig, ax = plt.subplots(2, 1, figsize=(30, len(labels) * 2), dpi=300)
+    fig, ax = plt.subplots(2, 1, figsize=(30, len(labels)), dpi=300)
 
     supervenn(single_copy_sets,
               labels,
