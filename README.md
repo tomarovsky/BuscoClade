@@ -21,7 +21,7 @@ Pipeline to construct species phylogenies using [BUSCO](https://busco.ezlab.org/
 To use this workflow, you can either download and extract the [latest release](https://github.com/tomarovsky/BuscoClade/releases) or clone the repository:
 
 ```
-git clone https://github.com/tomarovsky/BuscoClade.git
+git clone https://github.com/Zubiriguitar/BuscoClade.git
 ```
 
 ### Step 2. Add species genomes
