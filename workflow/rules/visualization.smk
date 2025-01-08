@@ -1,5 +1,6 @@
 localrules:
     species_ids_plot,
+    busco_histogram,
 
 
 if config["draw_phylotrees"]:
