@@ -116,7 +116,7 @@ gblocks_threads: 1
 trimal_threads: 1
 iqtree_threads: 8
 mrbayes_threads: 8
-iqtree_per_fna_threads: 4
+iqtree_per_fna_threads: 2
 astral_threads: 4
 rapidnj_threads: 4
 phylip_threads: 1
@@ -130,7 +130,7 @@ gblocks_mem_mb: 2000
 trimal_mem_mb: 2000
 iqtree_mem_mb: 10000
 mrbayes_mem_mb: 10000
-iqtree_per_fna_mem_mb: 10000
+iqtree_per_fna_mem_mb: 2000
 astral_mem_mb: 10000
 rapidnj_mem_mb: 8000
 phylip_mem_mb: 4000

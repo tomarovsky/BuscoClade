@@ -1,3 +1,7 @@
+localrules:
+    species_ids_plot,
+
+
 if config["draw_phylotrees"]:
 
     rule iqtree_dna_tree_visualization:
