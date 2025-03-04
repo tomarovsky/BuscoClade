@@ -72,7 +72,9 @@ def expand_faa_from_merged_sequences(wildcards, template, busco_blacklist=None):
 # blacklist is applied at the concatenation stage
 busco_blacklist = None
 busco_blacklist_path = Path("input/BUSCO.blacklist")
-
+print(busco_blacklist_path)
+print(busco_blacklist_path.exists())
+print(busco_blacklist_path.stat().st_size > 0)
 if busco_blacklist_path.exists() and (busco_blacklist_path.stat().st_size > 0):
     busco_blacklist = pd.read_csv("input/BUSCO.blacklist", sep="\t", header=None).squeeze()
 
