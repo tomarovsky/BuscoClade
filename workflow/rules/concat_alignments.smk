@@ -1,6 +1,7 @@
 rule concat_fasta_dna:
     input:
-        lambda w: expand_fna_from_merged_sequences(w, filtered_alignments_dir_path / "fna" / "{N}.fna"),
+        lambda w: expand_fna_from_merged_sequences(w, filtered_alignments_dir_path / "fna" / "{N}.fna",
+                                                   busco_blacklist=busco_blacklist),
     output:
         concat_alignments_dir_path / fasta_dna_filename,
     log:
@@ -22,7 +23,8 @@ rule concat_fasta_dna:
 
 rule concat_fasta_protein:
     input:
-        lambda w: expand_fna_from_merged_sequences(w, filtered_alignments_dir_path / "faa" / "{N}.faa"),
+        lambda w: expand_fna_from_merged_sequences(w, filtered_alignments_dir_path / "faa" / "{N}.faa",
+                                                   busco_blacklist=busco_blacklist),
     output:
         concat_alignments_dir_path / fasta_protein_filename,
     log:

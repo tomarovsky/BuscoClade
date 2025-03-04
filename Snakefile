@@ -1,6 +1,7 @@
 from pathlib import Path
 import os
 
+import pandas as pd
 
 # ---- Setup config ----
 configfile: "config/default.yaml"
@@ -47,17 +48,32 @@ phylip_tree = "{}.fna.phy.namefix.treefile".format(config["alignment_file_prefix
 
 
 # ---- Necessary functions ----
-def expand_fna_from_merged_sequences(wildcards, template):
+def expand_fna_from_merged_sequences(wildcards, template, busco_blacklist=None):
     checkpoint_output = checkpoints.merged_sequences.get(**wildcards).output[0]
     N = glob_wildcards(os.path.join(checkpoint_output, "{N}.fna")).N
+    print(len(N))
+    if busco_blacklist is not None:
+        N = set(N) - set(list(map(lambda s: f"{s}.merged", busco_blacklist)))
+    print(len(N))
     return expand(str(template), N=N)
 
 
-def expand_faa_from_merged_sequences(wildcards, template):
+def expand_faa_from_merged_sequences(wildcards, template, busco_blacklist=None):
     checkpoint_output = checkpoints.merged_sequences.get(**wildcards).output[0]
     N = glob_wildcards(os.path.join(checkpoint_output, "{N}.faa")).N
+    if busco_blacklist is not None:
+        N = set(N) - set(list(map(lambda s: f"{s}.merged", busco_blacklist)))
     return expand(str(template), N=N)
 
+#------------------TEMPORARY CODE!!!!!!!!!!!!! -----------------------
+# blacklist is applied at the concatenation stage
+busco_blacklist = None
+busco_blacklist_path = Path("input/BUSCO.blacklist")
+
+if busco_blacklist_path.exists() and (busco_dir_path.stat().st_size > 0):
+    busco_blacklist = pd.read_csv("input/BUSCO.blacklist", sep="\t", header=None).squeze()
+
+#---------------------------------------------------------------------
 
 # +-----------------+
 # |  the "All" rule |
