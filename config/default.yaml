@@ -1,6 +1,16 @@
 conda_config: "workflow/envs/conda.yaml"
 ete3_conda_config: "workflow/envs/ete3_conda.yaml"
 
+"conda":
+    "buscoclade":
+        "yaml": "workflow/envs/conda.yaml"
+        "name": "buscoclade"
+    "buscoclade_ete3":
+        "yaml": "workflow/envs/ete3_conda.yaml"
+        "name": "buscoclade_ete3"
+
+"use_existing_envs": False
+
 # +------------------------+
 # | Pipeline configuration | # False or comment line to disable
 # +------------------------+

@@ -12,7 +12,7 @@ rule quastcore:
     benchmark:
         benchmark_dir_path / "quastcore.benchmark.txt"
     conda:
-        "../../%s" % config["conda_config"]
+        config["conda"]["buscoclade"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade"]["yaml"]) #"../../%s" % config["conda_config"]
     resources:
         queue=config["processing_queue"],
         cpus=config["processing_threads"],
