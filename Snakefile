@@ -89,8 +89,8 @@ output_files = [
     # ---- Busco ----
     expand(busco_dir_path / "{species}/short_summary_{species}.txt", species=config["species_list"]),
     # ---- Merge sequences with common ids ----
-    lambda w: expand_fna_from_merged_sequences(w, merged_sequences_dir_path / "{N}.fna"),
-    lambda w: expand_faa_from_merged_sequences(w, merged_sequences_dir_path / "{N}.faa"),
+    lambda w: expand_fna_from_merged_sequences(w, merged_sequences_dir_path / "{N}.fna", busco_blacklist=busco_blacklist),
+    lambda w: expand_faa_from_merged_sequences(w, merged_sequences_dir_path / "{N}.faa", busco_blacklist=busco_blacklist),
     species_ids_dir_path / "unique_species_ids.png",
     busco_dir_path / "busco_summaries.svg",
 ]
@@ -99,10 +99,10 @@ if "quastcore" in config:
         output_files.append(quastcore_dir_path / "assembly_stats.csv")
 if "dna_alignment" in config:
     if config["dna_alignment"]:
-        output_files.append(lambda w: expand_fna_from_merged_sequences(w, alignments_dir_path / "fna" / "{N}.fna"))
+        output_files.append(lambda w: expand_fna_from_merged_sequences(w, alignments_dir_path / "fna" / "{N}.fna"), busco_blacklist=busco_blacklist)
         if "dna_filtration" in config:
             if config["dna_filtration"]:
-                output_files.append(lambda w: expand_fna_from_merged_sequences(w, filtered_alignments_dir_path / "fna" / "{N}.fna"))
+                output_files.append(lambda w: expand_fna_from_merged_sequences(w, filtered_alignments_dir_path / "fna" / "{N}.fna"), busco_blacklist=busco_blacklist)
                 output_files.append(concat_alignments_dir_path / fasta_dna_filename)
                 output_files.append(concat_alignments_dir_path / nexus_dna_filename)
                 if "iqtree_dna" in config:
@@ -136,7 +136,7 @@ if "protein_alignment" in config:
         output_files.append(lambda w: expand_faa_from_merged_sequences(w, alignments_dir_path / "faa" / "{N}.faa"))
         if "protein_filtration" in config:
             if config["protein_filtration"]:
-                output_files.append(lambda w: expand_fna_from_merged_sequences(w, filtered_alignments_dir_path / "faa" / "{N}.faa"))
+                output_files.append(lambda w: expand_fna_from_merged_sequences(w, filtered_alignments_dir_path / "faa" / "{N}.faa"), busco_blacklist=busco_blacklist)
                 output_files.append(concat_alignments_dir_path / fasta_protein_filename)
                 # output_files.append(concat_alignments_dir_path / nexus_protein_filename)
                 # output_files.append(concat_alignments_dir_path / stockholm_protein_filename)
