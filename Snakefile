@@ -51,7 +51,9 @@ phylip_tree = "{}.fna.phy.namefix.treefile".format(config["alignment_file_prefix
 def expand_fna_from_merged_sequences(wildcards, template, busco_blacklist=None):
     checkpoint_output = checkpoints.merged_sequences.get(**wildcards).output[0]
     N = glob_wildcards(os.path.join(checkpoint_output, "{N}.fna")).N
+    print("test")
     print(len(N))
+    print(N[0])
     if busco_blacklist is not None:
         N = set(N) - set(list(map(lambda s: f"{s}.merged", busco_blacklist)))
     print(len(N))
