@@ -35,7 +35,8 @@ if "astral" in config:
 
     rule concat_newick_files:
         input:
-            lambda w: expand_fna_from_merged_sequences(w, astral_dir_path / "iqtree_per_fna" / "{N}.fna.treefile"),
+            lambda w: expand_fna_from_merged_sequences(w, astral_dir_path / "iqtree_per_fna" / "{N}.fna.treefile",
+                                                       busco_blacklist=busco_blacklist),
         output:
             astral_dir_path / astral_input_trees,
         log:
