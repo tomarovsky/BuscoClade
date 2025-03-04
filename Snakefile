@@ -76,7 +76,8 @@ print(busco_blacklist_path)
 print(busco_blacklist_path.exists())
 print(busco_blacklist_path.stat().st_size > 0)
 if busco_blacklist_path.exists() and (busco_blacklist_path.stat().st_size > 0):
-    busco_blacklist = pd.read_csv("input/BUSCO.blacklist", sep="\t", header=None).squeeze()
+    busco_blacklist = pd.read_csv(busco_blacklist_path, sep="\t", header=None).squeeze()
+    print(busco_blacklist)
 
 #---------------------------------------------------------------------
 
