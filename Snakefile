@@ -71,7 +71,7 @@ busco_blacklist = None
 busco_blacklist_path = Path("input/BUSCO.blacklist")
 
 if busco_blacklist_path.exists() and (busco_dir_path.stat().st_size > 0):
-    busco_blacklist = pd.read_csv("input/BUSCO.blacklist", sep="\t", header=None).squeze()
+    busco_blacklist = pd.read_csv("input/BUSCO.blacklist", sep="\t", header=None).squeeze()
 
 #---------------------------------------------------------------------
 
