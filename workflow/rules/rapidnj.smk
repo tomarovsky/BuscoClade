@@ -3,7 +3,7 @@ rule rapidnj_tree:
         concat_alignments_dir_path / stockholm_dna_filename,
     output:
         tree=rapidnj_dir_path / rapidnj_tree,
-        matrix=rapidnj_dir_path / rapidnj_tree,
+        matrix=rapidnj_dir_path / rapidnj_matrix,
     params:
         config["rapidnj_params"],
     log:
