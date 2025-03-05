@@ -21,5 +21,5 @@ rule rapidnj_tree:
         mem_mb=config["rapidnj_mem_mb"],
     threads: config["rapidnj_threads"]
     shell:
-        " rapidnj -i sth -o -b 1 m -c {threads} {input} > {output} 2> {log.std}; "
-        " rapidnj -i sth -c {threads} {params} {input} > {output.tree} 2>> {log.std}; "
+        " rapidnj -i sth -c {threads} -o m  {input} > {output.matrix} 2>{log.std}; "
+        " rapidnj -i sth -c {threads} {params} {input} > {output.tree} 2>>{log.std}; "
