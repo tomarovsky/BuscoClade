@@ -15,6 +15,7 @@ dependencies:
   - newick_utils
   - rapidnj
   - phylip
+  - raxml-ng
 #  - mrbayes
   - pip:
     - "--editable=git+https://github.com/tomarovsky/Biocrutch.git#egg=Biocrutch"
