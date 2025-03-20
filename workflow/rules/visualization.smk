@@ -4,9 +4,10 @@ if config["draw_phylotrees"]:
         input:
             iqtree_dir_path / "fna" / f"{fasta_dna_filename}.treefile",
         output:
-            iqtree_dir_path / "fna" / f"{fasta_dna_filename}.length_and_support_tree.svg",
-            iqtree_dir_path / "fna" / f"{fasta_dna_filename}.only_support_tree.svg",
-            iqtree_dir_path / "fna" / f"{fasta_dna_filename}.only_tree.svg",
+            iqtree_dir_path / "fna" / f"{fasta_dna_filename}.length_and_support_tree.png",
+            iqtree_dir_path / "fna" / f"{fasta_dna_filename}.only_support_tree.png",
+            iqtree_dir_path / "fna" / f"{fasta_dna_filename}.only_tree.png",
+            iqtree_dir_path / "fna" / f"{fasta_dna_filename}.dots.png",
         params:
             prefix=iqtree_dir_path / "fna" / f"{fasta_dna_filename}",
             options=config["tree_visualization_params"],
@@ -35,9 +36,10 @@ if config["draw_phylotrees"]:
         input:
             iqtree_dir_path / "faa" / f"{fasta_protein_filename}.treefile",
         output:
-            iqtree_dir_path / "faa" / f"{fasta_protein_filename}.length_and_support_tree.svg",
-            iqtree_dir_path / "faa" / f"{fasta_protein_filename}.only_support_tree.svg",
-            iqtree_dir_path / "faa" / f"{fasta_protein_filename}.only_tree.svg",
+            iqtree_dir_path / "faa" / f"{fasta_protein_filename}.length_and_support_tree.png",
+            iqtree_dir_path / "faa" / f"{fasta_protein_filename}.only_support_tree.png",
+            iqtree_dir_path / "faa" / f"{fasta_protein_filename}.only_tree.png",
+            iqtree_dir_path / "faa" / f"{fasta_protein_filename}.dots.png",
         params:
             prefix=iqtree_dir_path / "faa" / f"{fasta_protein_filename}",
             options=config["tree_visualization_params"],
@@ -95,9 +97,10 @@ if config["draw_phylotrees"]:
         input:
             rapidnj_dir_path / rapidnj_tree,
         output:
-            rapidnj_dir_path / f"{fasta_dna_filename}.length_and_support_tree.svg",
-            rapidnj_dir_path / f"{fasta_dna_filename}.only_support_tree.svg",
-            rapidnj_dir_path / f"{fasta_dna_filename}.only_tree.svg",
+            rapidnj_dir_path / f"{fasta_dna_filename}.length_and_support_tree.png",
+            rapidnj_dir_path / f"{fasta_dna_filename}.only_support_tree.png",
+            rapidnj_dir_path / f"{fasta_dna_filename}.only_tree.png",
+            rapidnj_dir_path / f"{fasta_dna_filename}.dots.png",
         params:
             prefix=rapidnj_dir_path / f"{fasta_dna_filename}",
             options=config["tree_visualization_params"],
@@ -126,9 +129,10 @@ if config["draw_phylotrees"]:
         input:
             phylip_dir_path / phylip_tree,
         output:
-            phylip_dir_path / f"{fasta_dna_filename}.length_and_support_tree.svg",
-            phylip_dir_path / f"{fasta_dna_filename}.only_support_tree.svg",
-            phylip_dir_path / f"{fasta_dna_filename}.only_tree.svg",
+            phylip_dir_path / f"{fasta_dna_filename}.length_and_support_tree.png",
+            phylip_dir_path / f"{fasta_dna_filename}.only_support_tree.png",
+            phylip_dir_path / f"{fasta_dna_filename}.only_tree.png",
+            phylip_dir_path / f"{fasta_dna_filename}.dots.png",
         params:
             prefix=phylip_dir_path / f"{fasta_dna_filename}",
             options=config["tree_visualization_params"],
@@ -156,9 +160,10 @@ if config["draw_phylotrees"]:
         input:
             raxml_dir_path / raxml_tree,
         output:
-            raxml_dir_path / f"{fasta_dna_filename}.length_and_support_tree.svg",
-            raxml_dir_path / f"{fasta_dna_filename}.only_support_tree.svg",
-            raxml_dir_path / f"{fasta_dna_filename}.only_tree.svg",
+            raxml_dir_path / f"{fasta_dna_filename}.length_and_support_tree.png",
+            raxml_dir_path / f"{fasta_dna_filename}.only_support_tree.png",
+            raxml_dir_path / f"{fasta_dna_filename}.only_tree.png",
+            raxml_dir_path / f"{fasta_dna_filename}.dots.png",
         params:
             prefix=raxml_dir_path / f"{fasta_dna_filename}",
             options=config["tree_visualization_params"],

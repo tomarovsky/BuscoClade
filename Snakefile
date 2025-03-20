@@ -90,33 +90,33 @@ if "dna_alignment" in config:
                         output_files.append(iqtree_dir_path / "fna" / f"{fasta_dna_filename}.treefile")
                         if "draw_phylotrees" in config:
                             if config["draw_phylotrees"]:
-                                output_files.append(iqtree_dir_path / "fna" / f"{fasta_dna_filename}.length_and_support_tree.svg")
+                                output_files.append(iqtree_dir_path / "fna" / f"{fasta_dna_filename}.length_and_support_tree.png")
                 if "astral" in config:
                     if config["astral"]:
                         output_files.append(astral_dir_path / astral_tree)
                         if "draw_phylotrees" in config:
                             if config["draw_phylotrees"]:
-                                output_files.append(astral_dir_path / f"{astral_tree}.svg")
+                                output_files.append(astral_dir_path / f"{astral_tree}.png")
                 if "rapidnj" in config:
                     if config["rapidnj"]:
                         output_files.append(concat_alignments_dir_path / stockholm_dna_filename)
                         output_files.append(rapidnj_dir_path / rapidnj_tree)
                         if "draw_phylotrees" in config:
                             if config["draw_phylotrees"]:
-                                output_files.append(rapidnj_dir_path / f"{fasta_dna_filename}.only_tree.svg")
+                                output_files.append(rapidnj_dir_path / f"{fasta_dna_filename}.only_tree.png")
                 if "phylip" in config:
                     if config["phylip"]:
                         output_files.append(concat_alignments_dir_path / phylip_dna_filename)
                         output_files.append(phylip_dir_path / phylip_tree)
                         if "draw_phylotrees" in config:
                             if config["draw_phylotrees"]:
-                                output_files.append(phylip_dir_path / f"{fasta_dna_filename}.only_tree.svg")
+                                output_files.append(phylip_dir_path / f"{fasta_dna_filename}.only_tree.png")
                 if "raxml" in config:
                     if config["raxml"]:
                         output_files.append(raxml_dir_path / raxml_tree)
                         if "draw_phylotrees" in config:
                             if config["draw_phylotrees"]:
-                               output_files.append(raxml_dir_path / f"{fasta_dna_filename}.only_tree.svg") #todo
+                               output_files.append(raxml_dir_path / f"{fasta_dna_filename}.only_tree.png") #todo
 if "protein_alignment" in config:
     if config["protein_alignment"]:
         output_files.append(lambda w: expand_faa_from_merged_sequences(w, alignments_dir_path / "faa" / "{N}.faa"))
@@ -132,7 +132,7 @@ if "protein_alignment" in config:
                         output_files.append(iqtree_dir_path / "faa" / f"{fasta_protein_filename}.treefile")
                         if "draw_phylotrees" in config:
                             if config["draw_phylotrees"]:
-                                output_files.append(iqtree_dir_path / "faa" / f"{fasta_protein_filename}.length_and_support_tree.svg")
+                                output_files.append(iqtree_dir_path / "faa" / f"{fasta_protein_filename}.length_and_support_tree.png")
 if "mrbayes_dna" in config:
     if config["mrbayes_dna"]:  # to-do: upgrade
         output_files.append(mrbayes_dir_path / "fna")
