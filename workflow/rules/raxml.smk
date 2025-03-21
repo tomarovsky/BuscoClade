@@ -7,6 +7,7 @@ if config["raxml"]:
             raxml_dir_path / f"{fasta_dna_filename}.raxml.bestTree",
             raxml_dir_path / f"{fasta_dna_filename}.raxml.log",
             raxml_dir_path / f"{fasta_dna_filename}.raxml.rba",
+            raxml_dir_path / f"{fasta_dna_filename}.raxml.support",
         params:
             options=config["raxml_params"],
             outdir=raxml_dir_path,
@@ -31,7 +32,7 @@ if config["raxml"]:
             
     rule raxml_tree_rename:
         input:
-            raxml_dir_path / f"{fasta_dna_filename}.raxml.bestTree",
+            raxml_dir_path / f"{fasta_dna_filename}.raxml.support",
         output:
             raxml_dir_path / f"{fasta_dna_filename}.raxml.treefile",
         params:
