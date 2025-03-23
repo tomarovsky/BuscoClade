@@ -21,7 +21,7 @@ if "dna_filtration" in config:
                 queue=config["filtration_queue"],
                 cpus=config["gblocks_threads"],
                 time=config["gblocks_time"],
-                mem=config["gblocks_mem_mb"],
+                mem_mb=config["gblocks_mem_mb"],
             shell:
                 " mkdir -p {params.outdir}; set +e; "
                 " Gblocks {input} {params.options} 1> {log.std} 2>&1; "
