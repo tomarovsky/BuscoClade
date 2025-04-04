@@ -155,9 +155,9 @@ trimal_time: "10:00:00"
 iqtree_time: "100:00:00"
 mrbayes_time: "100:00:00"
 iqtree_per_fna_time: "10:00:00"
-astral_time: "5:00:00"
-rapidnj_time: "5:00:00"
-phylip_time: "5:00:00"
+astral_time: "50:00:00"
+rapidnj_time: "150:00:00"
+phylip_time: "50:00:00"
 processing_time: "5:00:00"
 
 
