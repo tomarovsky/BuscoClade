@@ -69,7 +69,7 @@ if config["draw_phylotrees"]:
             treefile=astral_dir_path / astral_tree,
             common_ids=rules.common_ids.output,
         output:
-            astral_dir_path / f"{astral_tree}.svg",
+            astral_dir_path / f"{astral_tree}.png",
         params:
             prefix=astral_dir_path / astral_tree,
         log:
