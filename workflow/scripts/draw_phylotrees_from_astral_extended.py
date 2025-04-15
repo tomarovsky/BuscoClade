@@ -149,7 +149,7 @@ if __name__ == "__main__":
     group_additional.add_argument('--width', type=int, default=1500, help="width for result rendering")
     group_additional.add_argument('--show', action="store_true", help="option to show tree using GUI")
     group_additional.add_argument("-e", "--output_formats", dest="output_formats", type=lambda s: s.split(","),
-                    default=("svg"), help="Comma-separated list of formats (supported by ete3) of output figure. Default: svg,png")
+                    default=("png"), help="Comma-separated list of formats (supported by ete3) of output figure. Default: svg,png")
     args = parser.parse_args()
     main()
 

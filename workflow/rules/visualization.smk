@@ -158,14 +158,14 @@ if config["draw_phylotrees"]:
 
     rule raxml_tree_visualization:
         input:
-            raxml_dir_path / raxml_tree,
+            raxml_dir_path / f"{fasta_dna_filename}.raxml.treefile"
         output:
-            raxml_dir_path / f"{fasta_dna_filename}.length_and_support_tree.png",
-            raxml_dir_path / f"{fasta_dna_filename}.only_support_tree.png",
-            raxml_dir_path / f"{fasta_dna_filename}.only_tree.png",
-            raxml_dir_path / f"{fasta_dna_filename}.dots.png",
+            raxml_dir_path / f"{fasta_dna_filename}.raxml.length_and_support_tree.png",
+            raxml_dir_path / f"{fasta_dna_filename}.raxml.only_support_tree.png",
+            raxml_dir_path / f"{fasta_dna_filename}.raxml.only_tree.png",
+            raxml_dir_path / f"{fasta_dna_filename}.raxml.dots.png",
         params:
-            prefix=raxml_dir_path / f"{fasta_dna_filename}",
+            prefix=raxml_dir_path / f"{fasta_dna_filename}.raxml",
             options=config["tree_visualization_params"],
         log:
             std=log_dir_path / "raxml_tree_visualization.log",

@@ -44,9 +44,9 @@ rule concat_fasta_protein:
 
 rule concat_nexus_dna:
     input:
-        rules.concat_fasta_dna.output,
+        rules.concat_fasta_dna.output, 
     output:
-        concat_alignments_dir_path / nexus_dna_filename,
+        concat_alignments_dir_path / nexus_dna_filename
     params:
         type="DNA",
         block=config["mrbayes_block"],

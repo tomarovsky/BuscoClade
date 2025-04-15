@@ -133,7 +133,7 @@ if __name__ == "__main__":
         "--output_formats",
         dest="output_formats",
         type=lambda s: s.split(","),
-        default=("svg"),
+        default=("png"),
         help="Comma-separated list of formats (supported by ete3) of output figure. Default: svg,png",
     )
     args = parser.parse_args()

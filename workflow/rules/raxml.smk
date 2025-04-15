@@ -2,13 +2,13 @@ if config["raxml"]:
 
     rule raxml_tree:
         input:
-            concat_alignments_dir_path / fasta_dna_filename,
+            concat_alignments_dir_path / fasta_dna_filename
         output:
             raxml_dir_path / f"{fasta_dna_filename}.raxml.bestTree",
             raxml_dir_path / f"{fasta_dna_filename}.raxml.log",
             raxml_dir_path / f"{fasta_dna_filename}.raxml.rba",
-            raxml_dir_path / f"{fasta_dna_filename}.raxml.support",
-        params:
+            raxml_dir_path / f"{fasta_dna_filename}.raxml.support"
+        params: 
             options=config["raxml_params"],
             outdir=raxml_dir_path,
             prefix=fasta_dna_filename,

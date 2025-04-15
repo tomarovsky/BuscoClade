@@ -16,6 +16,10 @@ dependencies:
   - rapidnj
   - phylip
   - raxml-ng
+  - gatk4
+  - bedtools
+  - bcftools
+  - samtools
 #  - mrbayes
   - pip:
     - "--editable=git+https://github.com/tomarovsky/Biocrutch.git#egg=Biocrutch"
