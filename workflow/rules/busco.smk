@@ -2,9 +2,7 @@ if config["busco_gene_prediction_tool"] == "metaeuk":
 
     rule busco_metaeuk:
         input:
-            genome_dir_path / "{species}{suffix}.fasta".format(
-            species="{species}",
-            suffix=config["altref_suffix"])
+            genome_dir_path / "{species}.fasta",
         output:
             busco_outdir=directory(busco_dir_path / "{species}"),
             single_copy_busco_sequences=directory(busco_dir_path / "{species}/busco_sequences/single_copy_busco_sequences"),

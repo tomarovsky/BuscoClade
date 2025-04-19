@@ -1,5 +1,7 @@
 from pathlib import Path
 import os
+from pathlib import Path
+import subprocess
 
 # ---- Setup config ----
 configfile: "config/default.yaml"
@@ -83,17 +85,41 @@ if config["vcf"]:
                 sample=glob_wildcards(os.path.join(vcf_dir_path, "*", "{sample}_PASS.vcf.gz")).sample
             )
 
-def get_vcf_samples(vcf_dir):
-    vcf_files = list(Path(vcf_dir).rglob("*.vcf.gz"))
-    if not vcf_files:
-        raise ValueError(f"No VCF samples found in {vcf_dir} subdirectories.")
-    return sorted({f.stem.replace("_PASS", "") for f in vcf_files})
+#def get_vcf_samples(vcf_dir):
+#    vcf_files = list(Path(vcf_dir).rglob("*.vcf.gz"))
+#    if not vcf_files:
+#        raise ValueError(f"No VCF samples found in {vcf_dir} subdirectories.")
+#    return sorted({f.stem.replace("_PASS", "") for f in vcf_files})
+
+#if "species_list" not in config:
+#    if config.get("vcf", False):
+#        config["species_list"] = []
+#    else:
+#        config["species_list"] = [f.stem for f in genome_dir_path.glob("*.fasta") if f.is_file()]
+
+# if "species_list" not in config:
+#    config["species_list"] = [f.stem for f in genome_dir_path.iterdir() if f.is_file() and f.suffix == ".fasta"]
+
+def get_species_list():
+    fasta_species = [f.stem for f in genome_dir_path.iterdir() if f.is_file() and f.suffix == ".fasta"]
+    if config.get("vcf", False):
+        vcf_samples = set()
+        for vcf in vcf_dir_path.glob("**/*.vcf*"):
+            if vcf.suffix in [".vcf", ".vcf.gz"]:
+                try:
+                    samples = subprocess.check_output(
+                        ["bcftools", "query", "-l", str(vcf)],
+                        text=True
+                    ).splitlines()
+                    vcf_samples.update(samples)
+                except subprocess.CalledProcessError as e:
+                    print(f"Error processing {vcf}: {e}")
+        return list(set(fasta_species + list(vcf_samples)))
+    else:
+        return fasta_species
 
 if "species_list" not in config:
-    if config.get("vcf", False):
-        config["species_list"] = []
-    else:
-        config["species_list"] = [f.stem for f in genome_dir_path.glob("*.fasta") if f.is_file()]
+    config["species_list"] = get_species_list()
 
 # +-----------------+
 # |  the "All" rule |

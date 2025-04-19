@@ -14,7 +14,7 @@ if config["vcf"]:
                 vcf_file=lambda w: f"vcf_dir_path/{w.vcf_directory}/{w.sample}.vcf.gz",
                 mask_file=lambda w: f"vcf_dir_path/{w.vcf_directory}/mask.bed"
             output:
-                vcf_dir_path / "{vcf_directory}/{sample}.masked.vcf.gz"
+                "vcf_dir_path / "{vcf_directory}/{sample}.masked.vcf.gz"
             params:
                 type="DNA"
             log:
@@ -36,10 +36,14 @@ if config["vcf"]:
 
     rule vcf_extract_sample_names:
         input:
-            vcf=lambda w: f"vcf_dir_path/{w.vcf_directory}/sample.masked.vcf.gz",
+            vcf_files=lambda w: (
+                glob.glob(f"vcf_dir_path/{w.vcf_directory}/*.masked.vcf.gz") 
+                if config["vcf_masking"] 
+                else glob.glob(f"vcf_dir_path/{w.vcf_directory}/*.vcf.gz")
+            ),
             checkpoint_file=checkpoints.vcf_discovery.get().output[0]
         output:
-            f"vcf_dir_path/{{vcf_directory}}/sample_list.txt",
+            "vcf_dir_path/{{vcf_directory}}/sample_list.txt",
         params:
             type="DNA"
         log:
@@ -56,12 +60,19 @@ if config["vcf"]:
             time=config["processing_time"],
             mem_mb=config["processing_mem_mb"],
         shell:
-            "bcftools query -l {input.vcf} > {output}"
+            """
+            for vcf in {input.vcf_files}; do
+                bcftools query -l "$vcf" >> {output}
+            done
+            """
 
 
     rule vcf_separation:
         input:
-            vcf=lambda w: f"vcf_dir_path/{w.vcf_directory}/sample.masked.vcf.gz",
+             if config["vcf_masking"]:
+                vcf=lambda w: f"vcf_dir_path/{w.vcf_directory}/{sample}.masked.vcf.gz",
+            else:
+                vcf=lambda w: f"vcf_dir_path/{w.vcf_directory}/{sample}.vcf.gz",
             sample_list="vcf_dir_path/{vcf_directory}/sample_list.txt"
         output:
             directory(f"vcf_dir_path/{{vcf_directory}}/separated"),
@@ -91,6 +102,8 @@ if config["vcf"]:
                     {input.vcf}
             done < {input.sample_list}
             """
+
+
     rule vcf_filtering:
         input:
             "vcf_dir_path/{vcf_directory}/separated/{sample}.separated.vcf.gz",
@@ -102,7 +115,7 @@ if config["vcf"]:
             haploid_filters=config["haploid_filters"],
             diploid_filters=config["diploid_filters"],
         log:
-            std=log_dir_path / "{vcf_directory}/{sample}_vcf_filtering.log",  # Removed {ext}
+            std=log_dir_path / "{vcf_directory}/{sample}_vcf_filtering.log",
             cluster_log=cluster_log_dir_path / "{vcf_directory}/{sample}_vcf_filtering.cluster.log",
             cluster_err=cluster_log_dir_path / "{vcf_directory}/{sample}_vcf_filtering.cluster.err",
         benchmark:
@@ -131,7 +144,7 @@ if config["vcf"]:
     
     rule vcf_sequence_dictionary:
         input:
-            "vcf_dir_path/{vcf_directory}/{reference}.{ext}",  # Simplified pattern
+            "vcf_dir_path/{vcf_directory}/{reference}.{ext}",
         output:
             "vcf_dir_path/{vcf_directory}/{reference}.dict"
         log:
@@ -153,7 +166,7 @@ if config["vcf"]:
 
     rule vcf_indexing:
         input:
-            "vcf_dir_path/{vcf_directory}/filtered/{sample}.filtered.{ext}",
+            "vcf_dir_path/{vcf_directory}/filtered/{sample}.filtered.vcf.gz",
         output:
             "vcf_dir_path/{vcf_directory}/filtered/{sample}.filtered.{ext}.idx",
         log:
@@ -196,7 +209,7 @@ if config["vcf"]:
     rule vcf_to_fasta:
         input:
             vcf_file="vcf_dir_path/{vcf_directory}/filtered/{sample}.filtered.vcf.gz",
-            reference_file="vcf_dir_path/{vcf_directory}/reference.fna"
+            reference_file="vcf_dir_path/{vcf_directory}/{reference}.{ext}",
         output:
             genome_dir_path / "{sample}.AltRef.fasta",  # Keep flat structure
         params:
