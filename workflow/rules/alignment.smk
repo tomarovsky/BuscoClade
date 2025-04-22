@@ -16,7 +16,8 @@ if "dna_alignment" in config:
             benchmark:
                 benchmark_dir_path / "prank_dna.{N}.benchmark.txt"
             conda:
-                "../../%s" % config["conda_config"]
+                config["conda"]["buscoclade"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade"]["yaml"])
+                #"../../%s" % config["conda_config"]
             resources:
                 queue=config["alignment_queue"],
                 cpus=config["prank_threads"],
@@ -43,7 +44,7 @@ if "dna_alignment" in config:
             benchmark:
                 benchmark_dir_path / "mafft_dna.{N}.benchmark.txt"
             conda:
-                "../../%s" % config["conda_config"]
+                config["conda"]["buscoclade"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade"]["yaml"]) #"../../%s" % config["conda_config"]
             resources:
                 queue=config["alignment_queue"],
                 cpus=config["mafft_threads"],
@@ -72,7 +73,7 @@ if "protein_alignment" in config:
             benchmark:
                 benchmark_dir_path / "prank_protein.{N}.benchmark.txt"
             conda:
-                "../../%s" % config["conda_config"]
+                config["conda"]["buscoclade"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade"]["yaml"]) #"../../%s" % config["conda_config"]
             resources:
                 queue=config["alignment_queue"],
                 cpus=config["prank_threads"],
@@ -99,7 +100,7 @@ if "protein_alignment" in config:
             benchmark:
                 benchmark_dir_path / "mafft_protein.{N}.benchmark.txt"
             conda:
-                "../../%s" % config["conda_config"]
+                config["conda"]["buscoclade"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade"]["yaml"]) #"../../%s" % config["conda_config"]
             resources:
                 queue=config["alignment_queue"],
                 cpus=config["mafft_threads"],

@@ -1,6 +1,16 @@
 conda_config: "workflow/envs/conda.yaml"
 ete3_conda_config: "workflow/envs/ete3_conda.yaml"
 
+"conda":
+    "buscoclade":
+        "yaml": "workflow/envs/conda.yaml"
+        "name": "buscoclade"
+    "buscoclade_ete3":
+        "yaml": "workflow/envs/ete3_conda.yaml"
+        "name": "buscoclade_ete3"
+
+"use_existing_envs": False
+
 # +------------------------+
 # | Pipeline configuration | # False or comment line to disable
 # +------------------------+
@@ -145,9 +155,9 @@ trimal_time: "10:00:00"
 iqtree_time: "100:00:00"
 mrbayes_time: "100:00:00"
 iqtree_per_fna_time: "10:00:00"
-astral_time: "5:00:00"
-rapidnj_time: "5:00:00"
-phylip_time: "5:00:00"
+astral_time: "50:00:00"
+rapidnj_time: "150:00:00"
+phylip_time: "50:00:00"
 processing_time: "5:00:00"
 
 

@@ -22,7 +22,7 @@ if "astral" in config:
         benchmark:
             benchmark_dir_path / "iqtree_per_fna.{N}.benchmark.txt"
         conda:
-            "../../%s" % config["conda_config"]
+            config["conda"]["buscoclade"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade"]["yaml"]) #"../../%s" % config["conda_config"]
         resources:
             queue=config["astral_queue"],
             cpus=config["iqtree_per_fna_threads"],
@@ -35,7 +35,8 @@ if "astral" in config:
 
     rule concat_newick_files:
         input:
-            lambda w: expand_fna_from_merged_sequences(w, astral_dir_path / "iqtree_per_fna" / "{N}.fna.treefile"),
+            lambda w: expand_fna_from_merged_sequences(w, astral_dir_path / "iqtree_per_fna" / "{N}.fna.treefile",
+                                                       busco_blacklist=busco_blacklist),
         output:
             astral_dir_path / astral_input_trees,
         log:
@@ -45,7 +46,7 @@ if "astral" in config:
         benchmark:
             benchmark_dir_path / "concat_newick_files.benchmark.txt"
         conda:
-            "../../%s" % config["conda_config"]
+            config["conda"]["buscoclade"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade"]["yaml"]) #"../../%s" % config["conda_config"]
         resources:
             queue=config["processing_queue"],
             cpus=config["processing_threads"],
@@ -69,7 +70,7 @@ if "astral" in config:
         benchmark:
             benchmark_dir_path / "nodes_filtrataion_by_support.benchmark.txt"
         conda:
-            "../../%s" % config["conda_config"]
+            config["conda"]["buscoclade"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade"]["yaml"]) #"../../%s" % config["conda_config"]
         resources:
             queue=config["processing_queue"],
             cpus=config["processing_threads"],
@@ -93,7 +94,7 @@ if "astral" in config:
         benchmark:
             benchmark_dir_path / "astral_tree.benchmark.txt"
         conda:
-            "../../%s" % config["conda_config"]
+            config["conda"]["buscoclade"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade"]["yaml"]) #"../../%s" % config["conda_config"]
         resources:
             queue=config["astral_queue"],
             cpus=config["astral_threads"],

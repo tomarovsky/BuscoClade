@@ -16,7 +16,7 @@ if "dna_filtration" in config:
             benchmark:
                 benchmark_dir_path / "{N}.fna.gblocks.benchmark.txt"
             conda:
-                "../../%s" % config["conda_config"]
+                config["conda"]["buscoclade"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade"]["yaml"]) #"../../%s" % config["conda_config"]
             resources:
                 queue=config["filtration_queue"],
                 cpus=config["gblocks_threads"],
@@ -45,7 +45,7 @@ if "dna_filtration" in config:
             benchmark:
                 benchmark_dir_path / "trimal_dna.{N}.benchmark.txt"
             conda:
-                "../../%s" % config["conda_config"]
+                config["conda"]["buscoclade"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade"]["yaml"]) #"../../%s" % config["conda_config"]
             resources:
                 queue=config["filtration_queue"],
                 cpus=config["trimal_threads"],
@@ -75,7 +75,7 @@ if "protein_filtration" in config:
             benchmark:
                 benchmark_dir_path / "{N}.faa.gblocks.benchmark.txt"
             conda:
-                "../../%s" % config["conda_config"]
+                config["conda"]["buscoclade"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade"]["yaml"]) #"../../%s" % config["conda_config"]
             resources:
                 queue=config["filtration_queue"],
                 cpus=config["gblocks_threads"],
@@ -104,7 +104,7 @@ if "protein_filtration" in config:
             benchmark:
                 benchmark_dir_path / "trimal_protein.{N}.benchmark.txt"
             conda:
-                "../../%s" % config["conda_config"]
+                config["conda"]["buscoclade"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade"]["yaml"]) #"../../%s" % config["conda_config"]
             resources:
                 queue=config["filtration_queue"],
                 cpus=config["trimal_threads"],

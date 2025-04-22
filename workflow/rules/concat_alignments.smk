@@ -1,6 +1,7 @@
 rule concat_fasta_dna:
     input:
-        lambda w: expand_fna_from_merged_sequences(w, filtered_alignments_dir_path / "fna" / "{N}.fna"),
+        lambda w: expand_fna_from_merged_sequences(w, filtered_alignments_dir_path / "fna" / "{N}.fna",
+                                                   busco_blacklist=busco_blacklist),
     output:
         concat_alignments_dir_path / fasta_dna_filename,
     log:
@@ -10,7 +11,7 @@ rule concat_fasta_dna:
     benchmark:
         benchmark_dir_path / "concat_fasta_dna.benchmark.txt"
     conda:
-        "../../%s" % config["conda_config"]
+        config["conda"]["buscoclade"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade"]["yaml"]) #"../../%s" % config["conda_config"]
     resources:
         queue=config["processing_queue"],
         cpus=config["processing_threads"],
@@ -22,7 +23,8 @@ rule concat_fasta_dna:
 
 rule concat_fasta_protein:
     input:
-        lambda w: expand_fna_from_merged_sequences(w, filtered_alignments_dir_path / "faa" / "{N}.faa"),
+        lambda w: expand_fna_from_merged_sequences(w, filtered_alignments_dir_path / "faa" / "{N}.faa",
+                                                   busco_blacklist=busco_blacklist),
     output:
         concat_alignments_dir_path / fasta_protein_filename,
     log:
@@ -32,7 +34,7 @@ rule concat_fasta_protein:
     benchmark:
         benchmark_dir_path / "concat_fasta_protein.benchmark.txt"
     conda:
-        "../../%s" % config["conda_config"]
+        config["conda"]["buscoclade"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade"]["yaml"]) #"../../%s" % config["conda_config"]
     resources:
         queue=config["processing_queue"],
         cpus=config["processing_threads"],
@@ -57,7 +59,7 @@ rule concat_nexus_dna:
     benchmark:
         benchmark_dir_path / "concat_nexus_dna.benchmark.txt"
     conda:
-        "../../%s" % config["conda_config"]
+        config["conda"]["buscoclade"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade"]["yaml"]) #"../../%s" % config["conda_config"]
     resources:
         queue=config["processing_queue"],
         cpus=config["processing_threads"],
@@ -83,7 +85,7 @@ rule concat_nexus_protein:
     benchmark:
         benchmark_dir_path / "concat_nexus_protein.benchmark.txt"
     conda:
-        "../../%s" % config["conda_config"]
+        config["conda"]["buscoclade"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade"]["yaml"]) #"../../%s" % config["conda_config"]
     resources:
         queue=config["processing_queue"],
         cpus=config["processing_threads"],
@@ -106,7 +108,7 @@ rule concat_stockholm_dna:
     benchmark:
         benchmark_dir_path / "concat_stockholm_dna.benchmark.txt"
     conda:
-        "../../%s" % config["conda_config"]
+        config["conda"]["buscoclade"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade"]["yaml"]) #"../../%s" % config["conda_config"]
     resources:
         queue=config["processing_queue"],
         cpus=config["processing_threads"],
@@ -128,7 +130,7 @@ rule concat_stockholm_protein:
     benchmark:
         benchmark_dir_path / "concat_stockholm_protein.benchmark.txt"
     conda:
-        "../../%s" % config["conda_config"]
+        config["conda"]["buscoclade"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade"]["yaml"]) #"../../%s" % config["conda_config"]
     resources:
         queue=config["processing_queue"],
         cpus=config["processing_threads"],
@@ -152,7 +154,7 @@ rule concat_phylip_dna:
     benchmark:
         benchmark_dir_path / "concat_phylip_dna.benchmark.txt"
     conda:
-        "../../%s" % config["conda_config"]
+        config["conda"]["buscoclade"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade"]["yaml"]) #"../../%s" % config["conda_config"]
     resources:
         queue=config["processing_queue"],
         cpus=config["processing_threads"],
@@ -177,7 +179,7 @@ rule concat_phylip_protein:
     benchmark:
         benchmark_dir_path / "concat_phylip_protein.benchmark.txt"
     conda:
-        "../../%s" % config["conda_config"]
+        config["conda"]["buscoclade"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade"]["yaml"]) #"../../%s" % config["conda_config"]
     resources:
         queue=config["processing_queue"],
         cpus=config["processing_threads"],

@@ -1,6 +1,7 @@
 from pathlib import Path
 import os
 
+import pandas as pd
 
 # ---- Setup config ----
 configfile: "config/default.yaml"
@@ -43,21 +44,43 @@ astral_input_trees = "{}.iqtree_per_fna.concat.treefile".format(config["alignmen
 astral_filtered_trees = "{0}.iqtree_per_fna.concat.{1}.treefile".format(config["alignment_file_prefix"], config["nodes_filtrataion_by_support"])
 astral_tree = "{0}.{1}.fna.astral.treefile".format(config["alignment_file_prefix"], config["nodes_filtrataion_by_support"])
 rapidnj_tree = "{}.fna.rapidnj.treefile".format(config["alignment_file_prefix"])
+rapidnj_matrix = "{}.fna.rapidnj.matrix".format(config["alignment_file_prefix"])
 phylip_tree = "{}.fna.phy.namefix.treefile".format(config["alignment_file_prefix"])
 
 
 # ---- Necessary functions ----
-def expand_fna_from_merged_sequences(wildcards, template):
+def expand_fna_from_merged_sequences(wildcards, template, busco_blacklist=None):
     checkpoint_output = checkpoints.merged_sequences.get(**wildcards).output[0]
     N = glob_wildcards(os.path.join(checkpoint_output, "{N}.fna")).N
+    #print("test")
+    #print(busco_blacklist)
+    #print(len(N))
+    #print(N[0])
+    if busco_blacklist is not None:
+        N = set(N) - set(list(map(lambda s: f"{s}.merged", busco_blacklist)))
+    #print(len(N))
     return expand(str(template), N=N)
 
 
-def expand_faa_from_merged_sequences(wildcards, template):
+def expand_faa_from_merged_sequences(wildcards, template, busco_blacklist=None):
     checkpoint_output = checkpoints.merged_sequences.get(**wildcards).output[0]
     N = glob_wildcards(os.path.join(checkpoint_output, "{N}.faa")).N
+    if busco_blacklist is not None:
+        N = set(N) - set(list(map(lambda s: f"{s}.merged", busco_blacklist)))
     return expand(str(template), N=N)
 
+#------------------TEMPORARY CODE!!!!!!!!!!!!! -----------------------
+# blacklist is applied at the concatenation stage
+busco_blacklist = None
+busco_blacklist_path = Path("input/BUSCO.blacklist")
+#print(busco_blacklist_path)
+#print(busco_blacklist_path.exists())
+#print(busco_blacklist_path.stat().st_size > 0)
+if busco_blacklist_path.exists() and (busco_blacklist_path.stat().st_size > 0):
+    busco_blacklist = pd.read_csv(busco_blacklist_path, sep="\t", header=None).squeeze()
+    #print(busco_blacklist)
+
+#---------------------------------------------------------------------
 
 # +-----------------+
 # |  the "All" rule |
@@ -67,8 +90,8 @@ output_files = [
     # ---- Busco ----
     expand(busco_dir_path / "{species}/short_summary_{species}.txt", species=config["species_list"]),
     # ---- Merge sequences with common ids ----
-    lambda w: expand_fna_from_merged_sequences(w, merged_sequences_dir_path / "{N}.fna"),
-    lambda w: expand_faa_from_merged_sequences(w, merged_sequences_dir_path / "{N}.faa"),
+    lambda w: expand_fna_from_merged_sequences(w, merged_sequences_dir_path / "{N}.fna", busco_blacklist=busco_blacklist),
+    lambda w: expand_faa_from_merged_sequences(w, merged_sequences_dir_path / "{N}.faa", busco_blacklist=busco_blacklist),
     species_ids_dir_path / "unique_species_ids.png",
     busco_dir_path / "busco_summaries.svg",
 ]
@@ -77,10 +100,10 @@ if "quastcore" in config:
         output_files.append(quastcore_dir_path / "assembly_stats.csv")
 if "dna_alignment" in config:
     if config["dna_alignment"]:
-        output_files.append(lambda w: expand_fna_from_merged_sequences(w, alignments_dir_path / "fna" / "{N}.fna"))
+        output_files.append(lambda w: expand_fna_from_merged_sequences(w, alignments_dir_path / "fna" / "{N}.fna", busco_blacklist=busco_blacklist))
         if "dna_filtration" in config:
             if config["dna_filtration"]:
-                output_files.append(lambda w: expand_fna_from_merged_sequences(w, filtered_alignments_dir_path / "fna" / "{N}.fna"))
+                output_files.append(lambda w: expand_fna_from_merged_sequences(w, filtered_alignments_dir_path / "fna" / "{N}.fna", busco_blacklist=busco_blacklist))
                 output_files.append(concat_alignments_dir_path / fasta_dna_filename)
                 if "iqtree_dna" in config:
                     if config["iqtree_dna"]:
@@ -113,7 +136,7 @@ if "protein_alignment" in config:
         output_files.append(lambda w: expand_faa_from_merged_sequences(w, alignments_dir_path / "faa" / "{N}.faa"))
         if "protein_filtration" in config:
             if config["protein_filtration"]:
-                output_files.append(lambda w: expand_fna_from_merged_sequences(w, filtered_alignments_dir_path / "faa" / "{N}.faa"))
+                output_files.append(lambda w: expand_fna_from_merged_sequences(w, filtered_alignments_dir_path / "faa" / "{N}.faa", busco_blacklist=busco_blacklist))
                 output_files.append(concat_alignments_dir_path / fasta_protein_filename)
                 # output_files.append(concat_alignments_dir_path / nexus_protein_filename)
                 # output_files.append(concat_alignments_dir_path / stockholm_protein_filename)
