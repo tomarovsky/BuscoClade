@@ -37,6 +37,7 @@ draw_phylotrees: True
 # +-----------------+
 # | Tool parameters |
 # +-----------------+
+gatk_path: # for VCF reconstruction
 # ---- Assembly statistics ----
 quastcore_params: "-m 0 150 500 1000" # сutoffs by minimum scaffold length
 # ---- BUSCO ----
@@ -85,25 +86,31 @@ tree_visualization_params: "" # "--outgroup Homo_sapiens" or "--outgroup species
 # +---------------------+
 # | Directory structure |
 # +---------------------+
-genome_dir: "genomes"
-output_dir: "results"
-quastcore_dir: "assembly_stats"
-busco_dir: "busco"
+# ---- Input ----
+genome_dir: "input/genomes/"
+vcf_reconstruct_dir: "input/vcf_reconstruct/"
+
+# ---- Output ----
+output_dir: "results/"
+altref_dir: "altref_genomes/"
+quastcore_dir: "assembly_stats/"
+busco_dir: "busco/"
 main_ids_dir: "ids/"
-species_ids_dir: "ids/species_ids"
-common_ids_dir: "ids/common_ids"
-merged_sequences_dir: "ids/merged_sequences"
+species_ids_dir: "ids/species_ids/"
+common_ids_dir: "ids/common_ids/"
+merged_sequences_dir: "ids/merged_sequences/"
 alignments_dir: "alignments/raw/"
 filtered_alignments_dir: "alignments/filtered/"
-concat_alignments_dir: "concat_alignments"
-iqtree_dir: "phylogeny/iqtree"
-mrbayes_dir: "phylogeny/mrbayes"
-astral_dir: "phylogeny/astral"
-rapidnj_dir: "phylogeny/rapidnj"
-phylip_dir: "phylogeny/phylip"
-log_dir: "logs"
-cluster_log_dir: "cluster_logs"
-benchmark_dir: "benchmarks"
+concat_alignments_dir: "concat_alignments/"
+iqtree_dir: "phylogeny/iqtree/"
+mrbayes_dir: "phylogeny/mrbayes/"
+astral_dir: "phylogeny/astral/"
+rapidnj_dir: "phylogeny/rapidnj/"
+phylip_dir: "phylogeny/phylip/"
+
+log_dir: "logs/"
+cluster_log_dir: "cluster_logs/"
+benchmark_dir: "benchmarks/"
 
 # +-----------+
 # | Resources |
