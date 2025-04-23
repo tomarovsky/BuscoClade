@@ -1,12 +1,9 @@
-conda_config: "workflow/envs/conda.yaml"
-ete3_conda_config: "workflow/envs/ete3_conda.yaml"
-
 "conda":
     "buscoclade":
-        "yaml": "workflow/envs/conda.yaml"
+        "yaml": "workflow/envs/default.yaml"
         "name": "buscoclade"
     "buscoclade_ete3":
-        "yaml": "workflow/envs/ete3_conda.yaml"
+        "yaml": "workflow/envs/ete3.yaml"
         "name": "buscoclade_ete3"
 
 "use_existing_envs": False

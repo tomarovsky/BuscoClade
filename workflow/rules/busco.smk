@@ -20,7 +20,7 @@ if config["busco_gene_prediction_tool"] == "metaeuk":
         benchmark:
             benchmark_dir_path / "busco.{species}.benchmark.txt"
         conda:
-            config["conda"]["buscoclade"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade"]["yaml"]) #"../../%s" % config["conda_config"]
+            config["conda"]["buscoclade"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade"]["yaml"])
         resources:
             queue=config["busco_queue"],
             cpus=config["busco_threads"],
@@ -64,7 +64,7 @@ elif config["busco_gene_prediction_tool"] == "augustus":
         benchmark:
             benchmark_dir_path / "busco.{species}.benchmark.txt"
         conda:
-            config["conda"]["buscoclade"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade"]["yaml"]) #"../../%s" % config["conda_config"]
+            config["conda"]["buscoclade"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade"]["yaml"])
         resources:
             queue=config["busco_queue"],
             cpus=config["busco_threads"],

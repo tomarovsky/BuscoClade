@@ -22,7 +22,7 @@ if config["draw_phylotrees"]:
         benchmark:
             benchmark_dir_path / "iqtree_dna_tree_visualization.benchmark.txt"
         conda:
-            config["conda"]["buscoclade_ete3"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_ete3"]["yaml"]) #"../../%s" % config["ete3_conda_config"]
+            config["conda"]["buscoclade_ete3"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_ete3"]["yaml"])
         resources:
             queue=config["processing_queue"],
             cpus=config["processing_threads"],
@@ -53,7 +53,7 @@ if config["draw_phylotrees"]:
         benchmark:
             benchmark_dir_path / "iqtree_protein_tree_visualization.benchmark.txt"
         conda:
-            config["conda"]["buscoclade_ete3"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_ete3"]["yaml"]) #"../../%s" % config["ete3_conda_config"]
+            config["conda"]["buscoclade_ete3"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_ete3"]["yaml"])
         resources:
             queue=config["processing_queue"],
             cpus=config["processing_threads"],
@@ -82,7 +82,7 @@ if config["draw_phylotrees"]:
         benchmark:
             benchmark_dir_path / "astral_tree_visualization.benchmark.txt"
         conda:
-            config["conda"]["buscoclade_ete3"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_ete3"]["yaml"]) #"../../%s" % config["ete3_conda_config"]
+            config["conda"]["buscoclade_ete3"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_ete3"]["yaml"])
         resources:
             queue=config["processing_queue"],
             cpus=config["processing_threads"],
@@ -113,7 +113,7 @@ if config["draw_phylotrees"]:
         benchmark:
             benchmark_dir_path / "rapidnj_tree_visualization.benchmark.txt"
         conda:
-            config["conda"]["buscoclade_ete3"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_ete3"]["yaml"]) #"../../%s" % config["ete3_conda_config"]
+            config["conda"]["buscoclade_ete3"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_ete3"]["yaml"])
         resources:
             queue=config["processing_queue"],
             cpus=config["processing_threads"],
@@ -144,7 +144,7 @@ if config["draw_phylotrees"]:
         benchmark:
             benchmark_dir_path / "phylip_tree_visualization.benchmark.txt"
         conda:
-            config["conda"]["buscoclade_ete3"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_ete3"]["yaml"]) #"../../%s" % config["ete3_conda_config"]
+            config["conda"]["buscoclade_ete3"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_ete3"]["yaml"])
         resources:
             queue=config["processing_queue"],
             cpus=config["processing_threads"],
@@ -167,7 +167,7 @@ rule species_ids_plot:
         cluster_log=cluster_log_dir_path / "species_ids_plot.cluster.log",
         cluster_err=cluster_log_dir_path / "species_ids_plot.cluster.err",
     conda:
-        config["conda"]["buscoclade_ete3"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_ete3"]["yaml"]) #"../../%s" % config["ete3_conda_config"]
+        config["conda"]["buscoclade_ete3"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_ete3"]["yaml"])
     benchmark:
         benchmark_dir_path / "species_ids_plot.benchmark.txt"
     resources:
@@ -192,6 +192,8 @@ rule busco_summaries_to_tsv:
         cluster_err=cluster_log_dir_path / "busco_summaries_to_tsv.cluster.err",
     benchmark:
         benchmark_dir_path / "busco_summaries_to_tsv.benchmark.txt"
+    conda:
+        config["conda"]["buscoclade"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade"]["yaml"])
     resources:
         queue=config["processing_queue"],
         cpus=config["processing_threads"],
@@ -216,7 +218,7 @@ rule busco_histogram:
     benchmark:
         benchmark_dir_path / "busco_histogram.benchmark.txt"
     conda:
-        config["conda"]["buscoclade"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade"]["yaml"]) #"../../%s" % config["conda_config"]
+        config["conda"]["buscoclade"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade"]["yaml"])
     resources:
         queue=config["processing_queue"],
         cpus=config["processing_threads"],
