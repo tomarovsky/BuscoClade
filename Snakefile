@@ -21,6 +21,7 @@ output_dir_path = Path(config["output_dir"]).resolve()
 
 # -- Results --
 quastcore_dir_path = output_dir_path / config["quastcore_dir"]
+altref_dir_path = output_dir_path / config["altref_dir"]
 busco_dir_path = output_dir_path / config["busco_dir"]
 species_ids_dir_path = output_dir_path / config["species_ids_dir"]
 common_ids_dir_path = output_dir_path / config["common_ids_dir"]
@@ -33,9 +34,6 @@ mrbayes_dir_path = output_dir_path / config["mrbayes_dir"]
 astral_dir_path = output_dir_path / config["astral_dir"]
 rapidnj_dir_path = output_dir_path / config["rapidnj_dir"]
 phylip_dir_path = output_dir_path / config["phylip_dir"]
-
-if "species_list" not in config:
-    config["species_list"] = [f.stem for f in genome_dir_path.iterdir() if f.is_file() and f.suffix == ".fasta"]
 
 # ---- Setup filenames ----
 fasta_dna_filename = "{}.fna".format(config["alignment_file_prefix"])
@@ -55,6 +53,33 @@ phylip_tree = "{}.fna.phy.namefix.treefile".format(config["alignment_file_prefix
 
 
 # ---- Necessary functions ----
+def get_vcf_reconstruct_map(vcf_dir: Path) -> dict:
+    """Returns a dictionary where keys are species names and values are dictionaries of VCF and FASTA files."""
+    vcf_mapping = {}
+    for vcf_subdir in vcf_dir.iterdir():
+        if vcf_subdir.is_dir():
+            # Находим reference FASTA (берем первый)
+            ref_files = list(vcf_subdir.glob("*.fasta"))
+            if not ref_files:
+                continue
+            ref_file = ref_files[0]
+            ref_prefix = ref_file.stem
+            
+            for vcf_file in vcf_subdir.glob("*.vcf.gz"):
+                vcf_id = vcf_file.stem.split('.')[0]  # часть до первой точки
+                alt_name = f"{vcf_id}.{ref_prefix}.AltRef"
+                vcf_mapping[alt_name] = {
+                    'vcf': vcf_file,
+                    'reference': ref_file
+                }
+    return vcf_mapping
+
+
+def get_species_list(vcf_species: list, genome_species: list) -> list:
+    """Merges and returns final species list"""
+    return list(set(vcf_species + genome_species))
+
+
 def expand_fna_from_merged_sequences(wildcards, template, busco_blacklist=None):
     checkpoint_output = checkpoints.merged_sequences.get(**wildcards).output[0]
     N = glob_wildcards(os.path.join(checkpoint_output, "{N}.fna")).N
@@ -86,6 +111,17 @@ if busco_blacklist_path.exists() and (busco_blacklist_path.stat().st_size > 0):
 # |  the "All" rule |
 # +-----------------+
 
+# ---- Input data ----
+genome_species = [f.stem for f in genome_dir_path.glob("*.fasta") if f.is_file()]
+vcf_reconstruct_map = get_vcf_reconstruct_map(vcf_reconstruct_dir_path)
+vcf_reconstruct_species = list(vcf_reconstruct_map.keys())
+
+if "species_list" not in config:
+    config["species_list"] = get_species_list(genome_species, vcf_reconstruct_species)
+    print(config["species_list"])
+
+
+# ---- "All" rule ----
 output_files = [
     # ---- Busco ----
     expand(busco_dir_path / "{species}/short_summary_{species}.txt", species=config["species_list"]),
