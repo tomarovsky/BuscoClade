@@ -22,7 +22,7 @@ if config["iqtree_dna"]:
         benchmark:
             benchmark_dir_path / "iqtree_dna.benchmark.txt"
         conda:
-            config["conda"]["buscoclade"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade"]["yaml"])
+            config["conda"]["buscoclade_main"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_main"]["yaml"])
         resources:
             queue=config["iqtree_queue"],
             cpus=config["iqtree_threads"],
@@ -58,7 +58,7 @@ if config["iqtree_protein"]:
         benchmark:
             benchmark_dir_path / "iqtree_protein.benchmark.txt"
         conda:
-            config["conda"]["buscoclade"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade"]["yaml"])
+            config["conda"]["buscoclade_main"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_main"]["yaml"])
         resources:
             queue=config["iqtree_queue"],
             cpus=config["iqtree_threads"],

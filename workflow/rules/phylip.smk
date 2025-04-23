@@ -17,7 +17,7 @@ rule phylip_dnadist:
     benchmark:
         benchmark_dir_path / "phylip_dnadist.benchmark.txt"
     conda:
-        config["conda"]["buscoclade"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade"]["yaml"])
+        config["conda"]["buscoclade_main"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_main"]["yaml"])
     resources:
         queue=config["phylip_queue"],
         cpus=config["phylip_threads"],
@@ -48,7 +48,7 @@ rule phylip_neighbor:
     benchmark:
         benchmark_dir_path / "phylip_neighbor.benchmark.txt"
     conda:
-        config["conda"]["buscoclade"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade"]["yaml"])
+        config["conda"]["buscoclade_main"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_main"]["yaml"])
     resources:
         queue=config["phylip_queue"],
         cpus=config["phylip_threads"],

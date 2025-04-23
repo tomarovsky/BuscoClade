@@ -193,7 +193,7 @@ rule busco_summaries_to_tsv:
     benchmark:
         benchmark_dir_path / "busco_summaries_to_tsv.benchmark.txt"
     conda:
-        config["conda"]["buscoclade"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade"]["yaml"])
+        config["conda"]["buscoclade_main"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_main"]["yaml"])
     resources:
         queue=config["processing_queue"],
         cpus=config["processing_threads"],
@@ -218,7 +218,7 @@ rule busco_histogram:
     benchmark:
         benchmark_dir_path / "busco_histogram.benchmark.txt"
     conda:
-        config["conda"]["buscoclade"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade"]["yaml"])
+        config["conda"]["buscoclade_main"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_main"]["yaml"])
     resources:
         queue=config["processing_queue"],
         cpus=config["processing_threads"],
