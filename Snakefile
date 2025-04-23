@@ -208,6 +208,7 @@ rule all:
 
 
 # ---- Load rules ----
+include: "workflow/rules/vcf_reconstruct.smk"
 include: "workflow/rules/quastcore.smk"
 include: "workflow/rules/busco.smk"
 include: "workflow/rules/common_ids.smk"
