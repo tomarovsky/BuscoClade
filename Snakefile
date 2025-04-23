@@ -9,12 +9,17 @@ configfile: "config/default.yaml"
 
 
 # ---- Setup paths ----
-cluster_log_dir_path = Path(config["cluster_log_dir"])
+# -- Input --
 genome_dir_path = Path(config["genome_dir"]).resolve()
-log_dir_path = Path(config["log_dir"])
-benchmark_dir_path = Path(config["benchmark_dir"])
-output_dir_path = Path(config["output_dir"])
+vcf_reconstruct_dir_path = Path(config["vcf_reconstruct_dir"]).resolve()
 
+# -- Logs and benchmarks --
+cluster_log_dir_path = Path(config["cluster_log_dir"]).resolve()
+log_dir_path = Path(config["log_dir"]).resolve()
+benchmark_dir_path = Path(config["benchmark_dir"]).resolve()
+output_dir_path = Path(config["output_dir"]).resolve()
+
+# -- Results --
 quastcore_dir_path = output_dir_path / config["quastcore_dir"]
 busco_dir_path = output_dir_path / config["busco_dir"]
 species_ids_dir_path = output_dir_path / config["species_ids_dir"]
