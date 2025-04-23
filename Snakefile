@@ -107,9 +107,6 @@ if busco_blacklist_path.exists() and (busco_blacklist_path.stat().st_size > 0):
     busco_blacklist = pd.read_csv(busco_blacklist_path, sep="\t", header=None).squeeze()
 # ---------------------------------------------------------------------
 
-# +-----------------+
-# |  the "All" rule |
-# +-----------------+
 
 # ---- Input data ----
 genome_species = [f.stem for f in genome_dir_path.glob("*.fasta") if f.is_file()]
@@ -131,9 +128,11 @@ output_files = [
     species_ids_dir_path / "unique_species_ids.png",
     busco_dir_path / "busco_summaries.svg",
 ]
+
 if "quastcore" in config:
     if config["quastcore"]:
         output_files.append(quastcore_dir_path / "assembly_stats.csv")
+
 if "dna_alignment" in config:
     if config["dna_alignment"]:
         output_files.append(lambda w: expand_fna_from_merged_sequences(w, alignments_dir_path / "fna" / "{N}.fna", busco_blacklist=busco_blacklist))
@@ -169,6 +168,7 @@ if "dna_alignment" in config:
                         if "draw_phylotrees" in config:
                             if config["draw_phylotrees"]:
                                 output_files.append(phylip_dir_path / f"{fasta_dna_filename}.only_tree.svg")
+
 if "protein_alignment" in config:
     if config["protein_alignment"]:
         output_files.append(lambda w: expand_faa_from_merged_sequences(w, alignments_dir_path / "faa" / "{N}.faa"))
@@ -187,10 +187,12 @@ if "protein_alignment" in config:
                         if "draw_phylotrees" in config:
                             if config["draw_phylotrees"]:
                                 output_files.append(iqtree_dir_path / "faa" / f"{fasta_protein_filename}.length_and_support_tree.svg")
+
 if "mrbayes_dna" in config:
     if config["mrbayes_dna"]:  # TODO: upgrade
         output_files.append(concat_alignments_dir_path / nexus_dna_filename)
         output_files.append(mrbayes_dir_path / "fna")
+
 if "mrbayes_protein" in config:
     if config["mrbayes_protein"]:
         output_files.append(mrbayes_dir_path / "faa")
