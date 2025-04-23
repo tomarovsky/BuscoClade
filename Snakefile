@@ -99,7 +99,7 @@ def expand_faa_from_merged_sequences(wildcards, template, busco_blacklist=None):
     return expand(str(template), N=N)
 
 
-# ------------------TEMPORARY CODE!!!!!!!!!!!!! -----------------------
+# ------------------ TEMPORARY CODE!!!!!!!!!!!!! -----------------------
 # blacklist is applied at the concatenation stage
 busco_blacklist = None
 busco_blacklist_path = Path("input/BUSCO.blacklist")
