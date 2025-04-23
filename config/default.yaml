@@ -1,10 +1,14 @@
+# ---- Conda ----
 "conda":
-    "buscoclade":
-        "yaml": "workflow/envs/default.yaml"
-        "name": "buscoclade"
+    "buscoclade_main":
+        "yaml": "workflow/envs/main.yaml"
+        "name": "buscoclade_main"
     "buscoclade_ete3":
         "yaml": "workflow/envs/ete3.yaml"
         "name": "buscoclade_ete3"
+    "buscoclade_gatk":
+        "yaml": "workflow/envs/gatk.yaml"
+        "name": "buscoclade_gatk"
 
 "use_existing_envs": False
 
