@@ -58,15 +58,14 @@ def get_vcf_reconstruct_map(vcf_dir: Path) -> dict:
     vcf_mapping = {}
     for vcf_subdir in vcf_dir.iterdir():
         if vcf_subdir.is_dir():
-            # Находим reference FASTA (берем первый)
             ref_files = list(vcf_subdir.glob("*.fasta"))
             if not ref_files:
                 continue
             ref_file = ref_files[0]
             ref_prefix = ref_file.stem
-            
+
             for vcf_file in vcf_subdir.glob("*.vcf.gz"):
-                vcf_id = vcf_file.stem.split('.')[0]  # часть до первой точки
+                vcf_id = vcf_file.stem.split('.')[0]
                 alt_name = f"{vcf_id}.{ref_prefix}.AltRef"
                 vcf_mapping[alt_name] = {
                     'vcf': vcf_file,
