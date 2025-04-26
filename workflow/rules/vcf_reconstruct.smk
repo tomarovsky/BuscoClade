@@ -4,7 +4,7 @@ localrules:
 
 rule picard_index:
     input:
-        "{reference}",
+        "{reference}.fasta",
     output:
         "{reference}.dict",
     log:
@@ -51,7 +51,7 @@ rule gatk_vcf_index:
 rule gatk_altref:
     input:
         ref=lambda wc: vcf_reconstruct_map[wc.species]["reference"],
-        refidx=lambda wc: vcf_reconstruct_map[wc.species]["reference"].with_name(vcf_reconstruct_map[wc.species]["reference"].name + ".dict"),
+        refidx=lambda wc: vcf_reconstruct_map[wc.species]["reference"].with_suffix(".dict"),
         vcf=lambda wc: vcf_reconstruct_map[wc.species]["vcf"],
         vcfidx=lambda wc: vcf_reconstruct_map[wc.species]["vcf"].with_name(vcf_reconstruct_map[wc.species]["vcf"].name + ".tbi"),
     output:
