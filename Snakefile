@@ -14,10 +14,10 @@ genome_dir_path = Path(config["genome_dir"]).resolve()
 vcf_reconstruct_dir_path = Path(config["vcf_reconstruct_dir"]).resolve()
 
 # -- Logs and benchmarks --
-cluster_log_dir_path = Path(config["cluster_log_dir"]).resolve()
-log_dir_path = Path(config["log_dir"]).resolve()
-benchmark_dir_path = Path(config["benchmark_dir"]).resolve()
-output_dir_path = Path(config["output_dir"]).resolve()
+cluster_log_dir_path = Path(config["cluster_log_dir"])
+log_dir_path = Path(config["log_dir"])
+benchmark_dir_path = Path(config["benchmark_dir"])
+output_dir_path = Path(config["output_dir"])
 
 # -- Results --
 quastcore_dir_path = output_dir_path / config["quastcore_dir"]
