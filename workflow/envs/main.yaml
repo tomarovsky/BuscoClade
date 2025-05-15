@@ -1,10 +1,9 @@
-# ---- Conda config ----
 name: buscoclade
 channels:
   - conda-forge
   - bioconda
 dependencies:
-  - busco=5.8.0
+  - busco=5.5.0
   - biopython
   - prank
   - mafft
@@ -23,3 +22,5 @@ dependencies:
 #  - mrbayes
   - pip:
     - "--editable=git+https://github.com/tomarovsky/Biocrutch.git#egg=Biocrutch"
+    - argparse
+    - indexed_gzip

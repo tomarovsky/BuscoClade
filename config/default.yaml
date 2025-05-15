@@ -1,107 +1,148 @@
-conda_config: "workflow/envs/conda.yaml"
-ete3_conda_config: "workflow/envs/ete3_conda.yaml"
+# ---- Conda ----
+"conda":
+    "buscoclade_main":
+        "yaml": "workflow/envs/main.yaml"
+        "name": "buscoclade_main"
+    "buscoclade_ete3":
+        "yaml": "workflow/envs/ete3.yaml"
+        "name": "buscoclade_ete3"
+    "buscoclade_gatk":
+        "yaml": "workflow/envs/gatk.yaml"
+        "name": "buscoclade_gatk"
+
+"use_existing_envs": True # Pipeline will use pre-installed envs 
 
 # +------------------------+
 # | Pipeline configuration | # False or comment line to disable
 # +------------------------+
+
 # ---- Assembly statistics ----
-quastcore: True
+quastcore: True 
+
 # ---- Alignment ----
-dna_alignment: 'mafft'       # 'prank' or 'mafft'
+dna_alignment: 'prank'       # 'prank' or 'mafft'
 protein_alignment: False     # 'prank' or 'mafft'
+
 # ---- Filtration ----
 dna_filtration: 'gblocks'    # 'gblocks' or 'trimal'
 protein_filtration: False    # 'gblocks' or 'trimal'
+
 # ---- Рhylogenetic tree inference ----
 iqtree_dna: True
-iqtree_protein: True
+iqtree_protein: False
 mrbayes_dna: False
-mrbayes_protein: True
+mrbayes_protein: False
 astral: True # use iqtree for each dna alignment
 rapidnj: True
 phylip: True
 raxml: True
+
 # ---- Рhylogenetic tree visualization ----
 draw_phylotrees: True
 
 # +-----------------+
 # | Tool parameters |
 # +-----------------+
+# ---- VCF ----
+vcf_gatk: False # .vcf to .fasta reconstruction using gatk package and reference .fasta
+vcf2phylip: True # .vcf to concat_alignment reconstruction
+gatk_path: "" # gatk installation directory
+
 # ---- Assembly statistics ----
-quastcore_params: "-m 0 150 500 1000" # сutoffs by minimum scaffold length
+quastcore_params: "-m 0 150 500 1000" # Cutoffs by minimum scaffold length
+
 # ---- BUSCO ----
 busco_gene_prediction_tool: "metaeuk" # 'metaeuk' or 'augustus'
-busco_augustus_species: "human" # used only if busco_gene_prediction_tool == 'augustus'
-busco_dataset_path: "" # path to orthodb directory
-busco_options: "--offline"
-busco_mode: "genome"
+busco_augustus_species: "human" # Used only if busco_gene_prediction_tool == 'augustus'
+busco_dataset_path: "/mnt/tank/scratch/ponomarev/busco/saccharomycetes_odb10/" # Path to orthodb directory
+busco_options: "--offline --metaeuk_parameters='--disk-space-limit=1000M,--remove-tmp-files=1' --metaeuk_rerun_parameters='--disk-space-limit=1000M,--remove-tmp-files=1'"
+busco_mode: "genome" 
 busco_histogram_colors: "#23b4e8,#008dbf,#fbbc04,#ea4335" # per S, D, F, M BUSCOs
+
 # ---- main IDs ----
 gene_blacklist: # IDs of genes to be deleted from main_ids
   - 1155at40674 # long sequences
+
 # ---- Alignment ----
 prank_dna_params: "-codon"
 mafft_dna_params: ""
 prank_protein_params: ""
 mafft_protein_params: "--anysymbol"
+
 # ---- Filtration ----
 gblocks_dna_params: "-t=Codons"
 gblocks_protein_params: "-t=Protein"
 trimal_dna_params: "-automated1"
 trimal_protein_params: "-automated1"
+
 # ---- Concatenation of alignments ----
 alignment_file_prefix: "concat_alignment"
+
 # ---- Рhylogenetic tree inference ----
 # IQtree:
 iqtree_dna_params: "-m TESTNEW -bb 1000" # -o homo_sapiens
 iqtree_protein_params: "-m TESTNEW -bb 1000" # -o homo_sapiens
+
 # Astral:
 iqtree_per_fna_params: "-m TESTNEW -bb 1000 -keep-ident"
 nodes_filtrataion_by_support: 70
 astral_params: "--branch-annotate 2 --reps 1000"
+
 # MrBayes:
 mrbayes_dna_params: ""
 mrbayes_protein_params: ""
 mrbayes_block: "workflow/envs/mrbayes.block"
-mrbayes_path: # path of MrBayes binary file
+mrbayes_path: # Path of MrBayes binary file
+
 # RapidNJ
 rapidnj_params: "-b 1000"
+
 # PHYLIP
-phylip_dnadist_params: "D\n" # use 'D\n' to set model to 'Kimura 2-parameter'. F84 model (default) if "".
-phylip_neighbor_params: "" # use 'N\n' to set UPGMA. NJ (default) if "".
+phylip_dnadist_params: "D\n" # Use 'D\n' to set model to 'Kimura 2-parameter'. F84 model (default) if "".
+phylip_neighbor_params: "" # Use 'N\n' to set UPGMA. NJ (default) if "".
 
 #RAXML
 raxml_params: "--model GTR+G --bs-trees 100"
+
 # ---- Рhylogenetic tree visualization ----
-tree_visualization_params: "" # "--outgroup Homo_sapiens" or "--outgroup species_1,species_2"
+tree_visualization_params: "" # Specify vizualisation outgroup as it should be named "--outgroup Homo sapiens" or "--outgroup species 1,species 2"
 
 # +---------------------+
 # | Directory structure |
 # +---------------------+
-genome_dir: "genomes"
-output_dir: "results"
-quastcore_dir: "assembly_stats"
-busco_dir: "busco"
+# ---- Input ----
+genome_dir: "input/genomes/"
+vcf_reconstruct_dir: "input/vcf_reconstruct/"
+
+# ---- Output ----
+output_dir: "results/"
+altref_dir: "altref_genomes/"
+quastcore_dir: "assembly_stats/"
+busco_dir: "busco/"
 main_ids_dir: "ids/"
-species_ids_dir: "ids/species_ids"
-common_ids_dir: "ids/common_ids"
-merged_sequences_dir: "ids/merged_sequences"
+species_ids_dir: "ids/species_ids/"
+common_ids_dir: "ids/common_ids/"
+merged_sequences_dir: "ids/merged_sequences/"
 alignments_dir: "alignments/raw/"
 filtered_alignments_dir: "alignments/filtered/"
-concat_alignments_dir: "concat_alignments"
-iqtree_dir: "phylogeny/iqtree"
-mrbayes_dir: "phylogeny/mrbayes"
-astral_dir: "phylogeny/astral"
-rapidnj_dir: "phylogeny/rapidnj"
-phylip_dir: "phylogeny/phylip"
+concat_alignments_dir: "concat_alignments/"
+iqtree_dir: "phylogeny/iqtree/"
+mrbayes_dir: "phylogeny/mrbayes/"
+astral_dir: "phylogeny/astral/"
+rapidnj_dir: "phylogeny/rapidnj/"
+phylip_dir: "phylogeny/phylip/"
 raxml_dir: "phylogeny/raxml"
-log_dir: "logs"
-cluster_log_dir: "cluster_logs"
-benchmark_dir: "benchmarks"
+
+log_dir: "logs/"
+cluster_log_dir: "cluster_logs/"
+benchmark_dir: "benchmarks/"
 
 # +-----------+
-# | Resources |
+# | Resources | 
 # +-----------+
+
+# NOTE : Be aware of Snakemake parallelization when specifying resources
+
 # ---- Slurm partition ----
 busco_queue: "main"
 alignment_queue: "main"
@@ -115,34 +156,35 @@ raxml_queue: "main"
 processing_queue: "main"
 
 # ---- Tool threads ----
-busco_threads: 20 # Для млеков около 30-60, если есть ресурсы (но не обязательно)
-mafft_threads: 2
-prank_threads: 1
-gblocks_threads: 2
-trimal_threads: 2
-iqtree_threads: 16
-mrbayes_threads: 16
-iqtree_per_fna_threads: 8
-astral_threads: 8
-rapidnj_threads: 8
-phylip_threads: 2
+busco_threads: 40 
+mafft_threads: 8
+prank_threads: 8
+gblocks_threads: 8
+trimal_threads: 8
+iqtree_threads: 40
+mrbayes_threads: 40
+iqtree_per_fna_threads: 40
+astral_threads: 40
+rapidnj_threads: 40
+phylip_threads: 40
 raxml_threads: 16
-processing_threads: 2
+processing_threads: 20
 
 # ---- Tool memory ----
-busco_mem_mb: 10000
-mafft_mem_mb: 2000
-prank_mem_mb: 2000
-gblocks_mem_mb: 2000
-trimal_mem_mb: 2000
-iqtree_mem_mb: 10000
+busco_mem_mb: 120000
+mafft_mem_mb: 20000
+prank_mem_mb: 20000
+gblocks_mem_mb: 20000
+trimal_mem_mb: 20000
+iqtree_mem_mb: 40000
 mrbayes_mem_mb: 10000
-iqtree_per_fna_mem_mb: 10000
+iqtree_per_fna_mem_mb: 20000
 astral_mem_mb: 10000
-rapidnj_mem_mb: 8000
-phylip_mem_mb: 4000
+rapidnj_mem_mb: 40000
+phylip_mem_mb: 40000
+raxml_mem_mb: 40000
 raxml_mem_mb: 10000
-processing_mem_mb: 2000
+processing_mem_mb: 20000
 
 # ---- Tool time ----
 busco_time: "150:00:00"
@@ -153,9 +195,9 @@ trimal_time: "10:00:00"
 iqtree_time: "100:00:00"
 mrbayes_time: "100:00:00"
 iqtree_per_fna_time: "10:00:00"
-astral_time: "5:00:00"
-rapidnj_time: "5:00:00"
-phylip_time: "5:00:00"
+astral_time: "50:00:00"
+rapidnj_time: "150:00:00"
+phylip_time: "50:00:00"
 raxml_time: "5:00:00"
 processing_time: "5:00:00"
 

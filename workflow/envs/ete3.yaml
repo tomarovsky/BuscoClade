@@ -10,3 +10,4 @@ dependencies:
   - ete3
   - pip:
     - supervenn
+    - regex

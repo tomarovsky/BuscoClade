@@ -1,8 +1,16 @@
 #!/usr/bin/env python3
 __author__ = 'tomarovsky'
-from ete3 import TextFace, Tree, faces, AttrFace, TreeStyle, NodeStyle
+from ete3 import TextFace, Tree, faces, AttrFace, TreeStyle, NodeStyle, CircleFace
 from argparse import ArgumentParser
+import re
 
+def format_name(name):
+    name = re.sub(r'(GCA|GCF)_', r'\1@', name)
+    name = name.replace('_', ' ')
+    name = name.replace('GCA@', 'GCA_').replace('GCF@', 'GCF_')
+    name = re.sub(r'(\d) (\d)', r'\1_\2', name)
+    
+    return name
 
 def mylayout(node):
     if node.is_leaf():
@@ -14,17 +22,21 @@ def mylayout(node):
         node.img_style["shape"] = "circle"
         node.img_style["fgcolor"] = "Black"
     else:
-        node.img_style["shape"] = "circle"
-        node.img_style["size"] = 5
-        if node.support > 90:
-            node.img_style["fgcolor"] = "LimeGreen"
-        elif node.support > 70:
-            node.img_style["fgcolor"] = '#008cf0'
-        elif node.support > 50:
-            node.img_style["fgcolor"] = '#883ac2'
+        support_value = node.support
+        if support_value > 90:
+            color = "LimeGreen"
+        elif support_value > 70:
+            color = "#008cf0"
+        elif support_value > 50:
+            color = "#883ac2"
         else:
-            node.img_style["fgcolor"] = '#ff0000'
-
+            color = "#ff0000"
+        
+        support_circle = CircleFace(radius=3, color=color, style="circle")
+        faces.add_face_to_node(support_circle, node, column=0, position="float")
+        node.img_style["size"] = 0 
+        
+        
 
 def export_legend(palette):
     legend = TreeStyle()
@@ -39,11 +51,12 @@ def export_legend(palette):
 
 
 def main():
-    palette = {"90": "LimeGreen", "70": '#008cf0', "50": '#883ac2', "<50": '#ff0000'}
+    palette = {"91 - 100": "LimeGreen", "71-90": '#008cf0', "51-70": '#883ac2', "<50": '#ff0000'}
     
     t = Tree(args.input)
     for i in t.get_leaves():
-        i.name = i.name.replace("_", " ").replace("GCA ", "GCA_").replace("GCF ", "GCF_")
+        i.name = format_name(i.name)
+        #i.name = i.name.replace("_", " ").replace("GCA ", "GCA_").replace("GCF ", "GCF_")
     if args.outgroup:
         outgroup_species = args.outgroup.split(',')
         if len(outgroup_species) == 1:
@@ -59,7 +72,7 @@ def main():
     ts.layout_fn = mylayout
     ts.show_scale = True
     ts.show_leaf_name = False
-    ts.legend_position = 4
+    ts.legend_position = 1
     ts.legend = export_legend(palette).legend
 
     for n in t.traverse():
@@ -73,21 +86,25 @@ def main():
     ts.show_branch_length = True
     ts.show_branch_support = True
     ts.branch_vertical_margin = -12
+    t.ladderize(direction=1)
     t.render(f"{args.output}.length_and_support_tree.png", w=3000, units="px", tree_style=ts)
 
     ts.show_branch_length = False
     ts.show_branch_support = True
     ts.branch_vertical_margin = -4
+    t.ladderize(direction=1)
     t.render(f"{args.output}.only_support_tree.png", w=3000, units="px", tree_style=ts)
 
     ts.show_branch_length = False
     ts.show_branch_support = False
     ts.branch_vertical_margin = 0
+    t.ladderize(direction=1)
     t.render(f"{args.output}.only_tree.png", w=6000, units="px", tree_style=ts)
 
     ts.show_branch_length = False
     ts.show_branch_support = False
     ts.branch_vertical_margin = 0
+    t.ladderize(direction=1)
     t.render(f"{args.output}.dots.png", w=6000, units="px", tree_style=ts)
 
 

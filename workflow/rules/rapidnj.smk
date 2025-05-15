@@ -12,7 +12,7 @@ rule rapidnj_tree:
     benchmark:
         benchmark_dir_path / "rapidnj_tree.benchmark.txt"
     conda:
-        "../../%s" % config["conda_config"]
+        config["conda"]["buscoclade"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade"]["yaml"])
     resources:
         queue=config["rapidnj_queue"],
         cpus=config["rapidnj_threads"],

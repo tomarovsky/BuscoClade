@@ -19,7 +19,7 @@ if config["raxml"]:
         benchmark:
             benchmark_dir_path / "raxml.benchmark.txt",
         conda:
-            "../../%s" % config["conda_config"],
+            config["conda"]["buscoclade"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade"]["yaml"])
         resources:
             queue=config["raxml_queue"],
             cpus=config["raxml_threads"],
@@ -44,7 +44,7 @@ if config["raxml"]:
         benchmark:
             benchmark_dir_path / "raxml.benchmark.txt",
         conda:
-            "../../%s" % config["conda_config"],
+            config["conda"]["buscoclade"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade"]["yaml"])
         resources:
             queue=config["raxml_queue"],
             cpus=config["raxml_threads"],
