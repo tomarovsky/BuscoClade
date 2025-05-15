@@ -27,6 +27,7 @@ if config["vcf_gatk"]:
             "1> {log.std} 2>&1" 
 
 
+
 rule gatk_vcf_index:
     input:
         vcf="{vcf_dir}/{vcf}",
