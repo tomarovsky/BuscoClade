@@ -27,100 +27,108 @@ if config["vcf_gatk"]:
             "1> {log.std} 2>&1" 
 
 
-    rule gatk_vcf_index:
-        input:
-            vcf="{vcf}",
-        output:
-            tbi="{vcf}.tbi",
-            sample_list=temp("{vcf}.sample_list.txt"),
-        params:
-            gatk_path=config["gatk_path"],
-        log:
-            std=log_dir_path / "gatk_vcf_index.{vcf}.log",
-            cluster_log=cluster_log_dir_path / "gatk_vcf_index.{vcf}.cluster.log",
-            cluster_err=cluster_log_dir_path / "gatk_vcf_index.{vcf}.cluster.err",
-        benchmark:
-            benchmark_dir_path / "gatk_vcf_index.{vcf}.benchmark.txt"
-        conda:
-            config["conda"]["buscoclade_gatk"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_gatk"]["yaml"])
-        resources:
-            queue=config["processing_queue"],
-            cpus=config["processing_threads"],
-            time=config["processing_time"],
-            mem_mb=config["processing_mem_mb"],
-        shell:
-            """
-            {params.gatk_path}/gatk --java-options -Xmx{resources.mem_mb}m IndexFeatureFile -I {input.vcf}
+rule gatk_vcf_index:
+    input:
+        vcf="{vcf_dir}/{vcf}",
+    output:
+        tbi="{vcf_dir}/{vcf}.tbi",
+        sample_list=temp("{vcf_dir}/{vcf}.sample_list.txt"),
+    params:
+        gatk_path=config["gatk_path"],
+    log:
+        std_gatk= "{vcf_dir}/gatk_vcf_index.{vcf}.log",
+        std_bcf= "{vcf_dir}/gatk_vcf_index.{vcf}.bcf.log",
+        std_grep= "{vcf_dir}/gatk_vcf_index.{vcf}.grep.log",
+        cluster_log="{vcf_dir}/gatk_vcf_index.{vcf}.cluster.log",
+        cluster_err="{vcf_dir}/gatk_vcf_index.{vcf}.cluster.err",
+    benchmark:
+        "{vcf_dir}/gatk_vcf_index.{vcf}.benchmark.txt"
+    conda:
+        config["conda"]["buscoclade_gatk"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_gatk"]["yaml"])
+    resources:
+        queue=config["processing_queue"],
+        cpus=config["processing_threads"],
+        time=config["processing_time"],
+        mem_mb=config["processing_mem_mb"],
+    shell:
+        """
+        {params.gatk_path}/gatk --java-options -Xmx{resources.mem_mb}m IndexFeatureFile -I {input.vcf} > {log.std_gatk} 2>&1; 
+        bcftools query -l {input.vcf} 2>{log.std_bcf}|
+        grep -v '^$' > {output.sample_list} 2>{log.std_grep}; 
+        """
+
+checkpoint vcf_separation:
+    input:
+        vcf="{vcf_dir}/{vcf}",
+        tbi="{vcf_dir}/{vcf}.tbi",
+        sample_list="{vcf_dir}/{vcf}.sample_list.txt",
+    output:
+        separated="{vcf_dir}/{vcf}.separation.done",
+    params:
+        gatk_path=config["gatk_path"],
+        vcf_basename=lambda wildcards: os.path.basename(wildcards.vcf).replace('.vcf.gz', ''),
+        output_dir=lambda wildcards: os.path.dirname(wildcards.vcf),
+        original_vcf_dir="results/original_vcf",
+    log:
+        std="{vcf_dir}/vcf_separation.{vcf}.log",
+        std_bcf_view="{vcf_dir}/vcf_separation.{vcf}.bcf_view.log",
+        std_bcf_filter="{vcf_dir}/vcf_separation.{vcf}.bcf_filter.log",
+        std_zip="{vcf_dir}/vcf_separation.{vcf}.zip.log",
+        std_tabix="{vcf_dir}/vcf_separation.{vcf}.tabix.log",
+        std_iff="{vcf_dir}/vcf_separation.{vcf}.iff.log",
+        cluster_log="{vcf_dir}/vcf_separation.{vcf}.cluster.log",
+        cluster_err="{vcf_dir}/vcf_separation.{vcf}.cluster.err",
+    benchmark:
+        "{vcf_dir}/vcf_separation.{vcf}.benchmark.txt"
+    conda:
+        config["conda"]["buscoclade_gatk"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_gatk"]["yaml"])
+    resources:
+        queue=config["processing_queue"],
+        cpus=config["processing_threads"],
+        time=config["processing_time"],
+        mem_mb=config["processing_mem_mb"],
+    shell:
+        r"""
+        SAMPLES=($(grep -v '^$' {input.sample_list}))
+
+        for SAMPLE in "${{SAMPLES[@]}}"; do
+
+            bcftools view \
+                --threads {resources.cpus} \
+                --min-ac 1 \
+                -s "$SAMPLE" \
+                -Ov -o "{params.output_dir}/$SAMPLE.{params.vcf_basename}.unfiltered.vcf" \
+                {input.vcf} > {log.std_bcf_view} 2>&1
+
+            bcftools filter \
+                -e 'ALT ~ "[^ATCGN]"' \
+                "{params.output_dir}/$SAMPLE.{params.vcf_basename}.unfiltered.vcf" \
+                > "{params.output_dir}/$SAMPLE.{params.vcf_basename}.filtered.vcf" 2>{log.std_bcf_filter}
+
+            bgzip -c "{params.output_dir}/$SAMPLE.{params.vcf_basename}.filtered.vcf" \
+                > "{params.output_dir}/$SAMPLE.{params.vcf_basename}.vcf.gz"  2>{log.std_zip}
+
+            tabix -p vcf "{params.output_dir}/$SAMPLE.{params.vcf_basename}.vcf.gz" > {log.std_tabix} 2>&1
+
+            {params.gatk_path}/gatk --java-options -Xmx{resources.mem_mb}m \
+                IndexFeatureFile -I "{params.output_dir}/$SAMPLE.{params.vcf_basename}.vcf.gz" >{log.std_iff} 2>&1
             
-            bcftools query -l {input.vcf} | grep -v '^$' > {output.sample_list}
-            """
+            rm -f \
+                "{params.output_dir}/$SAMPLE.{params.vcf_basename}.unfiltered.vcf" \
+                "{params.output_dir}/$SAMPLE.{params.vcf_basename}.filtered.vcf"
 
-    checkpoint vcf_separation:
-        input:
-            vcf="{vcf}",
-            tbi="{vcf}.tbi",
-            sample_list="{vcf}.sample_list.txt",
-        output:
-            separated=temp("{vcf}.separation.done"),
-        params:
-            gatk_path=config["gatk_path"],
-            vcf_basename=lambda wildcards: os.path.basename(wildcards.vcf).replace('.vcf.gz', ''),
-            output_dir=lambda wildcards: os.path.dirname(wildcards.vcf),
-            original_vcf_dir="results/original_vcf",
-        log:
-            std=log_dir_path / "vcf_separation.{vcf}.log",
-            cluster_log=cluster_log_dir_path / "vcf_separation.{vcf}.cluster.log",
-            cluster_err=cluster_log_dir_path / "vcf_separation.{vcf}.cluster.err",
-        benchmark:
-            benchmark_dir_path / "vcf_separation.{vcf}.benchmark.txt"
-        conda:
-            config["conda"]["buscoclade_gatk"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_gatk"]["yaml"])
-        resources:
-            queue=config["processing_queue"],
-            cpus=config["processing_threads"],
-            time=config["processing_time"],
-            mem_mb=config["processing_mem_mb"],
-        shell:
-            r"""
-            SAMPLES=($(grep -v '^$' {input.sample_list}))
+        done
 
-            for SAMPLE in "${{SAMPLES[@]}}"; do
+        touch {output.separated}
+        """
 
-                bcftools view \
-                    --threads {resources.cpus} \
-                    --min-ac 1 \
-                    -s "$SAMPLE" \
-                    -Ov -o "{params.output_dir}/$SAMPLE.{params.vcf_basename}.unfiltered.vcf" \
-                    {input.vcf}
-
-                bcftools filter \
-                    -e 'ALT ~ "[^ATCGN]"' \
-                    "{params.output_dir}/$SAMPLE.{params.vcf_basename}.unfiltered.vcf" \
-                    > "{params.output_dir}/$SAMPLE.{params.vcf_basename}.filtered.vcf"
-
-                bgzip -c "{params.output_dir}/$SAMPLE.{params.vcf_basename}.filtered.vcf" \
-                    > "{params.output_dir}/$SAMPLE.{params.vcf_basename}.vcf.gz"
-
-                tabix -p vcf "{params.output_dir}/$SAMPLE.{params.vcf_basename}.vcf.gz"
-
-                {params.gatk_path}/gatk --java-options -Xmx{resources.mem_mb}m \
-                    IndexFeatureFile -I "{params.output_dir}/$SAMPLE.{params.vcf_basename}.vcf.gz"
-                
-                rm -f \
-                    "{params.output_dir}/$SAMPLE.{params.vcf_basename}.unfiltered.vcf" \
-                    "{params.output_dir}/$SAMPLE.{params.vcf_basename}.filtered.vcf"
-
-            done
-
-            touch {output.separated}
-            """
-
-
+if config["vcf_gatk"]:
     rule gatk_altref:
         input:
             ref=lambda wc: vcf_reconstruct_map[wc.species]["reference"],
             refidx=lambda wc: vcf_reconstruct_map[wc.species]["reference"].with_suffix(".dict"),
-            vcf=lambda wc: checkpoints.vcf_separation.get(vcf=vcf_reconstruct_map[wc.species]["vcf"]).output.separated,
+            vcf=lambda wc: checkpoints.vcf_separation.get(vcf=Path(vcf_reconstruct_map[wc.species]["vcf"]).name,
+                                                          vcf_dir=Path(vcf_reconstruct_map[wc.species]["vcf"]).parent).output.separated,
             vcfidx=lambda wc: vcf_reconstruct_map[wc.species]["vcf"].with_name(vcf_reconstruct_map[wc.species]["vcf"].name + ".tbi"),
         output:
             altref_dir_path / "{species}.fasta",
