@@ -27,13 +27,12 @@ if config["vcf_gatk"]:
             "1> {log.std} 2>&1" 
 
 
-
 rule gatk_vcf_index:
     input:
         vcf="{vcf_dir}/{vcf}",
     output:
         tbi="{vcf_dir}/{vcf}.tbi",
-        sample_list=temp("{vcf_dir}/{vcf}.sample_list.txt"),
+        sample_list="{vcf_dir}/{vcf}.sample_list.txt",
     params:
         gatk_path=config["gatk_path"],
     log:
@@ -68,8 +67,8 @@ checkpoint vcf_separation:
     params:
         gatk_path=config["gatk_path"],
         vcf_basename=lambda wildcards: os.path.basename(wildcards.vcf).replace('.vcf.gz', ''),
-        output_dir=lambda wildcards: os.path.dirname(wildcards.vcf),
         original_vcf_dir="results/original_vcf",
+        reference_prefix=lambda wc: list(Path(wc.vcf_dir).glob("*.fasta"))[0].stem
     log:
         std="{vcf_dir}/vcf_separation.{vcf}.log",
         std_bcf_view="{vcf_dir}/vcf_separation.{vcf}.bcf_view.log",
@@ -98,25 +97,25 @@ checkpoint vcf_separation:
                 --threads {resources.cpus} \
                 --min-ac 1 \
                 -s "$SAMPLE" \
-                -Ov -o "{params.output_dir}/$SAMPLE.{params.vcf_basename}.unfiltered.vcf" \
+                -Ov -o "{wildcards.vcf_dir}/$SAMPLE.{reference_prefix}.{params.vcf_basename}.unfiltered.vcf" \
                 {input.vcf} > {log.std_bcf_view} 2>&1
 
             bcftools filter \
                 -e 'ALT ~ "[^ATCGN]"' \
-                "{params.output_dir}/$SAMPLE.{params.vcf_basename}.unfiltered.vcf" \
-                > "{params.output_dir}/$SAMPLE.{params.vcf_basename}.filtered.vcf" 2>{log.std_bcf_filter}
+                "{wildcards.vcf_dir}/$SAMPLE.{reference_prefix}.{params.vcf_basename}.unfiltered.vcf" \
+                > "{wildcards.vcf_dir}/$SAMPLE.{reference_prefix}.{params.vcf_basename}.filtered.vcf" 2>{log.std_bcf_filter}
 
-            bgzip -c "{params.output_dir}/$SAMPLE.{params.vcf_basename}.filtered.vcf" \
-                > "{params.output_dir}/$SAMPLE.{params.vcf_basename}.vcf.gz"  2>{log.std_zip}
+            bgzip -c "{wildcards.vcf_dir}/$SAMPLE.{reference_prefix}.{params.vcf_basename}.filtered.vcf" \
+                > "{wildcards.vcf_dir}/$SAMPLE.{reference_prefix}.{params.vcf_basename}.vcf.gz"  2>{log.std_zip}
 
-            tabix -p vcf "{params.output_dir}/$SAMPLE.{params.vcf_basename}.vcf.gz" > {log.std_tabix} 2>&1
+            tabix -p vcf "{wildcards.vcf_dir}/$SAMPLE.{reference_prefix}.{params.vcf_basename}.vcf.gz" > {log.std_tabix} 2>&1
 
             {params.gatk_path}/gatk --java-options -Xmx{resources.mem_mb}m \
-                IndexFeatureFile -I "{params.output_dir}/$SAMPLE.{params.vcf_basename}.vcf.gz" >{log.std_iff} 2>&1
+                IndexFeatureFile -I "{wildcards.vcf_dir}/$SAMPLE.{reference_prefix}.{params.vcf_basename}.vcf.gz" >{log.std_iff} 2>&1
             
             rm -f \
-                "{params.output_dir}/$SAMPLE.{params.vcf_basename}.unfiltered.vcf" \
-                "{params.output_dir}/$SAMPLE.{params.vcf_basename}.filtered.vcf"
+                "{wildcards.vcf_dir}/$SAMPLE.{reference_prefix}.{params.vcf_basename}.unfiltered.vcf" \
+                "{wildcards.vcf_dir}/$SAMPLE.{reference_prefix}.{params.vcf_basename}.filtered.vcf"
 
         done
 
@@ -128,8 +127,10 @@ if config["vcf_gatk"]:
         input:
             ref=lambda wc: vcf_reconstruct_map[wc.species]["reference"],
             refidx=lambda wc: vcf_reconstruct_map[wc.species]["reference"].with_suffix(".dict"),
-            vcf=lambda wc: checkpoints.vcf_separation.get(vcf=Path(vcf_reconstruct_map[wc.species]["vcf"]).name,
-                                                          vcf_dir=Path(vcf_reconstruct_map[wc.species]["vcf"]).parent).output.separated,
+            checkpoint=lambda wc: checkpoints.vcf_separation.get(vcf=Path(vcf_reconstruct_map[wc.species]["vcf"]).name,
+                                                                 vcf_dir=Path(vcf_reconstruct_map[wc.species]["vcf"]).parent).output.separated,
+            vcf=lambda wc: "%s/{species}.%s.vcf.gz" % (Path(vcf_reconstruct_map[wc.species]["vcf"]).parent,
+                                                             Path(vcf_reconstruct_map[wc.species]["vcf"]).name.replace('.vcf.gz', '')),
             vcfidx=lambda wc: vcf_reconstruct_map[wc.species]["vcf"].with_name(vcf_reconstruct_map[wc.species]["vcf"].name + ".tbi"),
         output:
             altref_dir_path / "{species}.fasta",
@@ -152,8 +153,6 @@ if config["vcf_gatk"]:
         shell:
             " {params.gatk_path}/gatk --java-options -Xmx{resources.mem_mb}m FastaAlternateReferenceMaker "
             " --output {output} --reference {input.ref} --variant {input.vcf} --showHidden true --use-iupac-sample {params.sample} 1> {log.std} 2>&1; "
-
-
 
 
     checkpoint move_altref_to_genomes_dir:
