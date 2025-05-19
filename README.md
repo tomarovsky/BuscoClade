@@ -3,7 +3,7 @@
 [![Snakemake](https://img.shields.io/badge/snakemake-<8.0-brightgreen.svg)](https://snakemake.github.io)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-# BuscoClade Pipeline Documentation
+# BuscoClade Pipeline
 
 **BuscoClade** is a **Snakemake**-based workflow that constructs species phylogenies using *BUSCO* (Benchmarking Universal Single-Copy Orthologs). It runs multiple analysis stages—from preparing inputs and running BUSCO on each genome, through multiple-sequence alignment (MSA), trimming, and tree-building—to produce a final phylogenetic tree and related visualizations. BuscoClade is organized as modular Snakemake rules; each rule corresponds to a step (e.g. alignment, filtering, tree inference). Snakemake automatically infers dependencies between rules based on input/output files. By leveraging Snakemake and Conda, BuscoClade ensures a reproducible, scalable pipeline that can run locally or on an HPC cluster with minimal user effort.
 
