@@ -1,9 +1,9 @@
-name: buscoclade
+name: buscoclade_main
 channels:
   - conda-forge
   - bioconda
 dependencies:
-  - busco=5.5.0
+  - busco=5.8.0
   - biopython
   - prank
   - mafft

@@ -16,7 +16,7 @@ if "dna_alignment" in config:
             benchmark:
                 benchmark_dir_path / "prank_dna.{N}.benchmark.txt"
             conda:
-                config["conda"]["buscoclade"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade"]["yaml"])
+                config["conda"]["buscoclade_main"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_main"]["yaml"])
             resources:
                 queue=config["alignment_queue"],
                 cpus=config["prank_threads"],
@@ -43,7 +43,7 @@ if "dna_alignment" in config:
             benchmark:
                 benchmark_dir_path / "mafft_dna.{N}.benchmark.txt"
             conda:
-                config["conda"]["buscoclade"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade"]["yaml"])
+                config["conda"]["buscoclade_main"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_main"]["yaml"])
             resources:
                 queue=config["alignment_queue"],
                 cpus=config["mafft_threads"],

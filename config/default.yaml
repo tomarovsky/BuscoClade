@@ -144,6 +144,9 @@ benchmark_dir: "benchmarks/"
 # NOTE : Be aware of Snakemake parallelization when specifying resources
 
 # ---- Slurm partition ----
+
+vcf_separation_queue: "main"
+
 busco_queue: "main"
 alignment_queue: "main"
 filtration_queue: "main"
@@ -156,6 +159,7 @@ raxml_queue: "main"
 processing_queue: "main"
 
 # ---- Tool threads ----
+vcf_separation_threads: 4
 busco_threads: 40 
 mafft_threads: 8
 prank_threads: 8
@@ -171,6 +175,7 @@ raxml_threads: 16
 processing_threads: 20
 
 # ---- Tool memory ----
+vcf_separation_mem_mb: 10000
 busco_mem_mb: 120000
 mafft_mem_mb: 20000
 prank_mem_mb: 20000
@@ -187,6 +192,7 @@ raxml_mem_mb: 10000
 processing_mem_mb: 20000
 
 # ---- Tool time ----
+vcf_separation_time: "10:00:00"
 busco_time: "150:00:00"
 mafft_time: "10:00:00"
 prank_time: "100:00:00"

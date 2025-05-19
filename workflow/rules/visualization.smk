@@ -221,7 +221,7 @@ if config["vcf2phylip"] != True:
             cluster_log=cluster_log_dir_path / "busco_summaries_to_tsv.cluster.log",
             cluster_err=cluster_log_dir_path / "busco_summaries_to_tsv.cluster.err",
         conda:
-            config["conda"]["buscoclade"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade"]["yaml"])
+            config["conda"]["buscoclade_main"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_main"]["yaml"])
         resources:
             queue=config["processing_queue"],
             cpus=config["processing_threads"],
@@ -246,7 +246,7 @@ if config["vcf2phylip"] != True:
         benchmark:
             benchmark_dir_path / "busco_histogram.benchmark.txt"
         conda:
-            config["conda"]["buscoclade"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade"]["yaml"])
+            config["conda"]["buscoclade_main"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_main"]["yaml"])
         resources:
             queue=config["processing_queue"],
             cpus=config["processing_threads"],

@@ -14,10 +14,10 @@ genome_dir_path = Path(config["genome_dir"]).resolve()
 vcf_reconstruct_dir_path = Path(config["vcf_reconstruct_dir"]).resolve()
 
 # -- Logs and benchmarks --
-cluster_log_dir_path = Path(config["cluster_log_dir"])
-log_dir_path = Path(config["log_dir"])
-benchmark_dir_path = Path(config["benchmark_dir"])
-output_dir_path = Path(config["output_dir"])
+cluster_log_dir_path = Path(config["cluster_log_dir"]).resolve()
+log_dir_path = Path(config["log_dir"]).resolve()
+benchmark_dir_path = Path(config["benchmark_dir"]).resolve()
+output_dir_path = Path(config["output_dir"]).resolve()
 
 # -- Results --
 quastcore_dir_path = output_dir_path / config["quastcore_dir"]
@@ -55,8 +55,8 @@ raxml_tree = "{}.fna.raxml.treefile".format(config["alignment_file_prefix"])
 
 
 # ---- Necessary functions ----
-def get_vcf_reconstruct_map(vcf_dir: Path) -> dict:
-    """Returns a dictionary where keys are species names and values are dictionaries of VCF and FASTA files."""
+"""def get_vcf_reconstruct_map(vcf_dir: Path) -> dict:
+    Returns a dictionary where keys are species names and values are dictionaries of VCF and FASTA files.
     vcf_mapping = {}
     for vcf_subdir in vcf_dir.iterdir():
         if vcf_subdir.is_dir():
@@ -73,7 +73,56 @@ def get_vcf_reconstruct_map(vcf_dir: Path) -> dict:
                     'vcf': vcf_file,
                     'reference': ref_file
                 }
+    return vcf_mapping """
+
+def get_vcf_reconstruct_map(vcf_dir: Path) -> dict:
+    """Returns a dictionary where keys are species names and values are dictionaries of VCF and FASTA files."""
+    import gzip
+
+    vcf_mapping = {}
+    for vcf_subdir in vcf_dir.iterdir():
+        if vcf_subdir.is_dir():
+            
+            ref_files = list(vcf_subdir.glob("*.fasta"))
+
+            if not ref_files:
+                continue
+            vcf_mapping[vcf_subdir] = {}
+            ref_file = ref_files[0]
+            ref_prefix = ref_file.stem
+            
+            vcf_mapping[vcf_subdir]["reference_prefix"] = ref_prefix
+            vcf_mapping[vcf_subdir]["vcf_prefix_list"] = [vcf_file.name.replace(".vcf.gz", "") for vcf_file in vcf_subdir.glob("*.vcf.gz")]
+            vcf_mapping[vcf_subdir]["sample_dict"] = {}
+
+            for vcf_prefix in vcf_mapping[vcf_subdir]["vcf_prefix_list"]:
+                vcf_file = vcf_subdir / f"{vcf_prefix}.vcf.gz"
+
+                sample_names = []
+                with gzip.open(vcf_file, "rt") as f:
+                    for line in f:
+                        if line.startswith("#CHROM"):
+                            parts = line.strip().split("\t")
+                            sample_names = parts[9:]
+                            break
+
+                vcf_mapping[vcf_subdir]["sample_dict"][vcf_prefix] = sample_names
+
     return vcf_mapping
+
+
+def vcf_species(vcf_reconstruct_map):
+    vcf_species_list = []
+    vcf_species_location_dict = {}
+    for vcf_subdir in vcf_reconstruct_map:
+        for vcf_prefix in vcf_reconstruct_map[vcf_subdir]['vcf_prefix_list']:
+            for sample_name in vcf_reconstruct_map[vcf_subdir]['sample_dict'][vcf_prefix]:
+                vcf_species_list.append(f"{sample_name}.{vcf_prefix}.{vcf_reconstruct_map[vcf_subdir]['reference_prefix']}")
+                vcf_species_location_dict[vcf_species_list[-1]] = vcf_subdir
+    return vcf_species_list, vcf_species_location_dict
+# altref_dir_path / "{sample}.{vcf_prefix}.{reference}.fasta",
+# {vcf_subfolder: {"vcf_prefix_list": [], "reference_prefix": "reference_prefix", "sample_dict": {"vcf_prefix": []}}, }
+#{"{sample}.{vcf_prefix}.{reference}": vcf_subfolder}
 
 
 def get_species_list(vcf_species: list, genome_species: list) -> list:
@@ -108,11 +157,11 @@ if busco_blacklist_path.exists() and (busco_blacklist_path.stat().st_size > 0):
     busco_blacklist = pd.read_csv(busco_blacklist_path, sep="\t", header=None).squeeze()
 # ---------------------------------------------------------------------
 
-
 # ---- Input data ----
 genome_species = [f.stem for f in genome_dir_path.glob("*.fasta") if f.is_file()]
 vcf_reconstruct_map = get_vcf_reconstruct_map(vcf_reconstruct_dir_path)
-vcf_reconstruct_species = list(vcf_reconstruct_map.keys())
+vcf_reconstruct_species, vcf_species_location_dict = vcf_species(vcf_reconstruct_map)
+
 
 if "species_list" not in config:
     config["species_list"] = get_species_list(genome_species, vcf_reconstruct_species)

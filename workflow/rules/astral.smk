@@ -23,7 +23,7 @@ if config["vcf2phylip"] != True:
             benchmark:
                 benchmark_dir_path / "iqtree_per_fna.{N}.benchmark.txt"
             conda:
-                config["conda"]["buscoclade"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade"]["yaml"])
+                config["conda"]["buscoclade_main"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_main"]["yaml"])
             resources:
                 queue=config["astral_queue"],
                 cpus=config["iqtree_per_fna_threads"],
@@ -46,7 +46,7 @@ if config["vcf2phylip"] != True:
             benchmark:
                 benchmark_dir_path / "concat_newick_files.benchmark.txt"
             conda:
-                config["conda"]["buscoclade"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade"]["yaml"])
+                config["conda"]["buscoclade_main"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_main"]["yaml"])
             resources:
                 queue=config["processing_queue"],
                 cpus=config["processing_threads"],
@@ -70,7 +70,7 @@ if config["vcf2phylip"] != True:
             benchmark:
                 benchmark_dir_path / "nodes_filtrataion_by_support.benchmark.txt"
             conda:
-                config["conda"]["buscoclade"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade"]["yaml"])
+                config["conda"]["buscoclade_main"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_main"]["yaml"])
             resources:
                 queue=config["processing_queue"],
                 cpus=config["processing_threads"],
@@ -94,7 +94,7 @@ if config["vcf2phylip"] != True:
             benchmark:
                 benchmark_dir_path / "astral_tree.benchmark.txt"
             conda:
-                config["conda"]["buscoclade"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade"]["yaml"])
+                config["conda"]["buscoclade_main"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_main"]["yaml"])
             resources:
                 queue=config["astral_queue"],
                 cpus=config["astral_threads"],
