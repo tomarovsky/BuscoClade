@@ -5,10 +5,10 @@ from argparse import ArgumentParser
 import re
 
 def format_name(name):
-    name = re.sub(r'(GCA|GCF)_', r'\1@', name)
-    name = name.replace('_', ' ')
-    name = name.replace('GCA@', 'GCA_').replace('GCF@', 'GCF_')
-    name = re.sub(r'(\d) (\d)', r'\1_\2', name)
+    name = re.sub(r'\.(GCA|GCF)_\d+\.\d+$', '', name)
+    name = re.sub(r'[_\.]', ' ', name)
+    return name.strip()
+
     
     return name
 
