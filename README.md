@@ -36,7 +36,7 @@ Follow these steps to run BuscoClade on your data. This guide assumes basic fami
 1. **Clone the Repository:**
 
    ```bash
-   git clone https://github.com/Zubiriguitar/BuscoClade.git
+   git clone https://github.com/tomarovsky/BuscoClade.git
    cd BuscoClade
    ```
 
