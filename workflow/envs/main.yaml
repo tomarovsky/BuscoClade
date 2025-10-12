@@ -1,19 +1,19 @@
 name: buscoclade
 channels:
-  - conda-forge
-  - bioconda
+    - conda-forge
+    - bioconda
 dependencies:
-  - busco=5.5.0
-  - biopython
-  - prank
-  - mafft
-  - gblocks
-  - trimal
-  - iqtree
-  - astral-tree
-  - newick_utils
-  - rapidnj
-  - phylip
-#  - mrbayes
-  - pip:
-    - "--editable=git+https://github.com/tomarovsky/Biocrutch.git#egg=Biocrutch"
+    - busco=6.0.0
+    - biopython
+    - prank
+    - mafft
+    - gblocks
+    - trimal
+    - iqtree
+    - astral-tree
+    - newick_utils
+    - rapidnj
+    - phylip
+    #  - mrbayes
+    - pip:
+          - "--editable=git+https://github.com/tomarovsky/Biocrutch.git#egg=Biocrutch"
