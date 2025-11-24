@@ -152,4 +152,3 @@ if __name__ == "__main__":
                     default=("svg"), help="Comma-separated list of formats (supported by ete3) of output figure. Default: svg,png")
     args = parser.parse_args()
     main()
-
