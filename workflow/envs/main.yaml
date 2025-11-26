@@ -1,4 +1,4 @@
-name: buscoclade
+name: buscoclade_main
 channels:
     - conda-forge
     - bioconda
@@ -14,6 +14,11 @@ dependencies:
     - newick_utils
     - rapidnj
     - phylip
-    #  - mrbayes
+    - raxml-ng
+    - bedtools
+    - bcftools
+    - samtools
     - pip:
           - "--editable=git+https://github.com/tomarovsky/Biocrutch.git#egg=Biocrutch"
+          - argparse
+          - indexed_gzip

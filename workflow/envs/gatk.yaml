@@ -1,7 +1,9 @@
 name: buscoclade_gatk
 channels:
-  - conda-forge
-  - bioconda
+    - conda-forge
+    - bioconda
 dependencies:
-  - openjdk=17
-  - picard
+    - openjdk=17
+    - picard
+    - samtools
+    - bcftools

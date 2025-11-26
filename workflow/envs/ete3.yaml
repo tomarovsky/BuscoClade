@@ -1,12 +1,12 @@
 # ---- ETE3 Conda config ----
 name: buscoclade_ete3
 channels:
-  - conda-forge
+    - conda-forge
 dependencies:
-  - python=3.8
-  - matplotlib
-  - pandas
-  - numpy
-  - ete3
-  - pip:
-    - supervenn
+    - python=3.8
+    - matplotlib
+    - pandas
+    - numpy
+    - ete3
+    - pip:
+          - supervenn
