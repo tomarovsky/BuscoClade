@@ -7,6 +7,9 @@ pyproject.toml
 # zed
 .zed/
 
+# Test directory
+tests/
+
 # Snakemake dir
 .snakemake/
 
