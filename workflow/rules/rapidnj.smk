@@ -1,6 +1,6 @@
-rule rapidnj_tree:
+rule rapidnj:
     input:
-        concat_alignments_dir_path / stockholm_dna_filename,
+        concat_alignments_dir_path / stockholm_filename,
     output:
         tree=rapidnj_dir_path / rapidnj_tree,
         matrix=rapidnj_dir_path / rapidnj_matrix,
@@ -21,5 +21,5 @@ rule rapidnj_tree:
         mem_mb=config["rapidnj_mem_mb"],
     threads: config["rapidnj_threads"]
     shell:
-        " rapidnj -i sth -c {threads} -o m  {input} > {output.matrix} 2>{log.std}; "
+        " rapidnj -i sth -c {threads} -o m {input} > {output.matrix} 2>{log.std}; "
         " rapidnj -i sth -c {threads} {params} {input} > {output.tree} 2>>{log.std}; "
