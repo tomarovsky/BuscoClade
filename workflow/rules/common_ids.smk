@@ -53,7 +53,6 @@ rule common_ids:  # get common IDs for all species given config["gene_blacklist"
         common_ids_dir_path / "common.ids",
     params:
         nfiles=len(config["species_list"]),
-        gene_blacklist=config["gene_blacklist"],
     log:
         std=log_dir_path / "common_ids.log",
         cluster_log=cluster_log_dir_path / "common_ids.cluster.log",
@@ -68,7 +67,6 @@ rule common_ids:  # get common IDs for all species given config["gene_blacklist"
     threads: config["processing_threads"]
     shell:
         " cat {input} | sort | uniq -c | awk '{{if($1=={params.nfiles}){{print $2}}}}' > {output} 2> {log.std}; "
-        ' for id in {params.gene_blacklist}; do sed -i "/$id$/d" {output}; done 2> {log.std}; '
 
 
 checkpoint merged_sequences:  # get merged sequences by common IDs
