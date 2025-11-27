@@ -116,9 +116,9 @@ rapidnj_dir: "phylogeny/rapidnj/"
 phylip_dir: "phylogeny/phylip/"
 raxml_dir: "phylogeny/raxml"
 
-log_dir: "results/logs/"
-cluster_log_dir: "results/cluster_logs/"
-benchmark_dir: "results/benchmarks/"
+log_dir: "logs/"
+cluster_log_dir: "cluster_logs/"
+benchmark_dir: "benchmarks/"
 
 # +-----------+
 # | Resources |
