@@ -74,7 +74,7 @@ astral_params: "--branch-annotate 2 --reps 1000"
 
 # MrBayes:
 mrbayes_params: ""
-mrbayes_block: "workflow/envs/mrbayes.block"
+mrbayes_block: "resources/mrbayes.block"
 mrbayes_path: # Path of MrBayes binary file
 
 # RapidNJ:
@@ -85,7 +85,7 @@ phylip_dnadist_params: "D\n" # Use 'D\n' to set model to 'Kimura 2-parameter'. F
 phylip_neighbor_params: "" # Use 'N\n' to set UPGMA. NJ (default) if "".
 
 # RAXML:
-raxml_params: "--model GTR+G --bs-trees 100"
+raxml_params: "--model GTR+G --bs-trees 1000"
 
 # ---- Рhylogenetic tree visualization ----
 tree_visualization_params: "" # Specify vizualisation outgroup as it should be named "--outgroup Homo sapiens" or "--outgroup species 1,species 2"
