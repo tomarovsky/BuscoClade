@@ -4,9 +4,9 @@ localrules:
 
 rule phylip_dnadist:
     input:
-        concat_alignments_dir_path / phylip_dna_filename,
+        concat_alignments_dir_path / phylip_filename,
     output:
-        dnadist=phylip_dir_path / f"{phylip_dna_filename}.dnadist",
+        dnadist=phylip_dir_path / f"{phylip_filename}.dnadist",
     params:
         outdir=phylip_dir_path,
         dnadist_params=config["phylip_dnadist_params"],
@@ -34,10 +34,10 @@ rule phylip_dnadist:
 
 rule phylip_neighbor:
     input:
-        phylip_dir_path / f"{phylip_dna_filename}.dnadist",
+        phylip_dir_path / f"{phylip_filename}.dnadist",
     output:
-        treefile=phylip_dir_path / f"{phylip_dna_filename}.treefile",
-        outfile=phylip_dir_path / f"{phylip_dna_filename}.outfile",
+        treefile=phylip_dir_path / f"{phylip_filename}.treefile",
+        outfile=phylip_dir_path / f"{phylip_filename}.outfile",
     params:
         outdir=phylip_dir_path,
         neighbor_params=config["phylip_neighbor_params"],
@@ -69,11 +69,10 @@ rule phylip_neighbor:
 
 rule phylip_tree_namefix:
     input:
-        phylip_dir_path / f"{phylip_dna_filename}.treefile",
+        phy=phylip_dir_path / f"{phylip_filename}.treefile",
+        map=concat_alignments_dir_path / f"{phylip_filename}.map",
     output:
         phylip_dir_path / phylip_tree,
-    params:
-        " ".join(config["species_list"]),
     log:
         std=log_dir_path / "phylip_tree_namefix.log",
         cluster_log=cluster_log_dir_path / "phylip_tree_namefix.cluster.log",
@@ -87,4 +86,4 @@ rule phylip_tree_namefix:
         mem_mb=config["processing_mem_mb"],
     threads: config["processing_threads"]
     shell:
-        " workflow/scripts/phylip_tree_namefix.py -i {input} -s {params} -o {output} > {log.std} 2>&1; "
+        " workflow/scripts/phylip_tree_namefix.py -i {input.phy} -m {input.map} -o {output} > {log.std} 2>&1; "
