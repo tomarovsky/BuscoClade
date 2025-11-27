@@ -174,10 +174,10 @@ if config.get("vcf2phylip"):
         if config.get("draw_phylotrees"):
             output_files.append(raxml_dir_path / f"{fasta_filename}.only_tree.svg")
 else:
-    expand(busco_dir_path / "{species}/short_summary_{species}.txt", species=config["species_list"]),
-    lambda w: expand_fna_from_merged_sequences(w, merged_sequences_dir_path / "{N}.fna", busco_blacklist=busco_blacklist),
-    species_ids_dir_path / "unique_species_ids.svg",
-    busco_dir_path / "busco_summaries.svg",
+    output_files.append(expand(busco_dir_path / "{species}/short_summary_{species}.txt", species=config["species_list"]))
+    output_files.append(lambda w: expand_fna_from_merged_sequences(w, merged_sequences_dir_path / "{N}.fna", busco_blacklist=busco_blacklist))
+    output_files.append(species_ids_dir_path / "unique_species_ids.svg")
+    output_files.append(busco_dir_path / "busco_summaries.svg")
 
     if config.get("quastcore"):
         output_files.append(quastcore_dir_path / "assembly_stats.csv")
