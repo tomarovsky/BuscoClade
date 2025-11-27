@@ -1,159 +1,144 @@
-localrules:
-    species_ids_plot,
-    busco_histogram,
+rule iqtree_tree_visualization:
+    input:
+        iqtree_dir_path / "fna" / f"{fasta_filename}.treefile",
+    output:
+        iqtree_dir_path / "fna" / f"{fasta_filename}.length_and_support_tree.svg",
+        iqtree_dir_path / "fna" / f"{fasta_filename}.only_support_tree.svg",
+        iqtree_dir_path / "fna" / f"{fasta_filename}.only_tree.svg",
+    params:
+        prefix=iqtree_dir_path / "fna" / f"{fasta_filename}",
+        options=config["tree_visualization_params"],
+    log:
+        std=log_dir_path / "iqtree_tree_visualization.log",
+        cluster_log=cluster_log_dir_path / "iqtree_tree_visualization.cluster.log",
+        cluster_err=cluster_log_dir_path / "iqtree_tree_visualization.cluster.err",
+    benchmark:
+        benchmark_dir_path / "iqtree_tree_visualization.benchmark.txt"
+    conda:
+        config["conda"]["buscoclade_ete3"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_ete3"]["yaml"])
+    resources:
+        queue=config["processing_queue"],
+        cpus=config["processing_threads"],
+        time=config["processing_time"],
+        mem_mb=config["processing_mem_mb"],
+    threads: config["processing_threads"]
+    shell:
+        " QT_QPA_PLATFORM=offscreen workflow/scripts/draw_phylotrees.py -i {input} "
+        " -o {params.prefix} {params.options} 1> {log.std} 2>&1; "
 
 
-if config["draw_phylotrees"]:
-
-    rule iqtree_dna_tree_visualization:
-        input:
-            iqtree_dir_path / "fna" / f"{fasta_dna_filename}.treefile",
-        output:
-            iqtree_dir_path / "fna" / f"{fasta_dna_filename}.length_and_support_tree.svg",
-            iqtree_dir_path / "fna" / f"{fasta_dna_filename}.only_support_tree.svg",
-            iqtree_dir_path / "fna" / f"{fasta_dna_filename}.only_tree.svg",
-        params:
-            prefix=iqtree_dir_path / "fna" / f"{fasta_dna_filename}",
-            options=config["tree_visualization_params"],
-        log:
-            std=log_dir_path / "iqtree_dna_tree_visualization.log",
-            cluster_log=cluster_log_dir_path / "iqtree_dna_tree_visualization.cluster.log",
-            cluster_err=cluster_log_dir_path / "iqtree_dna_tree_visualization.cluster.err",
-        benchmark:
-            benchmark_dir_path / "iqtree_dna_tree_visualization.benchmark.txt"
-        conda:
-            config["conda"]["buscoclade_ete3"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_ete3"]["yaml"])
-        resources:
-            queue=config["processing_queue"],
-            cpus=config["processing_threads"],
-            time=config["processing_time"],
-            mem_mb=config["processing_mem_mb"],
-        threads: config["processing_threads"]
-        shell:
-            " QT_QPA_PLATFORM=offscreen workflow/scripts/draw_phylotrees.py -i {input} "
-            " -o {params.prefix} {params.options} 1> {log.std} 2>&1; "
+rule astral_tree_visualization:
+    input:
+        treefile=astral_dir_path / astral_tree,
+        common_ids=rules.common_ids.output,
+    output:
+        astral_dir_path / f"{astral_tree}.svg",
+    params:
+        prefix=astral_dir_path / astral_tree,
+    log:
+        std=log_dir_path / "astral_tree_visualization.log",
+        cluster_log=cluster_log_dir_path / "astral_tree_visualization.cluster.log",
+        cluster_err=cluster_log_dir_path / "astral_tree_visualization.cluster.err",
+    benchmark:
+        benchmark_dir_path / "astral_tree_visualization.benchmark.txt"
+    conda:
+        config["conda"]["buscoclade_ete3"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_ete3"]["yaml"])
+    resources:
+        queue=config["processing_queue"],
+        cpus=config["processing_threads"],
+        time=config["processing_time"],
+        mem_mb=config["processing_mem_mb"],
+    threads: config["processing_threads"]
+    shell:
+        " QT_QPA_PLATFORM=offscreen workflow/scripts/draw_phylotrees_from_astral.py "
+        " -i {input.treefile} -o {params.prefix} -n $(cat {input.common_ids} | wc -l) > {log.std} 2>&1; "
 
 
-if config["draw_phylotrees"]:
-
-    rule iqtree_protein_tree_visualization:
-        input:
-            iqtree_dir_path / "faa" / f"{fasta_protein_filename}.treefile",
-        output:
-            iqtree_dir_path / "faa" / f"{fasta_protein_filename}.length_and_support_tree.svg",
-            iqtree_dir_path / "faa" / f"{fasta_protein_filename}.only_support_tree.svg",
-            iqtree_dir_path / "faa" / f"{fasta_protein_filename}.only_tree.svg",
-        params:
-            prefix=iqtree_dir_path / "faa" / f"{fasta_protein_filename}",
-            options=config["tree_visualization_params"],
-        log:
-            std=log_dir_path / "iqtree_protein_tree_visualization.log",
-            cluster_log=cluster_log_dir_path / "iqtree_protein_tree_visualization.cluster.log",
-            cluster_err=cluster_log_dir_path / "iqtree_protein_tree_visualization.cluster.err",
-        benchmark:
-            benchmark_dir_path / "iqtree_protein_tree_visualization.benchmark.txt"
-        conda:
-            config["conda"]["buscoclade_ete3"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_ete3"]["yaml"])
-        resources:
-            queue=config["processing_queue"],
-            cpus=config["processing_threads"],
-            time=config["processing_time"],
-            mem_mb=config["processing_mem_mb"],
-        threads: config["processing_threads"]
-        shell:
-            " QT_QPA_PLATFORM=offscreen workflow/scripts/draw_phylotrees.py -i {input} "
-            " -o {params.prefix} {params.options} 1> {log.std} 2>&1; "
+rule rapidnj_tree_visualization:
+    input:
+        rapidnj_dir_path / rapidnj_tree,
+    output:
+        rapidnj_dir_path / f"{fasta_filename}.length_and_support_tree.svg",
+        rapidnj_dir_path / f"{fasta_filename}.only_support_tree.svg",
+        rapidnj_dir_path / f"{fasta_filename}.only_tree.svg",
+    params:
+        prefix=rapidnj_dir_path / f"{fasta_filename}",
+        options=config["tree_visualization_params"],
+    log:
+        std=log_dir_path / "rapidnj_tree_visualization.log",
+        cluster_log=cluster_log_dir_path / "rapidnj_tree_visualization.cluster.log",
+        cluster_err=cluster_log_dir_path / "rapidnj_tree_visualization.cluster.err",
+    benchmark:
+        benchmark_dir_path / "rapidnj_tree_visualization.benchmark.txt"
+    conda:
+        config["conda"]["buscoclade_ete3"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_ete3"]["yaml"])
+    resources:
+        queue=config["processing_queue"],
+        cpus=config["processing_threads"],
+        time=config["processing_time"],
+        mem_mb=config["processing_mem_mb"],
+    threads: config["processing_threads"]
+    shell:
+        " QT_QPA_PLATFORM=offscreen workflow/scripts/draw_phylotrees.py -i {input} "
+        " -o {params.prefix} {params.options} 1> {log.std} 2>&1; "
 
 
-if config["draw_phylotrees"]:
-
-    rule astral_tree_visualization:
-        input:
-            treefile=astral_dir_path / astral_tree,
-            common_ids=rules.common_ids.output,
-        output:
-            astral_dir_path / f"{astral_tree}.svg",
-        params:
-            prefix=astral_dir_path / astral_tree,
-        log:
-            std=log_dir_path / "astral_tree_visualization.log",
-            cluster_log=cluster_log_dir_path / "astral_tree_visualization.cluster.log",
-            cluster_err=cluster_log_dir_path / "astral_tree_visualization.cluster.err",
-        benchmark:
-            benchmark_dir_path / "astral_tree_visualization.benchmark.txt"
-        conda:
-            config["conda"]["buscoclade_ete3"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_ete3"]["yaml"])
-        resources:
-            queue=config["processing_queue"],
-            cpus=config["processing_threads"],
-            time=config["processing_time"],
-            mem_mb=config["processing_mem_mb"],
-        threads: config["processing_threads"]
-        shell:
-            " QT_QPA_PLATFORM=offscreen workflow/scripts/draw_phylotrees_from_astral.py "
-            " -i {input.treefile} -o {params.prefix} -n $(cat {input.common_ids} | wc -l) > {log.std} 2>&1; "
-
-
-if config["draw_phylotrees"]:
-
-    rule rapidnj_tree_visualization:
-        input:
-            rapidnj_dir_path / rapidnj_tree,
-        output:
-            rapidnj_dir_path / f"{fasta_dna_filename}.length_and_support_tree.svg",
-            rapidnj_dir_path / f"{fasta_dna_filename}.only_support_tree.svg",
-            rapidnj_dir_path / f"{fasta_dna_filename}.only_tree.svg",
-        params:
-            prefix=rapidnj_dir_path / f"{fasta_dna_filename}",
-            options=config["tree_visualization_params"],
-        log:
-            std=log_dir_path / "rapidnj_tree_visualization.log",
-            cluster_log=cluster_log_dir_path / "rapidnj_tree_visualization.cluster.log",
-            cluster_err=cluster_log_dir_path / "rapidnj_tree_visualization.cluster.err",
-        benchmark:
-            benchmark_dir_path / "rapidnj_tree_visualization.benchmark.txt"
-        conda:
-            config["conda"]["buscoclade_ete3"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_ete3"]["yaml"])
-        resources:
-            queue=config["processing_queue"],
-            cpus=config["processing_threads"],
-            time=config["processing_time"],
-            mem_mb=config["processing_mem_mb"],
-        threads: config["processing_threads"]
-        shell:
-            " QT_QPA_PLATFORM=offscreen workflow/scripts/draw_phylotrees.py -i {input} "
-            " -o {params.prefix} {params.options} 1> {log.std} 2>&1; "
+rule phylip_tree_visualization:
+    input:
+        phylip_dir_path / phylip_tree,
+    output:
+        phylip_dir_path / f"{fasta_filename}.length_and_support_tree.svg",
+        phylip_dir_path / f"{fasta_filename}.only_support_tree.svg",
+        phylip_dir_path / f"{fasta_filename}.only_tree.svg",
+    params:
+        prefix=phylip_dir_path / f"{fasta_filename}",
+        options=config["tree_visualization_params"],
+    log:
+        std=log_dir_path / "phylip_tree_visualization.log",
+        cluster_log=cluster_log_dir_path / "phylip_tree_visualization.cluster.log",
+        cluster_err=cluster_log_dir_path / "phylip_tree_visualization.cluster.err",
+    benchmark:
+        benchmark_dir_path / "phylip_tree_visualization.benchmark.txt"
+    conda:
+        config["conda"]["buscoclade_ete3"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_ete3"]["yaml"])
+    resources:
+        queue=config["processing_queue"],
+        cpus=config["processing_threads"],
+        time=config["processing_time"],
+        mem_mb=config["processing_mem_mb"],
+    threads: config["processing_threads"]
+    shell:
+        " QT_QPA_PLATFORM=offscreen workflow/scripts/draw_phylotrees.py -i {input} "
+        " -o {params.prefix} {params.options} 1> {log.std} 2>&1; "
 
 
-if config["draw_phylotrees"]:
-
-    rule phylip_tree_visualization:
-        input:
-            phylip_dir_path / phylip_tree,
-        output:
-            phylip_dir_path / f"{fasta_dna_filename}.length_and_support_tree.svg",
-            phylip_dir_path / f"{fasta_dna_filename}.only_support_tree.svg",
-            phylip_dir_path / f"{fasta_dna_filename}.only_tree.svg",
-        params:
-            prefix=phylip_dir_path / f"{fasta_dna_filename}",
-            options=config["tree_visualization_params"],
-        log:
-            std=log_dir_path / "phylip_tree_visualization.log",
-            cluster_log=cluster_log_dir_path / "phylip_tree_visualization.cluster.log",
-            cluster_err=cluster_log_dir_path / "phylip_tree_visualization.cluster.err",
-        benchmark:
-            benchmark_dir_path / "phylip_tree_visualization.benchmark.txt"
-        conda:
-            config["conda"]["buscoclade_ete3"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_ete3"]["yaml"])
-        resources:
-            queue=config["processing_queue"],
-            cpus=config["processing_threads"],
-            time=config["processing_time"],
-            mem_mb=config["processing_mem_mb"],
-        threads: config["processing_threads"]
-        shell:
-            " QT_QPA_PLATFORM=offscreen workflow/scripts/draw_phylotrees.py -i {input} "
-            " -o {params.prefix} {params.options} 1> {log.std} 2>&1; "
+rule raxml_tree_visualization:
+    input:
+        raxml_dir_path / raxml_tree,
+    output:
+        raxml_dir_path / f"{fasta_filename}.length_and_support_tree.svg",
+        raxml_dir_path / f"{fasta_filename}.only_support_tree.svg",
+        raxml_dir_path / f"{fasta_filename}.only_tree.svg"
+    params:
+        prefix=raxml_dir_path / f"{fasta_filename}",
+        options=config["tree_visualization_params"],
+    log:
+        std=log_dir_path / "raxml_tree_visualization.log",
+        cluster_log=cluster_log_dir_path / "raxml_tree_visualization.cluster.log",
+        cluster_err=cluster_log_dir_path / "raxml_tree_visualization.cluster.err",
+    benchmark:
+        benchmark_dir_path / "raxml_tree_visualization.benchmark.txt",
+    conda:
+        config["conda"]["buscoclade_ete3"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_ete3"]["yaml"])
+    resources:
+        queue=config["processing_queue"],
+        cpus=config["processing_threads"],
+        time=config["processing_time"],
+        mem_mb=config["processing_mem_mb"],
+    threads: config["processing_threads"],
+    shell:
+        "QT_QPA_PLATFORM=offscreen workflow/scripts/draw_phylotrees.py -i {input} "
+        "-o {params.prefix} {params.options} 1> {log.std} 2>&1; "
 
 
 rule species_ids_plot:
@@ -161,7 +146,7 @@ rule species_ids_plot:
         single_copy_ids=expand(species_ids_dir_path / "single_copy/{species}.ids", species=config["species_list"]),
         multi_copy_ids=expand(species_ids_dir_path / "multi_copy/{species}.ids", species=config["species_list"]),
     output:
-        species_ids_dir_path / "unique_species_ids.png",
+        species_ids_dir_path / "unique_species_ids.svg",
     log:
         std=log_dir_path / "species_ids_plot.log",
         cluster_log=cluster_log_dir_path / "species_ids_plot.cluster.log",
@@ -190,8 +175,6 @@ rule busco_summaries_to_tsv:
         std=log_dir_path / "busco_summaries_to_tsv.log",
         cluster_log=cluster_log_dir_path / "busco_summaries_to_tsv.cluster.log",
         cluster_err=cluster_log_dir_path / "busco_summaries_to_tsv.cluster.err",
-    benchmark:
-        benchmark_dir_path / "busco_summaries_to_tsv.benchmark.txt"
     conda:
         config["conda"]["buscoclade_main"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_main"]["yaml"])
     resources:
