@@ -146,7 +146,7 @@ def process_tree(args):
 
     # Render figure
     render_params = {
-        "w": args.width,
+        "dpi": args.dpi,
         "units": "px",
         "tree_style": ts
     }
@@ -181,7 +181,7 @@ def main():
                     default=['EN', 'q1', 'pp1'], help="comma-separated list of metrics for colorification (default metric color is 'Black')")
 
     # figure options:
-    group_additional.add_argument('--width', type=int, default=800, help="width for result rendering")
+    group_additional.add_argument('--dpi', type=int, default=300, help="dpi for result rendering")
     group_additional.add_argument('--show', action="store_true", help="option to show tree using GUI")
     group_additional.add_argument("-e", "--output_formats", dest="output_formats", type=lambda s: s.split(","),
                     default=("svg"), help="Comma-separated list of formats (supported by ete3) of output figure. Default: svg")

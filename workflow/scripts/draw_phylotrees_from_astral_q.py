@@ -1,26 +1,32 @@
 #!/usr/bin/env python3
 __author__ = 'tomarovsky'
 
+"""
+Script for visualizing phylogenetic trees with quartet support using ETE3
+"""
+
 import argparse
 import os
 import sys
+import tempfile
 
-from ete3 import CircleFace, NodeStyle, TextFace, Tree, TreeStyle, faces
+import matplotlib.pyplot as plt
+from ete3 import CircleFace, ImgFace, NodeStyle, TextFace, Tree, TreeStyle, faces
 
 
 def newick_to_nhx(newick_file) -> str:
     """Convert Newick format to NHX format"""
-    with open(newick_file, "r") as file:
-        tree_string = ""
+    with open(newick_file, 'r') as file:
+        tree_string = ''
         newick = file.readline().replace("_", " ").strip().split("'")
         tree_string += newick[0]
         for i in range(1, len(newick), 2):
-            line = ""
+            line = ''
             flag = True
-            for s in newick[i + 1]:
+            for s in newick[i+1]:
                 if s == ")" or s == ",":
                     if flag:
-                        nhx = newick[i].replace(",", ".").replace(";", ":")[1:]
+                        nhx = newick[i].replace(',', '.').replace(';', ':')[1:]
                         line += f"[&&NHX:{nhx}{s}"
                         flag = False
                     else:
@@ -29,6 +35,23 @@ def newick_to_nhx(newick_file) -> str:
                     line += s
             tree_string += line
         return tree_string
+
+
+def pie_chart_face(data, size=10):
+    """Create pie chart face for quartet support"""
+    fig, ax = plt.subplots(figsize=(5, 5), dpi=size)
+    ax.pie(data, colors=["blue", "orange", "yellow"], startangle=90)
+    ax.set(aspect="equal")
+    plt.axis('off')
+
+    tmp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".png")
+    plt.savefig(tmp_file.name, format='png', bbox_inches='tight', transparent=True, pad_inches=0)
+    plt.close(fig)
+
+    face = ImgFace(tmp_file.name)
+    face.tmp_file = tmp_file.name
+
+    return face
 
 
 def filter_tree(node, prefixes):
@@ -46,14 +69,13 @@ def filter_tree(node, prefixes):
 def add_legend(ts):
     """Add legend to tree style"""
     legend_items = [
-        (" 100", "blue"),
-        (" 90-99", "#009022"),
-        (" 70-89", "#e6c700"),
-        (" 0-69", "#e60000"),
+        (" – q1, main topology support", "blue"),
+        (" – q2, first alternative topology", "orange"),
+        (" – q3, second alternative topology", "yellow"),
     ]
 
     ts.legend.add_face(TextFace(" ", fsize=14), column=0)
-    ts.legend.add_face(TextFace("Main local posterior probability (pp1):", fsize=10), column=1)
+    ts.legend.add_face(TextFace("Quartet support:", fsize=10), column=1)
 
     for text, color in legend_items:
         circle = CircleFace(5, color=color, style="circle")
@@ -75,15 +97,58 @@ def create_tree_style():
     return ts
 
 
+def create_custom_layout():
+    """Create custom layout function for tree visualization"""
+    def my_layout(node):
+        node.img_style["size"] = 0
+        node.img_style["fgcolor"] = "black"
+
+        if node.is_leaf():
+            face_text = ' ' + node.name
+            face = TextFace(face_text, fsize=17, fstyle="italic", fgcolor="black")
+            faces.add_face_to_node(face, node, column=0)
+
+        else:
+            # Add pie chart for quartet support if all metrics are present
+            if all(hasattr(node, m) for m in ["q1", "q2", "q3"]):
+                try:
+                    q1 = float(node.q1)
+                    q2 = float(node.q2)
+                    q3 = float(node.q3)
+                    total = q1 + q2 + q3
+                    if total > 0:
+                        proportions = [q1/total, q2/total, q3/total]
+                        pie = pie_chart_face(proportions)
+                        faces.add_face_to_node(pie, node, column=0, position="float-behind")
+                    if total > 100:
+                        print("Warning: Total quartet support > 100 for node", file=sys.stderr)
+                except Exception as e:
+                    print(f"Warning: Error adding pie chart: {e}", file=sys.stderr)
+
+    return my_layout
+
+
+def apply_node_styles(tree):
+    """Apply consistent node styles to tree"""
+    nstyle = NodeStyle()
+    nstyle["fgcolor"] = "Blue"
+    nstyle["size"] = 0
+    nstyle["hz_line_width"] = 1
+    nstyle["vt_line_width"] = 1
+
+    for n in tree.traverse():
+        n.set_style(nstyle)
+
+
 def main():
-    parser = argparse.ArgumentParser(description='Visualize phylogenetic trees with ETE3')
+    parser = argparse.ArgumentParser(description='Visualize phylogenetic trees with quartet support using ETE3')
     parser.add_argument('-i', '--input', required=True, help='Input tree file (Newick format)')
     parser.add_argument('-o', '--output', required=True, help='Output file prefix')
     parser.add_argument('-g', '--outgroup', default=False, help="outgroup species name (default = unrooted)")
+    parser.add_argument('--filter-prefixes', nargs='+', help='Filter leaves by prefixes')
     parser.add_argument('--ladderize', action='store_true', default=True, help='Ladderize tree (default: True)')
     parser.add_argument('--format', default='svg', help='Output format (svg, png, pdf, etc.)')
     parser.add_argument('--dpi', type=int, default=300, help='Output DPI for raster formats')
-    parser.add_argument('--filter-prefixes', nargs='+', help='Filter leaves by prefixes')
 
     args = parser.parse_args()
 
@@ -134,59 +199,19 @@ def main():
         # Filter tree if prefixes provided
         if args.filter_prefixes:
             filter_tree(tree, args.filter_prefixes)
+            print(f"Tree filtered using prefixes: {args.filter_prefixes}")
 
         # Ladderize if requested
         if args.ladderize:
             tree.ladderize(direction=True)
+            print("Tree ladderized")
 
-        # Node counter for numbering
-        node_counter = {"count": 1}
-
-        def my_layout(node):
-            """Custom layout function"""
-            node.img_style["size"] = 0
-            node.img_style["fgcolor"] = "black"
-
-            if node.is_leaf():
-                face_text = " " + node.name
-                face = TextFace(face_text, fsize=17, fstyle="italic", fgcolor="black")
-                faces.add_face_to_node(face, node, column=0)
-            else:
-                # Support circles for pp1
-                circle_size = 5
-                if hasattr(node, "pp1"):
-                    try:
-                        pp1 = float(node.pp1)
-                        if pp1 == 1.0:
-                            support_color = "blue"
-                        elif pp1 >= 0.9:
-                            support_color = "#009022"
-                        elif pp1 >= 0.7:
-                            support_color = "#e6c700"
-                        else:
-                            support_color = "#e60000"
-                        circle_face = CircleFace(radius=circle_size, color=support_color, style="circle")
-                        faces.add_face_to_node(circle_face, node, column=1, position="float-behind")
-                    except Exception as e:
-                        print(f"Warning: Error processing pp1: {e}", file=sys.stderr)
-
-                # Node numbering
-                number = node_counter["count"]
-                node.node_number = number
-                number_face = TextFace(f" {number}", fsize=16, fgcolor="black")
-                faces.add_face_to_node(number_face, node, column=0, position="float-behind")
-                node_counter["count"] += 1
-
-        # Create tree style and set layout
+        # Create tree style and layout
         ts = create_tree_style()
-        ts.layout_fn = my_layout
+        ts.layout_fn = create_custom_layout()
 
         # Apply node styles
-        nstyle = NodeStyle()
-        nstyle["hz_line_width"] = 1
-        nstyle["vt_line_width"] = 1
-        for n in tree.traverse():
-            n.set_style(nstyle)
+        apply_node_styles(tree)
 
         # Render tree
         output_file = f"{args.output}.{args.format}"

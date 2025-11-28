@@ -140,7 +140,7 @@ def process_tree(args):
     # 5. Render files
     # Define rendering parameters
     render_params = {
-        "w": args.width,
+        "dpi": args.dpi,
         "units": "px",
         "tree_style": ts
     }
@@ -174,7 +174,7 @@ def main():
     opt = parser.add_argument_group("Optional options")
     opt.add_argument("-o", "--output", type=str, help="Output file prefix (default: same as input filename)")
     opt.add_argument("-g", "--outgroup", type=str, help="Name of the outgroup species (if not found, uses midpoint rooting)")
-    opt.add_argument("--width", type=int, default=800, help="Width of the image in pixels (default: 800)")
+    opt.add_argument("--dpi", type=int, default=300, help="dpi for result rendering")
     opt.add_argument("--show", action="store_true", help="Open an interactive GUI window")
 
     args = parser.parse_args()
