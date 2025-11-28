@@ -6,8 +6,6 @@ if config.get("vcf2phylip") != True:
                                                     busco_blacklist=busco_blacklist),
         output:
             concat_alignments_dir_path / fasta_filename,
-        params:
-            vcf2phylip=config["vcf2phylip"],
         log:
             std=log_dir_path / "concat_fasta.log",
             cluster_log=cluster_log_dir_path / "concat_fasta.cluster.log",

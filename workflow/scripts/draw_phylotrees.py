@@ -91,6 +91,25 @@ def process_tree(args):
     else:
         t.unroot()
 
+
+    # if args.outgroup:
+    #     if "," in args.outgroup:
+    #         try:
+    #             nodes_to_root = args.outgroup.split(",")
+    #             common_ancestor = t.get_common_ancestor(*nodes_to_root)
+    #             t.set_outgroup(common_ancestor)
+    #         except:
+    #             R = t.get_midpoint_outgroup()
+    #             t.set_outgroup(R)
+    #             nodes_to_root = args.outgroup.split(",")
+    #             common_ancestor = t.get_common_ancestor(*nodes_to_root)
+    #             t.set_outgroup(common_ancestor)
+    #     else:
+    #         t.set_outgroup(args.outgroup)
+    # else:
+    #     t.unroot()
+
+
     # 2. Ladderize (sort branches)
     t.ladderize(direction=True)
 
@@ -107,7 +126,7 @@ def process_tree(args):
     ts.layout_fn = mylayout
     ts.show_leaf_name = False
 
-    # Общий стиль линий
+    # Line style
     for n in t.traverse():
         nstyle = NodeStyle()
         nstyle["fgcolor"] = "Blue" # Line color
