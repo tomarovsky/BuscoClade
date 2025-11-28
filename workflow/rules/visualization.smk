@@ -38,6 +38,7 @@ rule astral_tree_visualization:
         astral_dir_path / f"{astral_tree}.tsv",
     params:
         prefix=astral_dir_path / astral_tree,
+        options=config["tree_visualization_params"],
     log:
         std=log_dir_path / "astral_tree_visualization.log",
         cluster_log=cluster_log_dir_path / "astral_tree_visualization.cluster.log",
@@ -54,10 +55,10 @@ rule astral_tree_visualization:
     threads: config["processing_threads"]
     shell:
         " QT_QPA_PLATFORM=offscreen; "
-        " workflow/scripts/draw_phylotrees_from_astral.py -i {input.treefile} -o {params.prefix} -n $(cat {input.common_ids} | wc -l) > {log.std} 2>&1; "
-        " workflow/scripts/draw_phylotrees_from_astral_pp.py -i {input.treefile} -o {params.prefix}.pp > {log.std} 2>&1; "
-        " workflow/scripts/draw_phylotrees_from_astral_q.py -i {input.treefile} -o {params.prefix}.q > {log.std} 2>&1; "
-        " workflow/scripts/astral_metrics.py -i {input.treefile} -o {params.prefix}.tsv > {log.std} 2>&1; "
+        " workflow/scripts/draw_phylotrees_from_astral.py -i {input.treefile} -o {params.prefix} -n $(cat {input.common_ids} | wc -l) {params.options} > {log.std} 2>&1; "
+        " workflow/scripts/draw_phylotrees_from_astral_pp.py -i {input.treefile} -o {params.prefix}.pp {params.options} > {log.std} 2>&1; "
+        " workflow/scripts/draw_phylotrees_from_astral_q.py -i {input.treefile} -o {params.prefix}.q {params.options} > {log.std} 2>&1; "
+        " workflow/scripts/astral_metrics.py -i {input.treefile} -o {params.prefix}.tsv {params.options} > {log.std} 2>&1; "
 
 
 rule rapidnj_tree_visualization:
