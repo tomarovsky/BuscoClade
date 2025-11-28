@@ -18,7 +18,7 @@ def newick_to_nhx(newick_file) -> str:
             flag = True
             for s in newick[i+1]:
                 if s == ")" or s == ",":
-                    if flag is True:
+                    if flag:
                         nhx = newick[i].replace(',', '.').replace(';', ':')[1:]
                         line += f"[&&NHX:{nhx}{s}"
                         flag = False
@@ -27,7 +27,6 @@ def newick_to_nhx(newick_file) -> str:
                 else:
                     line += s
             tree_string += line
-        # print(tree_string)
         return tree_string
 
 
@@ -141,7 +140,7 @@ def process_tree(args):
                 if metric == 'EN':
                     n.add_face(TextFace(f"{value:.2f} ({normalized_value:.2f}%) ", fgcolor = color), column=2, position="branch-top")
                 else:
-                    n.add_face(TextFace(f"{value:.0f} ", fgcolor=color), column=2, position="branch-top")
+                    n.add_face(TextFace(f"{value:.2f} ", fgcolor=color), column=2, position="branch-top")
 
     add_legend(ts)
 
@@ -179,7 +178,7 @@ def main():
     group_additional.add_argument('-n', '--number_of_genes', type=int,
                     help="total number of gene trees in ASTRAL input treefile (necessary to normalize 'EN' option value)")
     group_additional.add_argument('-w', '--colored_metrics_whitelist', type=lambda s: list(map(str, s.split(","))),
-                    default=['EN'], help="comma-separated list of metrics for colorification (default metric color is 'Black')")
+                    default=['EN', 'q1', 'pp1'], help="comma-separated list of metrics for colorification (default metric color is 'Black')")
 
     # figure options:
     group_additional.add_argument('--width', type=int, default=800, help="width for result rendering")
