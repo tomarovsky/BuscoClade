@@ -7,6 +7,7 @@ from pathlib import Path
 
 from ete3 import AttrFace, CircleFace, NodeStyle, TextFace, Tree, TreeStyle, faces
 
+
 def mylayout(node):
     if node.is_leaf():
         N = AttrFace("name", fgcolor="black", text_prefix="  ", fstyle="italic", fsize=12)
@@ -91,7 +92,7 @@ def process_tree(args):
         t.unroot()
 
     # 2. Ladderize (sort branches)
-    t.ladderize(direction=1)
+    t.ladderize(direction=True)
 
     # 3. Normalize leaf names
     for leaf in t.iter_leaves():
