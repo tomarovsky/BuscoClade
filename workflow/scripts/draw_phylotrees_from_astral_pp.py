@@ -54,8 +54,6 @@ def add_legend(ts):
         (" 0-69", "#e60000"),
     ]
 
-    # empty_circle = CircleFace(5, color="#000000", style="circle")
-    # ts.legend.add_face(empty_circle, column=0)
     ts.legend.add_face(TextFace(" ", fsize=14), column=0)
     ts.legend.add_face(TextFace(" Main local posterior probability (pp1):", fsize=10), column=1)
 
