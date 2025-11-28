@@ -33,6 +33,7 @@ rule astral_tree_visualization:
         common_ids=rules.common_ids.output,
     output:
         astral_dir_path / f"{astral_tree}.svg",
+        astral_dir_path / f"{astral_tree}.pp.svg",
     params:
         prefix=astral_dir_path / astral_tree,
     log:
@@ -50,8 +51,9 @@ rule astral_tree_visualization:
         mem_mb=config["processing_mem_mb"],
     threads: config["processing_threads"]
     shell:
-        " QT_QPA_PLATFORM=offscreen workflow/scripts/draw_phylotrees_from_astral.py "
-        " -i {input.treefile} -o {params.prefix} -n $(cat {input.common_ids} | wc -l) > {log.std} 2>&1; "
+        " QT_QPA_PLATFORM=offscreen; "
+        " workflow/scripts/draw_phylotrees_from_astral.py -i {input.treefile} -o {params.prefix} -n $(cat {input.common_ids} | wc -l) > {log.std} 2>&1; "
+        " workflow/scripts/draw_phylotrees_from_astral_pp.py -i {input.treefile} -o {params.prefix}.pp > {log.std} 2>&1; "
 
 
 rule rapidnj_tree_visualization:
