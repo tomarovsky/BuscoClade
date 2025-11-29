@@ -15,9 +15,8 @@ rule rapidnj:
     conda:
         config["conda"]["buscoclade_main"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_main"]["yaml"])
     resources:
-        queue=config["rapidnj_queue"],
-        cpus=config["rapidnj_threads"],
-        time=config["rapidnj_time"],
+        slurm_partition=config["rapidnj_queue"],
+        runtime=config["rapidnj_time"],
         mem_mb=config["rapidnj_mem_mb"],
     threads: config["rapidnj_threads"]
     shell:

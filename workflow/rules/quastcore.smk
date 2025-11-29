@@ -14,9 +14,8 @@ rule quastcore:
     conda:
         config["conda"]["buscoclade_main"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_main"]["yaml"]),
     resources:
-        queue=config["processing_queue"],
-        cpus=config["processing_threads"],
-        time=config["processing_time"],
+        slurm_partition=config["processing_queue"],
+        runtime=config["processing_time"],
         mem_mb=config["processing_mem_mb"],
     threads: config["processing_threads"]
     shell:

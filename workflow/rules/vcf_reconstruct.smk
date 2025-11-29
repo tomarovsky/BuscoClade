@@ -16,10 +16,10 @@ rule samtools_index:
     conda:
         config["conda"]["buscoclade_gatk"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_gatk"]["yaml"])
     resources:
-        queue=config["processing_queue"],
-        cpus=config["processing_threads"],
-        time=config["processing_time"],
+        slurm_partition=config["processing_queue"],
+        runtime=config["processing_time"],
         mem_mb=config["processing_mem_mb"],
+    threads=config["processing_threads"],
     shell:
         " samtools faidx {input} 1> {log.std} 2>&1; "
 
@@ -38,10 +38,10 @@ rule picard_index:
     conda:
         config["conda"]["buscoclade_gatk"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_gatk"]["yaml"])
     resources:
-        queue=config["processing_queue"],
-        cpus=config["processing_threads"],
-        time=config["processing_time"],
+        slurm_partition=config["processing_queue"],
+        runtime=config["processing_time"],
         mem_mb=config["processing_mem_mb"],
+    threads=config["processing_threads"],
     shell:
         " picard CreateSequenceDictionary -R {input} 1> {log.std} 2>&1; "
 
@@ -62,10 +62,10 @@ rule gatk_vcf_index:
     conda:
         config["conda"]["buscoclade_gatk"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_gatk"]["yaml"])
     resources:
-        queue=config["processing_queue"],
-        cpus=config["processing_threads"],
-        time=config["processing_time"],
+        slurm_partition=config["processing_queue"],
+        runtime=config["processing_time"],
         mem_mb=config["processing_mem_mb"],
+    threads=config["processing_threads"],
     shell:
         " {params.gatk_path}/gatk --java-options -Xmx{resources.mem_mb}m IndexFeatureFile -I {input}"
 
@@ -91,10 +91,10 @@ rule gatk_altref:
     conda:
         config["conda"]["buscoclade_gatk"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_gatk"]["yaml"])
     resources:
-        queue=config["processing_queue"],
-        cpus=config["processing_threads"],
-        time=config["processing_time"],
+        slurm_partition=config["processing_queue"],
+        runtime=config["processing_time"],
         mem_mb=config["processing_mem_mb"],
+    threads=config["processing_threads"],
     shell:
         " {params.gatk_path}/gatk --java-options -Xmx{resources.mem_mb}m FastaAlternateReferenceMaker "
         " --output {output} --reference {input.ref} --variant {input.vcf} --showHidden true --use-iupac-sample {params.sample} 1> {log.std} 2>&1; "
@@ -132,10 +132,10 @@ if config.get("vcf2phylip"):
             config["conda"]["buscoclade_main"]["name"] if config["use_existing_envs"]
             else ("../../%s" % config["conda"]["buscoclade_main"]["yaml"]),
         resources:
-            queue=config["processing_queue"],
-            cpus=config["processing_threads"],
-            time=config["processing_time"],
+            slurm_partition=config["processing_queue"],
+            runtime=config["processing_time"],
             mem_mb=config["processing_mem_mb"],
+        threads=config["processing_threads"],
         shell:
             " workflow/scripts/vcf2phylip.py -i {input.vcf} --phylip-disable --fasta 1> {log.std} 2>&1; "
             " mv {params.prefix} {output}"

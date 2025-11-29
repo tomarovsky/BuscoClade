@@ -17,10 +17,10 @@ if config.get("filtration") == "gblocks":
         conda:
             config["conda"]["buscoclade_main"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_main"]["yaml"])
         resources:
-            queue=config["filtration_queue"],
-            cpus=config["gblocks_threads"],
-            time=config["gblocks_time"],
-            mem=config["gblocks_mem_mb"],
+            slurm_partition=config["filtration_queue"],
+            runtime=config["gblocks_time"],
+            mem_mb=config["gblocks_mem_mb"],
+        threads: config["gblocks_threads"]
         shell:
             " mkdir -p {params.outdir}; set +e; "
             " Gblocks {input} {params.options} 1> {log.std} 2>&1; "
@@ -46,10 +46,10 @@ if config.get("filtration") == "trimal":
         conda:
             config["conda"]["buscoclade_main"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_main"]["yaml"])
         resources:
-            queue=config["filtration_queue"],
-            cpus=config["trimal_threads"],
-            time=config["trimal_time"],
+            slurm_partition=config["filtration_queue"],
+            runtime=config["trimal_time"],
             mem_mb=config["trimal_mem_mb"],
+        threads: config["trimal_threads"]
         shell:
             " trimal -in {input} -out {params.prefix} {params.options} > {log.std} 2>&1; "
             " trimal -in {params.prefix} -out {output} -nogaps >> {log.std} 2>&1; "

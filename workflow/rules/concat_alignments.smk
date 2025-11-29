@@ -15,10 +15,10 @@ if config.get("vcf2phylip") != True:
         conda:
             config["conda"]["buscoclade_main"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_main"]["yaml"])
         resources:
-            queue=config["processing_queue"],
-            cpus=config["processing_threads"],
-            time=config["processing_time"],
+            slurm_partition=config["processing_queue"],
+            runtime=config["processing_time"],
             mem_mb=config["processing_mem_mb"],
+        threads: config["processing_threads"]
         shell:
             """
             workflow/scripts/concat_fasta.py -i {input} -o {output} 1> {log.std} 2>&1
@@ -42,10 +42,10 @@ rule concat_nexus:
     conda:
         config["conda"]["buscoclade_main"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_main"]["yaml"])
     resources:
-        queue=config["processing_queue"],
-        cpus=config["processing_threads"],
-        time=config["processing_time"],
+        slurm_partition=config["processing_queue"],
+        runtime=config["processing_time"],
         mem_mb=config["processing_mem_mb"],
+    threads: config["processing_threads"]
     shell:
         " workflow/scripts/fasta_to_nexus.py -i {input} "
         " -t {params.type} -b {params.block} -o {output} 1> {log.std} 2>&1; "
@@ -65,10 +65,10 @@ rule concat_stockholm:
     conda:
         config["conda"]["buscoclade_main"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_main"]["yaml"])
     resources:
-        queue=config["processing_queue"],
-        cpus=config["processing_threads"],
-        time=config["processing_time"],
+        slurm_partition=config["processing_queue"],
+        runtime=config["processing_time"],
         mem_mb=config["processing_mem_mb"],
+    threads: config["processing_threads"]
     shell:
         " workflow/scripts/fasta_to_stockholm.py -i {input} -o {output} 1> {log.std} 2>&1 "
 
@@ -88,9 +88,9 @@ rule concat_phylip:
     conda:
         config["conda"]["buscoclade_main"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_main"]["yaml"])
     resources:
-        queue=config["processing_queue"],
-        cpus=config["processing_threads"],
-        time=config["processing_time"],
+        slurm_partition=config["processing_queue"],
+        runtime=config["processing_time"],
         mem_mb=config["processing_mem_mb"],
+    threads: config["processing_threads"]
     shell:
         " workflow/scripts/fasta_to_phylip.py -i {input} -o {output.phy} 1> {log.std} 2>&1; "

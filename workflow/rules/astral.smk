@@ -22,9 +22,8 @@ rule iqtree_per_fna:
     conda:
         config["conda"]["buscoclade_main"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_main"]["yaml"])
     resources:
-        queue=config["astral_queue"],
-        cpus=config["iqtree_per_fna_threads"],
-        time=config["iqtree_per_fna_time"],
+        slurm_partition=config["astral_queue"],
+        runtime=config["iqtree_per_fna_time"],
         mem_mb=config["iqtree_per_fna_mem_mb"],
     threads: config["iqtree_per_fna_threads"]
     shell:
@@ -45,9 +44,8 @@ rule concat_newick_files:
     conda:
         config["conda"]["buscoclade_main"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_main"]["yaml"])
     resources:
-        queue=config["processing_queue"],
-        cpus=config["processing_threads"],
-        time=config["processing_time"],
+        slurm_partition=config["processing_queue"],
+        runtime=config["processing_time"],
         mem_mb=config["processing_mem_mb"],
     threads: config["processing_threads"]
     shell:
@@ -69,9 +67,8 @@ rule nodes_filtrataion_by_support:
     conda:
         config["conda"]["buscoclade_main"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_main"]["yaml"])
     resources:
-        queue=config["processing_queue"],
-        cpus=config["processing_threads"],
-        time=config["processing_time"],
+        slurm_partition=config["processing_queue"],
+        runtime=config["processing_time"],
         mem_mb=config["processing_mem_mb"],
     threads: config["processing_threads"]
     shell:
@@ -93,9 +90,8 @@ rule astral_tree:
     conda:
         config["conda"]["buscoclade_main"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_main"]["yaml"])
     resources:
-        queue=config["astral_queue"],
-        cpus=config["astral_threads"],
-        time=config["astral_time"],
+        slurm_partition=config["astral_queue"],
+        runtime=config["astral_time"],
         mem_mb=config["astral_mem_mb"],
     threads: config["astral_threads"]
     shell:

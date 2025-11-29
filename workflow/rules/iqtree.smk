@@ -22,9 +22,8 @@ rule iqtree:
     conda:
         config["conda"]["buscoclade_main"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_main"]["yaml"])
     resources:
-        queue=config["iqtree_queue"],
-        cpus=config["iqtree_threads"],
-        time=config["iqtree_time"],
+        slurm_partition=config["iqtree_queue"],
+        runtime=config["iqtree_time"],
         mem_mb=config["iqtree_mem_mb"],
     threads: config["iqtree_threads"]
     shell:

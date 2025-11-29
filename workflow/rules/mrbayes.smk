@@ -13,10 +13,10 @@ rule mrbayes:
     benchmark:
         benchmark_dir_path / "mrbayes.benchmark.txt"
     resources:
-        queue=config["mrbayes_queue"],
-        cpus=config["mrbayes_threads"],
-        time=config["mrbayes_time"],
+        slurm_partition=config["mrbayes_queue"],
+        runtime=config["mrbayes_time"],
         mem_mb=config["mrbayes_mem_mb"],
+    threads: config["mrbayes_threads"]
     shell:
         " mkdir -p {output}; "
         " mpirun -np {resources.cpus} {params.mrbayes_path}/mb-mpi {input} {params.options} 1> {log.std} 2>&1; "

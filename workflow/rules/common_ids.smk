@@ -16,9 +16,8 @@ rule species_single_copy_ids:  # get single copy ids for each species
     benchmark:
         benchmark_dir_path / "species_ids.{species}.benchmark.txt"
     resources:
-        queue=config["processing_queue"],
-        cpus=config["processing_threads"],
-        time=config["processing_time"],
+        slurm_partition=config["processing_queue"],
+        runtime=config["processing_time"],
         mem_mb=config["processing_mem_mb"],
     threads: config["processing_threads"]
     shell:
@@ -37,9 +36,8 @@ rule species_multi_copy_ids:  # get multi copy ids for each species
     benchmark:
         benchmark_dir_path / "species_ids.{species}.benchmark.txt"
     resources:
-        queue=config["processing_queue"],
-        cpus=config["processing_threads"],
-        time=config["processing_time"],
+        slurm_partition=config["processing_queue"],
+        runtime=config["processing_time"],
         mem_mb=config["processing_mem_mb"],
     threads: config["processing_threads"]
     shell:
@@ -60,9 +58,8 @@ rule common_ids:  # get common IDs for all species given config["gene_blacklist"
     benchmark:
         benchmark_dir_path / "common_ids.benchmark.txt"
     resources:
-        queue=config["processing_queue"],
-        cpus=config["processing_threads"],
-        time=config["processing_time"],
+        slurm_partition=config["processing_queue"],
+        runtime=config["processing_time"],
         mem_mb=config["processing_mem_mb"],
     threads: config["processing_threads"]
     shell:
@@ -83,9 +80,8 @@ checkpoint merged_sequences:  # get merged sequences by common IDs
     benchmark:
         benchmark_dir_path / "merged_sequences.benchmark.txt"
     resources:
-        queue=config["processing_queue"],
-        cpus=config["processing_threads"],
-        time=config["processing_time"],
+        slurm_partition=config["processing_queue"],
+        runtime=config["processing_time"],
         mem_mb=config["processing_mem_mb"],
     threads: config["processing_threads"]
     shell:

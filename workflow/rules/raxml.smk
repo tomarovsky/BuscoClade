@@ -20,9 +20,8 @@ rule raxml:
     conda:
         config["conda"]["buscoclade_main"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_main"]["yaml"])
     resources:
-        queue=config["raxml_queue"],
-        cpus=config["raxml_threads"],
-        time=config["raxml_time"],
+        slurm_partition=config["raxml_queue"],
+        runtime=config["raxml_time"],
         mem_mb=config["raxml_mem_mb"],
     threads: config["raxml_threads"],
     shell:

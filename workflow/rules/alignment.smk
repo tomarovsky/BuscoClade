@@ -17,9 +17,8 @@ if config.get("alignment") == "prank":
         conda:
             config["conda"]["buscoclade_main"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_main"]["yaml"])
         resources:
-            queue=config["alignment_queue"],
-            cpus=config["prank_threads"],
-            time=config["prank_time"],
+            slurm_partition=config["alignment_queue"],
+            runtime=config["prank_time"],
             mem_mb=config["prank_mem_mb"],
         threads: config["prank_threads"]
         shell:
@@ -44,9 +43,8 @@ if config["alignment"] == "mafft":
         conda:
             config["conda"]["buscoclade_main"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_main"]["yaml"])
         resources:
-            queue=config["alignment_queue"],
-            cpus=config["mafft_threads"],
-            time=config["mafft_time"],
+            slurm_partition=config["alignment_queue"],
+            runtime=config["mafft_time"],
             mem_mb=config["mafft_mem_mb"],
         threads: config["mafft_threads"]
         shell:

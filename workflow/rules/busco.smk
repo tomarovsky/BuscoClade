@@ -21,9 +21,8 @@ rule busco_metaeuk:
     conda:
         config["conda"]["buscoclade_main"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_main"]["yaml"])
     resources:
-        queue=config["busco_queue"],
-        cpus=config["busco_threads"],
-        time=config["busco_time"],
+        slurm_partition=config["busco_queue"],
+        runtime=config["busco_time"],
         mem_mb=config["busco_mem_mb"],
     threads: config["busco_threads"]
     shell:

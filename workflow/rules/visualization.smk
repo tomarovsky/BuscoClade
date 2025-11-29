@@ -17,9 +17,8 @@ rule iqtree_tree_visualization:
     conda:
         config["conda"]["buscoclade_ete3"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_ete3"]["yaml"])
     resources:
-        queue=config["processing_queue"],
-        cpus=config["processing_threads"],
-        time=config["processing_time"],
+        slurm_partition=config["processing_queue"],
+        runtime=config["processing_time"],
         mem_mb=config["processing_mem_mb"],
     threads: config["processing_threads"]
     shell:
@@ -48,9 +47,8 @@ rule astral_tree_visualization:
     conda:
         config["conda"]["buscoclade_ete3"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_ete3"]["yaml"])
     resources:
-        queue=config["processing_queue"],
-        cpus=config["processing_threads"],
-        time=config["processing_time"],
+        slurm_partition=config["processing_queue"],
+        runtime=config["processing_time"],
         mem_mb=config["processing_mem_mb"],
     threads: config["processing_threads"]
     shell:
@@ -80,9 +78,8 @@ rule rapidnj_tree_visualization:
     conda:
         config["conda"]["buscoclade_ete3"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_ete3"]["yaml"])
     resources:
-        queue=config["processing_queue"],
-        cpus=config["processing_threads"],
-        time=config["processing_time"],
+        slurm_partition=config["processing_queue"],
+        runtime=config["processing_time"],
         mem_mb=config["processing_mem_mb"],
     threads: config["processing_threads"]
     shell:
@@ -109,9 +106,8 @@ rule phylip_tree_visualization:
     conda:
         config["conda"]["buscoclade_ete3"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_ete3"]["yaml"])
     resources:
-        queue=config["processing_queue"],
-        cpus=config["processing_threads"],
-        time=config["processing_time"],
+        slurm_partition=config["processing_queue"],
+        runtime=config["processing_time"],
         mem_mb=config["processing_mem_mb"],
     threads: config["processing_threads"]
     shell:
@@ -138,9 +134,8 @@ rule raxml_tree_visualization:
     conda:
         config["conda"]["buscoclade_ete3"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_ete3"]["yaml"])
     resources:
-        queue=config["processing_queue"],
-        cpus=config["processing_threads"],
-        time=config["processing_time"],
+        slurm_partition=config["processing_queue"],
+        runtime=config["processing_time"],
         mem_mb=config["processing_mem_mb"],
     threads: config["processing_threads"],
     shell:
@@ -163,9 +158,8 @@ rule species_ids_plot:
     benchmark:
         benchmark_dir_path / "species_ids_plot.benchmark.txt"
     resources:
-        queue=config["processing_queue"],
-        cpus=config["processing_threads"],
-        time=config["processing_time"],
+        slurm_partition=config["processing_queue"],
+        runtime=config["processing_time"],
         mem_mb=config["processing_mem_mb"],
     threads: config["processing_threads"]
     shell:
@@ -185,9 +179,8 @@ rule busco_summaries_to_tsv:
     conda:
         config["conda"]["buscoclade_main"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_main"]["yaml"])
     resources:
-        queue=config["processing_queue"],
-        cpus=config["processing_threads"],
-        time=config["processing_time"],
+        slurm_partition=config["processing_queue"],
+        runtime=config["processing_time"],
         mem_mb=config["processing_mem_mb"],
     threads: config["processing_threads"]
     shell:
@@ -210,9 +203,8 @@ rule busco_histogram:
     conda:
         config["conda"]["buscoclade_main"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_main"]["yaml"])
     resources:
-        queue=config["processing_queue"],
-        cpus=config["processing_threads"],
-        time=config["processing_time"],
+        slurm_partition=config["processing_queue"],
+        runtime=config["processing_time"],
         mem_mb=config["processing_mem_mb"],
     threads: config["processing_threads"]
     shell:

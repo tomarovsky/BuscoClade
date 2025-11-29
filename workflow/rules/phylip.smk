@@ -19,9 +19,8 @@ rule phylip_dnadist:
     conda:
         config["conda"]["buscoclade_main"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_main"]["yaml"])
     resources:
-        queue=config["phylip_queue"],
-        cpus=config["phylip_threads"],
-        time=config["phylip_time"],
+        slurm_partition=config["phylip_queue"],
+        runtime=config["phylip_time"],
         mem_mb=config["phylip_mem_mb"],
     threads: config["phylip_threads"]
     shell:
@@ -50,9 +49,8 @@ rule phylip_neighbor:
     conda:
         config["conda"]["buscoclade_main"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_main"]["yaml"])
     resources:
-        queue=config["phylip_queue"],
-        cpus=config["phylip_threads"],
-        time=config["phylip_time"],
+        slurm_partition=config["phylip_queue"],
+        runtime=config["phylip_time"],
         mem_mb=config["phylip_mem_mb"],
     threads: config["phylip_threads"]
     shell:
@@ -80,9 +78,8 @@ rule phylip_tree_namefix:
     benchmark:
         benchmark_dir_path / "phylip_tree_namefix.benchmark.txt"
     resources:
-        queue=config["processing_queue"],
-        cpus=config["processing_threads"],
-        time=config["processing_time"],
+        slurm_partition=config["processing_queue"],
+        runtime=config["processing_time"],
         mem_mb=config["processing_mem_mb"],
     threads: config["processing_threads"]
     shell:
