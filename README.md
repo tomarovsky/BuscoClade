@@ -50,6 +50,13 @@ Specify Slurm queue, threads, memory, and runtime for each tool.
 
 ### Step 4. Execute workflow
 
+Install snakemake:
+
+```
+mamba create -c conda-forge -c bioconda -c nodefaults -n snakemake snakemake snakemake-executor-plugin-slurm
+mamba activate snakemake
+```
+
 For a dry run:
 
 ```
@@ -84,4 +91,3 @@ results/
 ## Contact
 
 Please email me at: <andrey.tomarovsky@gmail.com> for any questions or feedback.
-
