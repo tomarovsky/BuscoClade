@@ -67,7 +67,7 @@ Snakemake will print all the rules that will be executed. Remove `--dry-run` to 
 
 **How to run the workflow if I have completed BUSCOs?**
 
-First, move the genome assemblies to the ` genomes/` directory or create empty files with corresponding names. Then, create a `results/busco/` directory and move the BUSCO output directories into it. Note that BUSCO output must be formatted. Thus, for `Ailurus_fulgens.fasta` BUSCO output should look like this:
+First, move the genome assemblies to the `genomes/` directory or create empty files with corresponding names. Then, create a `results/busco/` directory and move the BUSCO output directories into it. Note that BUSCO output must be formatted. Thus, for `Ailurus_fulgens.fasta` BUSCO output should look like this:
 
 ```
 results/
