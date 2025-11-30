@@ -52,7 +52,7 @@ rule astral_tree_visualization:
         mem_mb=config["processing_mem_mb"],
     threads: config["processing_threads"]
     shell:
-        " QT_QPA_PLATFORM=offscreen; "
+        " export QT_QPA_PLATFORM=offscreen; "
         " workflow/scripts/draw_phylotrees_from_astral.py -i {input.treefile} -o {params.prefix} -n $(cat {input.common_ids} | wc -l) {params.options} > {log.std} 2>&1; "
         " workflow/scripts/draw_phylotrees_from_astral_pp.py -i {input.treefile} -o {params.prefix}.pp {params.options} > {log.std} 2>&1; "
         " workflow/scripts/draw_phylotrees_from_astral_q.py -i {input.treefile} -o {params.prefix}.q {params.options} > {log.std} 2>&1; "

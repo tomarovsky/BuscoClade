@@ -6,6 +6,7 @@ cluster-generic-submit-cmd: sbatch
     --time={resources.runtime}
     --job-name=smk-{rule}-{wildcards}
     --output={log.cluster_log}
+    --error={log.cluster_err}
     --parsable # Required to pass job IDs to scancel
 scheduler: greedy
 max-jobs-per-second: 10
