@@ -35,8 +35,6 @@ To set up the workflow, modify `config/default.yaml`. I recommend to copy config
 - **Pipeline Configuration:**
 This section outlines the workflow. By default, it includes alignments and following filtration of nucleotide sequences, and all tools for phylogeny reconstruction, except for MrBayes (it is recommended to run the GPU compiled version separately). To disable a tool, set its value to `False` or comment out the corresponding line.
 
-  **NB!** When constructing a phylogeny using the Neighbor-Joining (NJ) method with PHYLIP, ensure that the first 10 characters of each species name are unique and distinct from one another.
-
 - **Tool Parameters:**
 Specify parameters for each tool. To perform BUSCO, it is important to specify:
   - `busco_dataset_path`: Download the BUSCO dataset beforehand and specify its path here.
