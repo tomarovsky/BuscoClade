@@ -53,7 +53,7 @@ Specify Slurm queue, threads, memory, and runtime for each tool.
 Install snakemake:
 
 ```
-mamba create -c conda-forge -c bioconda -c nodefaults -n snakemake snakemake snakemake-executor-plugin-slurm
+mamba create -c conda-forge -c bioconda -c nodefaults -n snakemake snakemake snakemake-executor-plugin-cluster-generic
 mamba activate snakemake
 ```
 
