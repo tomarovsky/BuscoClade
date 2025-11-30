@@ -5,9 +5,3 @@ latency-wait: 60
 printshellcmds: True
 show-failed-logs: True
 rerun-incomplete: True
-
-default-resources:
-    slurm_partition: "main"
-    runtime: 60
-    mem_mb: 2000
-    cpus_per_task: 1
