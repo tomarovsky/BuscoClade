@@ -20,5 +20,3 @@ dependencies:
     - samtools
     - pip:
           - "--editable=git+https://github.com/tomarovsky/Biocrutch.git#egg=Biocrutch"
-          - argparse
-          - indexed_gzip
