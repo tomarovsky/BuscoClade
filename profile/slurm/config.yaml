@@ -1,4 +1,4 @@
-executor: slurm
+executor: "slurm"
 jobs: 100
 use-conda: True
 latency-wait: 60
