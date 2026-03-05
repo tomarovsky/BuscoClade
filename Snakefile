@@ -65,12 +65,9 @@ def get_vcf_reconstruct_map(vcf_dir: Path) -> dict:
 
             # Process VCF files
             for vcf_file in vcf_subdir.glob("*.vcf.gz"):
-                vcf_id = vcf_file.stem.split('.')[0]
+                vcf_id = vcf_file.stem.split(".")[0]
                 alt_name = f"{vcf_id}.{ref_prefix}.AltRef"
-                vcf_mapping[alt_name] = {
-                    'vcf': vcf_file,
-                    'reference': ref_file
-                }
+                vcf_mapping[alt_name] = {"vcf": vcf_file, "reference": ref_file}
 
     return vcf_mapping
 
@@ -83,10 +80,10 @@ def get_species_list(vcf_species: list, genome_species: list) -> list:
 def extract_samples_from_vcf(vcf_file: Path) -> list:
     """Extract sample names from VCF file header."""
     try:
-        with gzip.open(vcf_file, 'rt') as file:
+        with gzip.open(vcf_file, "rt") as file:
             for line in file:
-                if line.startswith('#CHROM'):
-                    parts = line.strip().split('\t')
+                if line.startswith("#CHROM"):
+                    parts = line.strip().split("\t")
                     return parts[9:]  # Sample names start at column 10
     except Exception as e:
         raise ValueError(f"Failed to read VCF file {vcf_file}: {e}")
@@ -130,10 +127,7 @@ if "species_list" not in config:
         # VCF2Phylip specific processing
         vcf_files = list(vcf_reconstruct_dir_path.rglob("*.vcf.gz"))
         if len(vcf_files) != 1:
-            raise ValueError(
-                f"vcf2phylip requires exactly one VCF in {vcf_reconstruct_dir_path}, "
-                f"found {len(vcf_files)}: {vcf_files}"
-            )
+            raise ValueError(f"vcf2phylip requires exactly one VCF in {vcf_reconstruct_dir_path}, " f"found {len(vcf_files)}: {vcf_files}")
         vcf_file = vcf_files[0]
         prefix = vcf_file.name.replace(".vcf.gz", "")
         config["species_list"] = extract_samples_from_vcf(vcf_file)
@@ -185,7 +179,9 @@ else:
     if config.get("alignment"):
         output_files.append(lambda w: expand_fna_from_merged_sequences(w, alignments_dir_path / "fna" / "{N}.fna", busco_blacklist=busco_blacklist))
         if config.get("filtration"):
-            output_files.append(lambda w: expand_fna_from_merged_sequences(w, filtered_alignments_dir_path / "fna" / "{N}.fna", busco_blacklist=busco_blacklist))
+            output_files.append(
+                lambda w: expand_fna_from_merged_sequences(w, filtered_alignments_dir_path / "fna" / "{N}.fna", busco_blacklist=busco_blacklist)
+            )
             output_files.append(concat_alignments_dir_path / fasta_filename)
             if config.get("iqtree"):
                 output_files.append(iqtree_dir_path / "fna" / f"{fasta_filename}.treefile")
@@ -210,8 +206,8 @@ else:
                 if config.get("draw_phylotrees"):
                     output_files.append(raxml_dir_path / f"{fasta_filename}.only_tree.svg")
             if config.get("mrbayes"):
-                    output_files.append(concat_alignments_dir_path / nexus_filename)
-                    output_files.append(mrbayes_dir_path / "fna")
+                output_files.append(concat_alignments_dir_path / nexus_filename)
+                output_files.append(mrbayes_dir_path / "fna")
 
 
 localrules:
