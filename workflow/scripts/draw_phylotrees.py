@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-__author__ = 'tomarovsky'
+__author__ = "tomarovsky"
 
 import sys
 from argparse import ArgumentParser
@@ -29,6 +29,7 @@ def mylayout(node):
             support_circle = CircleFace(4, color=color, style="circle")
             faces.add_face_to_node(support_circle, node, column=0, position="float")
 
+
 def add_legend(ts):
     legend_items = [
         (" >90", "LimeGreen"),
@@ -46,6 +47,7 @@ def add_legend(ts):
 
     ts.legend_position = (0, 0)
 
+
 def process_tree(args):
     """Main logic for processing the tree."""
     input_path = Path(args.input)
@@ -58,7 +60,7 @@ def process_tree(args):
 
     # 1. Rooting
     if args.outgroup:
-        outgroup_names = [name.strip() for name in args.outgroup.split(',')]
+        outgroup_names = [name.strip() for name in args.outgroup.split(",")]
         target_nodes = []
         for name in outgroup_names:
             node = t.search_nodes(name=name)
@@ -91,7 +93,6 @@ def process_tree(args):
     else:
         t.unroot()
 
-
     # if args.outgroup:
     #     if "," in args.outgroup:
     #         try:
@@ -109,27 +110,23 @@ def process_tree(args):
     # else:
     #     t.unroot()
 
-
     # 2. Ladderize (sort branches)
     t.ladderize(direction=True)
 
     # 3. Normalize leaf names
     for leaf in t.iter_leaves():
-        leaf.name = (leaf.name
-                    .replace("_", " ")
-                    .replace("GCA ", "GCA_")
-                    .replace("GCF ", "GCF_"))
+        leaf.name = leaf.name.replace("_", " ").replace("GCA ", "GCA_").replace("GCF ", "GCF_")
 
     # 4. Set style
     ts = TreeStyle()
-    ts.mode = "r" # Rectangular
+    ts.mode = "r"  # Rectangular
     ts.layout_fn = mylayout
     ts.show_leaf_name = False
 
     # Line style
     for n in t.traverse():
         nstyle = NodeStyle()
-        nstyle["fgcolor"] = "Blue" # Line color
+        nstyle["fgcolor"] = "Blue"  # Line color
         nstyle["size"] = 0
         nstyle["vt_line_width"] = 1
         nstyle["hz_line_width"] = 1
@@ -139,11 +136,7 @@ def process_tree(args):
 
     # 5. Render files
     # Define rendering parameters
-    render_params = {
-        "dpi": args.dpi,
-        "units": "px",
-        "tree_style": ts
-    }
+    render_params = {"dpi": args.dpi, "units": "px", "tree_style": ts}
 
     ts.show_branch_length = True
     ts.show_branch_support = True
@@ -165,6 +158,7 @@ def process_tree(args):
     if args.show:
         t.show(tree_style=ts)
 
+
 def main():
     parser = ArgumentParser(description="Visualize phylogenetic trees using ete3 with custom styling.")
 
@@ -183,6 +177,7 @@ def main():
         sys.exit(f"Error: File '{args.input}' not found.")
 
     process_tree(args)
+
 
 if __name__ == "__main__":
     main()

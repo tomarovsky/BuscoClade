@@ -10,7 +10,7 @@ dependencies:
     - gblocks
     - trimal
     - iqtree
-    - astral-tree
+    - aster
     - newick_utils
     - rapidnj
     - phylip
@@ -18,5 +18,3 @@ dependencies:
     - bedtools
     - bcftools
     - samtools
-    - pip:
-          - "--editable=git+https://github.com/tomarovsky/Biocrutch.git#egg=Biocrutch"

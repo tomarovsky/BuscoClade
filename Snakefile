@@ -5,6 +5,10 @@ import os
 import pandas as pd
 
 
+# ---- Constants ----
+FASTA_EXTENSIONS = [".fasta.gz", ".fna.gz", ".fa.gz", ".fasta", ".fna", ".fa"]
+FASTA_PATTERNS = [f"*{ext}" for ext in FASTA_EXTENSIONS]
+
 # ---- Setup paths ----
 # -- Input --
 genome_dir_path = Path(config["genome_dir"]).resolve()
@@ -48,6 +52,27 @@ raxml_tree = "{}.fna.raxml.treefile".format(config["alignment_file_prefix"])
 
 
 # ---- Necessary functions ----
+def get_fasta_stem(path: Path) -> str:
+    """Returns filename stem, correctly handling multi-part extensions like .fna.gz."""
+    name = path.name
+    for ext in FASTA_EXTENSIONS:
+        if name.endswith(ext):
+            return name[: -len(ext)]
+    return path.stem
+
+
+def get_fasta_files(directory: Path) -> list[Path]:
+    """Returns all FASTA files in a directory, matching all known extensions."""
+    seen = set()
+    files = []
+    for pattern in FASTA_PATTERNS:
+        for f in sorted(directory.glob(pattern)):
+            if f.is_file() and f not in seen:
+                seen.add(f)
+                files.append(f)
+    return files
+
+
 def get_vcf_reconstruct_map(vcf_dir: Path) -> dict:
     """Returns a dictionary where keys are species names and values are dictionaries of VCF and FASTA files."""
     vcf_mapping = {}
@@ -57,13 +82,12 @@ def get_vcf_reconstruct_map(vcf_dir: Path) -> dict:
             if not vcf_subdir.is_dir():
                 continue
 
-            # Find first FASTA file
-            ref_file = next(vcf_subdir.glob("*.fasta"), None)
-            if ref_file is None:
+            ref_files = get_fasta_files(vcf_subdir)
+            if not ref_files:
                 continue
-            ref_prefix = ref_file.stem
+            ref_file = ref_files[0]
+            ref_prefix = get_fasta_stem(ref_file)
 
-            # Process VCF files
             for vcf_file in vcf_subdir.glob("*.vcf.gz"):
                 vcf_id = vcf_file.stem.split(".")[0]
                 alt_name = f"{vcf_id}.{ref_prefix}.AltRef"
@@ -114,8 +138,30 @@ def expand_fna_from_merged_sequences(wildcards, template, busco_blacklist=None):
     return expand(str(template), N=N)
 
 
+def get_genome_file(wildcards) -> Path:
+    """
+    Finds genome file for a given species, trying all known extensions.
+    For VCF-reconstructed species the file will be created by link_altref_to_genomes_dir,
+    so we return the expected .fasta path without checking existence.
+    """
+
+    if wildcards.species in vcf_reconstruct_map:
+        return genome_dir_path / f"{wildcards.species}.fasta"
+
+    for f in get_fasta_files(genome_dir_path):
+        if get_fasta_stem(f) == wildcards.species:
+            return f
+
+    raise ValueError(f"No genome file found for species '{wildcards.species}' in {genome_dir_path}")
+
+
+def get_all_genome_files() -> list[Path]:
+    """Returns genome files for all species in species_list, in the same order."""
+    return [get_genome_file(type("W", (), {"species": s})()) for s in config["species_list"]]
+
+
 # ---- Input data ----
-genome_species = [f.stem for f in genome_dir_path.glob("*.fasta") if f.is_file()]
+genome_species = sorted({get_fasta_stem(f) for f in get_fasta_files(genome_dir_path)})
 vcf_reconstruct_map = get_vcf_reconstruct_map(vcf_reconstruct_dir_path)
 vcf_reconstruct_species = list(vcf_reconstruct_map.keys())
 

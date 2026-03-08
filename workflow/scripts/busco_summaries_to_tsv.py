@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 __author__ = "tomarovsky"
-import pandas as pd
 import argparse
 import re
+
+import pandas as pd
 
 
 def main():

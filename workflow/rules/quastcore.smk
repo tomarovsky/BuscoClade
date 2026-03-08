@@ -1,6 +1,6 @@
 rule quastcore:
     input:
-        expand(genome_dir_path / "{species}.fasta", species=config["species_list"]),
+        lambda w: get_all_genome_files(),
     output:
         quastcore_dir_path / "assembly_stats.csv",
     params:
@@ -19,4 +19,4 @@ rule quastcore:
         mem_mb=config["processing_mem_mb"],
     threads: config["processing_threads"]
     shell:
-        " quast_core.py -i {input} {params} -b 10000000 -o {output} > {log.std} 2>&1; "
+        " workflow/scripts/quastcore.py -i {input} {params} -o {output} > {log.std} 2>&1; "

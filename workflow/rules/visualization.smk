@@ -29,7 +29,6 @@ rule iqtree_tree_visualization:
 rule astral_tree_visualization:
     input:
         treefile=astral_dir_path / astral_tree,
-        common_ids=rules.common_ids.output,
     output:
         astral_dir_path / f"{astral_tree}.svg",
         astral_dir_path / f"{astral_tree}.pp.svg",
@@ -53,7 +52,7 @@ rule astral_tree_visualization:
     threads: config["processing_threads"]
     shell:
         " export QT_QPA_PLATFORM=offscreen; "
-        " workflow/scripts/draw_phylotrees_from_astral.py -i {input.treefile} -o {params.prefix} -n $(cat {input.common_ids} | wc -l) {params.options} > {log.std} 2>&1; "
+        " workflow/scripts/draw_phylotrees_from_astral.py -i {input.treefile} -o {params.prefix} {params.options} > {log.std} 2>&1; "
         " workflow/scripts/draw_phylotrees_from_astral_pp.py -i {input.treefile} -o {params.prefix}.pp {params.options} > {log.std} 2>&1; "
         " workflow/scripts/draw_phylotrees_from_astral_q.py -i {input.treefile} -o {params.prefix}.q {params.options} > {log.std} 2>&1; "
         " workflow/scripts/astral_metrics.py -i {input.treefile} -o {params.prefix}.tsv {params.options} > {log.std} 2>&1; "

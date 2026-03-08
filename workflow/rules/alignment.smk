@@ -25,6 +25,7 @@ if config.get("alignment") == "prank":
             " prank -d={input} -o={params.prefix} {params.options} 1> {log.std} 2>&1; "
             " mv {params.prefix}.best.fas {output} >> {log.std} 2>&1; "
 
+
 if config["alignment"] == "mafft":
 
     rule mafft:

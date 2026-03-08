@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-__author__ = 'tomarovsky'
+__author__ = "tomarovsky"
 
 import sys
 from argparse import ArgumentParser
@@ -9,17 +9,17 @@ from ete3 import AttrFace, CircleFace, NodeStyle, TextFace, Tree, TreeStyle, fac
 
 
 def newick_to_nhx(newick_file) -> str:
-    with open(newick_file, 'r') as file:
-        tree_string = ''
-        newick = file.readline().replace("_", " ").strip().split("'")
+    with open(newick_file, "r") as file:
+        tree_string = ""
+        newick = file.readline().strip().split("'")
         tree_string += newick[0]
         for i in range(1, len(newick), 2):
-            line = ''
+            line = ""
             flag = True
-            for s in newick[i+1]:
+            for s in newick[i + 1]:
                 if s == ")" or s == ",":
                     if flag:
-                        nhx = newick[i].replace(',', '.').replace(';', ':')[1:]
+                        nhx = newick[i].replace(",", ".").replace(";", ":")[1:]
                         line += f"[&&NHX:{nhx}{s}"
                         flag = False
                     else:
@@ -30,6 +30,18 @@ def newick_to_nhx(newick_file) -> str:
         return tree_string
 
 
+def filter_tree(node, prefixes):
+    """Filter tree based on prefix list"""
+    if node.is_leaf():
+        return any(node.name.startswith(prefix) for prefix in prefixes)
+    keep_children = []
+    for child in node.children:
+        if filter_tree(child, prefixes):
+            keep_children.append(child)
+    node.children = keep_children
+    return len(node.children) > 0
+
+
 def mylayout(node):
     if node.is_leaf():
         N = AttrFace("name", fgcolor="black", text_prefix="  ", fstyle="italic", fsize=12)
@@ -37,15 +49,14 @@ def mylayout(node):
         node.img_style["size"] = 1
         node.img_style["shape"] = "circle"
         node.img_style["fgcolor"] = "Black"
-        # node.dist = 0 # ASTRAL does not generate terminal branch lengths
 
 
 def add_legend(ts):
     legend_items = [
-        (" >90", "LimeGreen"),
-        (" 71-90", "#008cf0"),
-        (" 51-70", "#883ac2"),
-        (" ≤50", "#ff0000"),
+        (" >0.9", "LimeGreen"),
+        (" 0.71-0.9", "#008cf0"),
+        (" 0.51-0.7", "#883ac2"),
+        (" ≤0.5", "#ff0000"),
     ]
 
     for text, color in legend_items:
@@ -57,6 +68,7 @@ def add_legend(ts):
 
     ts.legend_position = (0, 0)
 
+
 def process_tree(args):
     """Main logic for processing the tree."""
     input_path = Path(args.input)
@@ -67,9 +79,9 @@ def process_tree(args):
     except Exception as e:
         sys.exit(f"Error reading tree file: {e}")
 
-    # 1. Rooting
+    # Rooting
     if args.outgroup:
-        outgroup_names = [name.strip() for name in args.outgroup.split(',')]
+        outgroup_names = [name.strip() for name in args.outgroup.split(",")]
         target_nodes = []
         for name in outgroup_names:
             node = t.search_nodes(name=name)
@@ -102,16 +114,17 @@ def process_tree(args):
     else:
         t.unroot()
 
-    # 2. Ladderize (sort branches)
+    # Filter tree if prefixes provided
+    if args.filter_prefixes:
+        filter_tree(t, args.filter_prefixes)
+        print(f"Tree filtered using prefixes: {args.filter_prefixes}")
+
+    # Ladderize (sort branches)
     t.ladderize(direction=True)
 
-    # 3. Normalize leaf names
+    # Normalize leaf names
     for leaf in t.iter_leaves():
-        leaf.name = (leaf.name
-                    .replace("_", " ")
-                    .replace("GCA ", "GCA_")
-                    .replace("GCF ", "GCF_"))
-
+        leaf.name = leaf.name.replace("_", " ").replace("GCA ", "GCA_").replace("GCF ", "GCF_")
 
     ts = TreeStyle()
     ts.mode = "r"
@@ -124,67 +137,78 @@ def process_tree(args):
         nstyle["fgcolor"] = "Blue"
         nstyle["size"] = 0
         n.set_style(nstyle)
-        if hasattr(n,"q1"):
+        if hasattr(n, "CULength"):
             for metric in args.metrics:
                 value = float(getattr(n, metric))
-                normalized_value = value / args.number_of_genes * 100 if metric == 'EN' else value * 100
-                for threshold in sorted(args.thresholds_and_colors.keys()):
-                    if normalized_value >= threshold:
-                        color = args.thresholds_and_colors[threshold] if metric in args.colored_metrics_whitelist else "Black"
-
-                if len(metric) <= 2:
-                    n.add_face(TextFace(f" {metric}  = "), column=1, position="branch-top")
+                if metric in args.colored_metrics_whitelist:
+                    color = "Black"
+                    for threshold in sorted(args.thresholds_and_colors.keys()):
+                        if value >= threshold:
+                            color = args.thresholds_and_colors[threshold]
                 else:
-                    n.add_face(TextFace(f" {metric} = "), column=1, position="branch-top")
+                    color = "Black"
 
-                if metric == 'EN':
-                    n.add_face(TextFace(f"{value:.2f} ({normalized_value:.2f}%) ", fgcolor = color), column=2, position="branch-top")
-                else:
-                    n.add_face(TextFace(f"{value:.2f} ", fgcolor=color), column=2, position="branch-top")
+                n.add_face(TextFace(f" {metric} ="), column=1, position="branch-top")
+                n.add_face(TextFace(f"{value:.2f} ", fgcolor=color), column=2, position="branch-top")
 
     add_legend(ts)
 
     # Render figure
-    render_params = {
-        "dpi": args.dpi,
-        "units": "px",
-        "tree_style": ts
-    }
+    render_params = {"dpi": args.dpi, "units": "px", "tree_style": ts}
     ts.show_branch_length = False
     ts.show_branch_support = False
     ts.branch_vertical_margin = -4
     for f in args.output_formats:
-        t.render(f"{args.output}.{f}", **render_params)
+        t.render(f"{output_prefix}.{f}", **render_params)
 
     if args.show:
         t.show(tree_style=ts)
 
 
 def main():
-    parser = ArgumentParser(description="script to visualize ASTRAL lll phylogenetic trees using ete3 (required python3 < 3.10)")
-    group_required = parser.add_argument_group('Required options')
-    group_required.add_argument('-i', '--input', type=str, help="NEWICK treefile from Astral lll with full annotation option (-t 2)")
-    group_required.add_argument('-o', '--output', type=str, help="outfile prefix")
-    group_additional = parser.add_argument_group('Additional options')
-    group_additional.add_argument('-g', '--outgroup', type=str, default=False, help="outgroup species name (default = unrooted)")
+    parser = ArgumentParser(description="script to visualize ASTRAL-IV phylogenetic trees using ete3 (required python3 < 3.10)")
+    group_required = parser.add_argument_group("Required options")
+    group_required.add_argument("-i", "--input", type=str, help="extended NEWICK treefile (from Astral-IV with -u 2)")
+    group_required.add_argument("-o", "--output", type=str, help="outfile prefix")
+    group_additional = parser.add_argument_group("Additional options")
+    group_additional.add_argument("-g", "--outgroup", type=str, default=False, help="outgroup species name (default = unrooted)")
+    group_additional.add_argument("-f", "--filter_prefixes", type=str, default=False, help="comma-separated list of leaf name prefixes to filter out")
 
     # colorification:
-    group_additional.add_argument('-m', '--metrics', type=lambda s: list(map(str, s.split(","))),
-                    default=['q1', 'q2', 'pp1', 'pp2', 'EN'], help="comma-separated list of necessary metrics")
-    group_additional.add_argument('--thresholds_and_colors', type=lambda s: dict(zip([int(s) for i in s[::2]], s[1::2])),
-                    default={90: 'LimeGreen', 70: '#008cf0', 50: '#883ac2', 0: '#ff0000'}, help="colors per metrics"
-                    "Example input: '90,LimeGreen,70,Gold,50,OrangeRed,0,Red'"
-                    "This means that normalized values above 90 will be colored LimeGreen, values above 70 will be colored Gold, etc.")
-    group_additional.add_argument('-n', '--number_of_genes', type=int,
-                    help="total number of gene trees in ASTRAL input treefile (necessary to normalize 'EN' option value)")
-    group_additional.add_argument('-w', '--colored_metrics_whitelist', type=lambda s: list(map(str, s.split(","))),
-                    default=['EN', 'q1', 'pp1'], help="comma-separated list of metrics for colorification (default metric color is 'Black')")
+    group_additional.add_argument(
+        "-m",
+        "--metrics",
+        type=lambda s: list(map(str, s.split(","))),
+        default=["CULength", "SULength", "f1", "f2", "f3", "localPP", "pp1", "pp2", "pp3", "q1", "q2", "q3"],
+        help="comma-separated list of necessary metrics",
+    )
+    group_additional.add_argument(
+        "--thresholds_and_colors",
+        type=lambda s: dict(zip([float(s) for i in s[::2]], s[1::2])),
+        default={0.9: "LimeGreen", 0.7: "#008cf0", 0.5: "#883ac2", 0: "#ff0000"},
+        help="colors per metrics"
+        "Example input: '0.9,LimeGreen,0.7,Gold,0.5,OrangeRed,0,Red'"
+        "This means that values above 0.9 will be colored LimeGreen, values above 0.7 will be colored Gold, etc.",
+    )
+    group_additional.add_argument(
+        "-w",
+        "--colored_metrics_whitelist",
+        type=lambda s: list(map(str, s.split(","))),
+        default=["q1", "pp1"],
+        help="comma-separated list of metrics for colorification (default metric color is 'Black')",
+    )
 
     # figure options:
-    group_additional.add_argument('--dpi', type=int, default=300, help="dpi for result rendering")
-    group_additional.add_argument('--show', action="store_true", help="option to show tree using GUI")
-    group_additional.add_argument("-e", "--output_formats", dest="output_formats", type=lambda s: s.split(","),
-                    default=("svg"), help="Comma-separated list of formats (supported by ete3) of output figure. Default: svg")
+    group_additional.add_argument("--dpi", type=int, default=300, help="dpi for result rendering")
+    group_additional.add_argument("--show", action="store_true", help="option to show tree using GUI")
+    group_additional.add_argument(
+        "-e",
+        "--output_formats",
+        dest="output_formats",
+        type=lambda s: s.split(","),
+        default=("svg"),
+        help="Comma-separated list of formats (supported by ete3) of output figure. Default: svg",
+    )
     args = parser.parse_args()
 
     if not Path(args.input).exists():

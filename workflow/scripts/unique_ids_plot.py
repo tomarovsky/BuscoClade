@@ -10,7 +10,7 @@ import argparse
 
 
 def read_species_ids(file_path):
-    with open(file_path, 'r') as file:
+    with open(file_path, "r") as file:
         return {line.strip() for line in file}
 
 
@@ -20,30 +20,32 @@ def main():
     multi_copy_sets = [read_species_ids(file) for file in args.multi_copy_ids_files]
     fig, ax = plt.subplots(2, 1, figsize=(30, len(labels)), dpi=300)
 
-    supervenn(single_copy_sets,
-              labels,
-              ax=ax[0],
-              sets_ordering=None,
-              chunks_ordering='size',
-              min_width_for_annotation=50,
-              rotate_col_annotations=True,
-              col_annotations_area_height=1.4,
-              # widths_minmax_ratio=0.005,
-              )
+    supervenn(
+        single_copy_sets,
+        labels,
+        ax=ax[0],
+        sets_ordering=None,
+        chunks_ordering="size",
+        min_width_for_annotation=50,
+        rotate_col_annotations=True,
+        col_annotations_area_height=1.4,
+        # widths_minmax_ratio=0.005,
+    )
 
-    supervenn(multi_copy_sets,
-              labels,
-              ax=ax[1],
-              sets_ordering=None,
-              chunks_ordering='size',
-              min_width_for_annotation=10,
-              rotate_col_annotations=True,
-              col_annotations_area_height=1.4,
-              widths_minmax_ratio=0.005,
-              )
+    supervenn(
+        multi_copy_sets,
+        labels,
+        ax=ax[1],
+        sets_ordering=None,
+        chunks_ordering="size",
+        min_width_for_annotation=10,
+        rotate_col_annotations=True,
+        col_annotations_area_height=1.4,
+        widths_minmax_ratio=0.005,
+    )
 
-    ax[0].set_title("Single copy BUSCOs", fontsize=16, fontweight='bold')
-    ax[1].set_title("Multi copy BUSCOs", fontsize=16, fontweight='bold')
+    ax[0].set_title("Single copy BUSCOs", fontsize=16, fontweight="bold")
+    ax[1].set_title("Multi copy BUSCOs", fontsize=16, fontweight="bold")
 
     plt.tight_layout()
     plt.savefig(args.outplot)

@@ -46,5 +46,6 @@ def main():
     except Exception as e:
         sys.exit(f"An error occurred: {e}")
 
+
 if __name__ == "__main__":
     main()

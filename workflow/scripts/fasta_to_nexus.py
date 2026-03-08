@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 __author__ = "tomarovsky"
-from Bio import AlignIO
-from sys import stdin
 import argparse
+from sys import stdin
+
+from Bio import AlignIO
 
 
 def main():

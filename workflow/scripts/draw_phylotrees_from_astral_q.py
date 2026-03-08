@@ -1,9 +1,6 @@
 #!/usr/bin/env python3
-__author__ = 'tomarovsky'
+__author__ = "tomarovsky"
 
-"""
-Script for visualizing phylogenetic trees with quartet support using ETE3
-"""
 
 import argparse
 import os
@@ -16,17 +13,17 @@ from ete3 import CircleFace, ImgFace, NodeStyle, TextFace, Tree, TreeStyle, face
 
 def newick_to_nhx(newick_file) -> str:
     """Convert Newick format to NHX format"""
-    with open(newick_file, 'r') as file:
-        tree_string = ''
-        newick = file.readline().replace("_", " ").strip().split("'")
+    with open(newick_file, "r") as file:
+        tree_string = ""
+        newick = file.readline().strip().split("'")
         tree_string += newick[0]
         for i in range(1, len(newick), 2):
-            line = ''
+            line = ""
             flag = True
-            for s in newick[i+1]:
+            for s in newick[i + 1]:
                 if s == ")" or s == ",":
                     if flag:
-                        nhx = newick[i].replace(',', '.').replace(';', ':')[1:]
+                        nhx = newick[i].replace(",", ".").replace(";", ":")[1:]
                         line += f"[&&NHX:{nhx}{s}"
                         flag = False
                     else:
@@ -42,10 +39,10 @@ def pie_chart_face(data, size=10):
     fig, ax = plt.subplots(figsize=(5, 5), dpi=size)
     ax.pie(data, colors=["blue", "orange", "yellow"], startangle=90)
     ax.set(aspect="equal")
-    plt.axis('off')
+    plt.axis("off")
 
     tmp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".png")
-    plt.savefig(tmp_file.name, format='png', bbox_inches='tight', transparent=True, pad_inches=0)
+    plt.savefig(tmp_file.name, format="png", bbox_inches="tight", transparent=True, pad_inches=0)
     plt.close(fig)
 
     face = ImgFace(tmp_file.name)
@@ -91,20 +88,23 @@ def create_tree_style():
     """Create and configure tree style"""
     ts = TreeStyle()
     ts.show_leaf_name = False
-    ts.scale = 40
     ts.legend = TreeStyle().legend
+    ts.show_branch_length = False
+    ts.show_branch_support = False
+    ts.branch_vertical_margin = -4
     add_legend(ts)
     return ts
 
 
 def create_custom_layout():
     """Create custom layout function for tree visualization"""
+
     def my_layout(node):
         node.img_style["size"] = 0
         node.img_style["fgcolor"] = "black"
 
         if node.is_leaf():
-            face_text = ' ' + node.name
+            face_text = " " + node.name
             face = TextFace(face_text, fsize=17, fstyle="italic", fgcolor="black")
             faces.add_face_to_node(face, node, column=0)
 
@@ -117,7 +117,7 @@ def create_custom_layout():
                     q3 = float(node.q3)
                     total = q1 + q2 + q3
                     if total > 0:
-                        proportions = [q1/total, q2/total, q3/total]
+                        proportions = [q1 / total, q2 / total, q3 / total]
                         pie = pie_chart_face(proportions)
                         faces.add_face_to_node(pie, node, column=0, position="float-behind")
                     if total > 100:
@@ -141,14 +141,14 @@ def apply_node_styles(tree):
 
 
 def main():
-    parser = argparse.ArgumentParser(description='Visualize phylogenetic trees with quartet support using ETE3')
-    parser.add_argument('-i', '--input', required=True, help='Input tree file (Newick format)')
-    parser.add_argument('-o', '--output', required=True, help='Output file prefix')
-    parser.add_argument('-g', '--outgroup', default=False, help="outgroup species name (default = unrooted)")
-    parser.add_argument('--filter-prefixes', nargs='+', help='Filter leaves by prefixes')
-    parser.add_argument('--ladderize', action='store_true', default=True, help='Ladderize tree (default: True)')
-    parser.add_argument('--format', default='svg', help='Output format (svg, png, pdf, etc.)')
-    parser.add_argument('--dpi', type=int, default=300, help='Output DPI for raster formats')
+    parser = argparse.ArgumentParser(description="Visualize phylogenetic trees with quartet support using ETE3")
+    parser.add_argument("-i", "--input", required=True, help="Input tree file (Newick format)")
+    parser.add_argument("-o", "--output", required=True, help="Output file prefix")
+    parser.add_argument("-g", "--outgroup", default=False, help="outgroup species name (default = unrooted)")
+    parser.add_argument("--filter-prefixes", nargs="+", help="Filter leaves by prefixes")
+    parser.add_argument("--ladderize", action="store_true", default=True, help="Ladderize tree (default: True)")
+    parser.add_argument("--format", default="svg", help="Output format (svg, png, pdf, etc.)")
+    parser.add_argument("--dpi", type=int, default=300, help="Output DPI for raster formats")
 
     args = parser.parse_args()
 
@@ -161,9 +161,9 @@ def main():
         # Load and process tree
         tree = Tree(newick_to_nhx(args.input))
 
-        # Set outgroup
+        # Rooting
         if args.outgroup:
-            outgroup_names = [name.strip() for name in args.outgroup.split(',')]
+            outgroup_names = [name.strip() for name in args.outgroup.split(",")]
             target_nodes = []
             for name in outgroup_names:
                 node = tree.search_nodes(name=name)
@@ -205,6 +205,10 @@ def main():
         if args.ladderize:
             tree.ladderize(direction=True)
             print("Tree ladderized")
+
+        # Normalize leaf names
+        for leaf in tree.iter_leaves():
+            leaf.name = leaf.name.replace("_", " ").replace("GCA ", "GCA_").replace("GCF ", "GCF_")
 
         # Create tree style and layout
         ts = create_tree_style()

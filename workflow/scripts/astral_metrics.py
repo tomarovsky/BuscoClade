@@ -1,9 +1,6 @@
 #!/usr/bin/env python3
 __author__ = 'tomarovsky'
 
-"""
-Script for extracting node statistics from phylogenetic trees
-"""
 
 import argparse
 import csv
@@ -102,7 +99,7 @@ def main():
         add_node_numbers(tree)
 
         # Extract node statistics
-        metrics = ["q1", "q2", "q3", "f1", "f2", "f3", "pp1", "pp2", "pp3", "QC", "EN"]
+        metrics = ["CULength", "SULength", "f1", "f2", "f3", "localPP", "pp1", "pp2", "pp3", "q1", "q2", "q3"]
         stats_data = []
 
         for node in tree.traverse():

@@ -7,7 +7,7 @@ import pandas as pd
 
 
 def main():
-    data = pd.read_csv(args.input, sep="\t").sort_values(by=['M', 'F', 'D'], ascending=False).reset_index(drop=True)
+    data = pd.read_csv(args.input, sep="\t").sort_values(by=["M", "F", "D"], ascending=False).reset_index(drop=True)
 
     fig_height = len(data) * 0.3
     plt.figure(figsize=(13, fig_height), dpi=300)
@@ -31,7 +31,7 @@ def main():
     plt.xlim(0, 100)
 
     for i, row in data.iterrows():
-        plt.text(-1, i, f'{row["Species"]}', va="center", ha="right", fontweight="medium", style="italic")
+        plt.text(-1, i, f"{row['Species']}", va="center", ha="right", fontweight="medium", style="italic")
         plt.text(
             1,
             i,

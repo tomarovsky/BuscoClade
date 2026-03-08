@@ -2,8 +2,7 @@ if config.get("vcf2phylip") != True:
 
     rule concat_fasta:
         input:
-            lambda w: expand_fna_from_merged_sequences(w, filtered_alignments_dir_path / "fna" / "{N}.fna",
-                                                    busco_blacklist=busco_blacklist),
+            lambda w: expand_fna_from_merged_sequences(w, filtered_alignments_dir_path / "fna" / "{N}.fna", busco_blacklist=busco_blacklist),
         output:
             concat_alignments_dir_path / fasta_filename,
         log:

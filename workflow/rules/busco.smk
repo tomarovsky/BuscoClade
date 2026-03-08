@@ -1,6 +1,8 @@
 rule busco_metaeuk:
+    wildcard_constraints:
+        species="|".join(config["species_list"])
     input:
-        genome_dir_path / "{species}.fasta",
+        get_genome_file,
     output:
         busco_outdir=directory(busco_dir_path / "{species}"),
         single_copy_busco_sequences=directory(busco_dir_path / "{species}/busco_sequences/single_copy_busco_sequences"),

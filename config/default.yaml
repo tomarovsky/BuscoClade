@@ -123,7 +123,6 @@ benchmark_dir: "benchmarks/"
 # +-----------+
 # | Resources |
 # +-----------+
-
 # ---- Slurm partition ----
 processing_queue: "main"
 vcf_separation_queue: "main"

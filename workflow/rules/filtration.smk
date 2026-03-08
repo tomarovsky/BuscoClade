@@ -24,8 +24,10 @@ if config.get("filtration") == "gblocks":
         shell:
             " mkdir -p {params.outdir}; set +e; "
             " Gblocks {input} {params.options} 1> {log.std} 2>&1; "
-            " rm -r {input}-gb.htm; mv {input}-gb {output} "  # Gblocks always returns 1 exit code
+            " rm -r {input}-gb.htm; mv {input}-gb {output} "
+            # Gblocks always returns 1 exit code
             # If Gblocks exits with an error, the output files will not exist
+
 
 if config.get("filtration") == "trimal":
 

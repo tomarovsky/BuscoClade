@@ -19,5 +19,5 @@ rule mrbayes:
     threads: config["mrbayes_threads"]
     shell:
         " mkdir -p {output}; "
-        " mpirun -np {resources.cpus} {params.mrbayes_path}/mb-mpi {input} {params.options} 1> {log.std} 2>&1; "
+        " mpirun -np {threads} {params.mrbayes_path}/mb-mpi {input} {params.options} 1> {log.std} 2>&1; "
         " mv {input}.* {output}/; "

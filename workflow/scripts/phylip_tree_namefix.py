@@ -16,7 +16,7 @@ def load_mapping(map_file_path):
                 if not line:
                     continue
 
-                parts = line.split('\t')
+                parts = line.split("\t")
                 if len(parts) == 2:
                     short_id = parts[0].strip()
                     original_id = parts[1].strip()
@@ -31,6 +31,7 @@ def load_mapping(map_file_path):
         sys.exit(f"Error: Map file {map_file_path} is empty or has no valid entries.")
 
     return mapping
+
 
 def main():
     parser = argparse.ArgumentParser(description="Rename taxa in NEWICK tree using a .map file.")
@@ -57,7 +58,10 @@ def main():
             replacements_count += 1
 
     if replacements_count < len(name_map):
-        print(f"Warning: Only {replacements_count} taxa were renamed, but {len(name_map)} entries were in the map file. Check if all taxa from map are present in the tree.", file=sys.stderr)
+        print(
+            f"Warning: Only {replacements_count} taxa were renamed, but {len(name_map)} entries were in the map file. Check if all taxa from map are present in the tree.",
+            file=sys.stderr,
+        )
 
     try:
         with open(args.output, "w") as nwk_namefix_tree:

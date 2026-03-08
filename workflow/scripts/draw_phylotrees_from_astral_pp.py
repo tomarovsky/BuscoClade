@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-__author__ = 'tomarovsky'
+__author__ = "tomarovsky"
 
 import argparse
 import os
@@ -12,7 +12,7 @@ def newick_to_nhx(newick_file) -> str:
     """Convert Newick format to NHX format"""
     with open(newick_file, "r") as file:
         tree_string = ""
-        newick = file.readline().replace("_", " ").strip().split("'")
+        newick = file.readline().strip().split("'")
         tree_string += newick[0]
         for i in range(1, len(newick), 2):
             line = ""
@@ -46,10 +46,10 @@ def filter_tree(node, prefixes):
 def add_legend(ts):
     """Add legend to tree style"""
     legend_items = [
-        (" 100", "blue"),
-        (" 90-99", "#009022"),
-        (" 70-89", "#e6c700"),
-        (" 0-69", "#e60000"),
+        (" 1", "blue"),
+        (" 0.9-0.99", "#009022"),
+        (" 0.7-0.89", "#e6c700"),
+        (" 0-0.69", "#e60000"),
     ]
 
     ts.legend.add_face(TextFace(" ", fsize=14), column=0)
@@ -69,21 +69,23 @@ def create_tree_style():
     """Create and configure tree style"""
     ts = TreeStyle()
     ts.show_leaf_name = False
-    ts.scale = 40
     ts.legend = TreeStyle().legend
+    ts.show_branch_length = False
+    ts.show_branch_support = False
+    ts.branch_vertical_margin = -4
     add_legend(ts)
     return ts
 
 
 def main():
-    parser = argparse.ArgumentParser(description='Visualize phylogenetic trees with ETE3')
-    parser.add_argument('-i', '--input', required=True, help='Input tree file (Newick format)')
-    parser.add_argument('-o', '--output', required=True, help='Output file prefix')
-    parser.add_argument('-g', '--outgroup', default=False, help="outgroup species name (default = unrooted)")
-    parser.add_argument('--ladderize', action='store_true', default=True, help='Ladderize tree (default: True)')
-    parser.add_argument('--format', default='svg', help='Output format (svg, png, pdf, etc.)')
-    parser.add_argument('--dpi', type=int, default=300, help='Output DPI for raster formats')
-    parser.add_argument('--filter-prefixes', nargs='+', help='Filter leaves by prefixes')
+    parser = argparse.ArgumentParser(description="Visualize phylogenetic trees with ETE3")
+    parser.add_argument("-i", "--input", required=True, help="Input tree file (Newick format)")
+    parser.add_argument("-o", "--output", required=True, help="Output file prefix")
+    parser.add_argument("-g", "--outgroup", default=False, help="outgroup species name (default = unrooted)")
+    parser.add_argument("--ladderize", action="store_true", default=True, help="Ladderize tree (default: True)")
+    parser.add_argument("--format", default="svg", help="Output format (svg, png, pdf, etc.)")
+    parser.add_argument("--dpi", type=int, default=300, help="Output DPI for raster formats")
+    parser.add_argument("--filter-prefixes", nargs="+", help="Filter leaves by prefixes")
 
     args = parser.parse_args()
 
@@ -96,9 +98,9 @@ def main():
         # Load and process tree
         tree = Tree(newick_to_nhx(args.input))
 
-        # Set outgroup
+        # Rooting
         if args.outgroup:
-            outgroup_names = [name.strip() for name in args.outgroup.split(',')]
+            outgroup_names = [name.strip() for name in args.outgroup.split(",")]
             target_nodes = []
             for name in outgroup_names:
                 node = tree.search_nodes(name=name)
@@ -134,10 +136,16 @@ def main():
         # Filter tree if prefixes provided
         if args.filter_prefixes:
             filter_tree(tree, args.filter_prefixes)
+            print(f"Tree filtered using prefixes: {args.filter_prefixes}")
 
         # Ladderize if requested
         if args.ladderize:
             tree.ladderize(direction=True)
+            print("Tree ladderized")
+
+        # Normalize leaf names
+        for leaf in tree.iter_leaves():
+            leaf.name = leaf.name.replace("_", " ").replace("GCA ", "GCA_").replace("GCF ", "GCF_")
 
         # Node counter for numbering
         node_counter = {"count": 1}
