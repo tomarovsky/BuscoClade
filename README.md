@@ -26,7 +26,7 @@ git clone https://github.com/tomarovsky/BuscoClade.git
 
 ### Step 2. Add species genomes
 
-Place your unpacked FASTA genome assemblies into the `genomes/` directory. Keep in mind that the file prefixes will influence the output phylogeny. Ensure that your files have a `.fasta` extension.
+Place your FASTA genome assemblies into the `genomes/` directory. Keep in mind that the file prefixes will influence the output phylogeny. The pipeline supports FASTA files with the extensions `.fasta`, `.fna`, and `.fa`, including their gzipped versions (e.g., `.fasta.gz`, `.fna.gz`, `.fa.gz`).
 
 ### Step 3. Configure workflow
 
