@@ -43,7 +43,7 @@ vcf2phylip: False # .vcf to concat_alignment reconstruction
 gatk_path: "$TOOLS/gatk-4.6.2.0/" # gatk directory
 
 # ---- Assembly statistics ----
-quastcore_params: "-m 0 150 500 1000" # Cutoffs by minimum scaffold length
+quastcore_params: ""
 
 # ---- BUSCO ----
 busco_dataset_path: "$TOOLS/busco_datasets/mammalia_odb12/" # Path to orthodb directory
