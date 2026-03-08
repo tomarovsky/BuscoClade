@@ -22,3 +22,4 @@ rule rapidnj:
     shell:
         " rapidnj -i sth -c {threads} -o m {input} > {output.matrix} 2>{log.std}; "
         " rapidnj -i sth -c {threads} {params} {input} > {output.tree} 2>>{log.std}; "
+        " sed -i \"s/'//g\" {output.tree} "
