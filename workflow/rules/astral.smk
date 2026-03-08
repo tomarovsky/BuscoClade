@@ -30,6 +30,7 @@ rule iqtree_per_fna:
         " mkdir -p {params.outdir}; "
         " iqtree -nt {threads} -s {input} --prefix {params.prefix} {params.options} > {log.std} 2>&1; "
 
+
 rule concat_newick_files:
     input:
         lambda w: expand_fna_from_merged_sequences(w, astral_dir_path / "iqtree_per_fna" / "{N}.fna.treefile", busco_blacklist=busco_blacklist),
@@ -50,6 +51,7 @@ rule concat_newick_files:
     threads: config["processing_threads"]
     shell:
         " cat {input} > {output} 2> {log.std}; "
+
 
 rule nodes_filtrataion_by_support:
     input:
@@ -74,6 +76,7 @@ rule nodes_filtrataion_by_support:
     shell:
         " nw_ed {input} 'i & b<{params.support}' o > {output} 2> {log.std}; "
 
+
 rule astral_tree:
     input:
         astral_dir_path / astral_filtered_trees,
@@ -95,4 +98,4 @@ rule astral_tree:
         mem_mb=config["astral_mem_mb"],
     threads: config["astral_threads"]
     shell:
-        " astral -i {input} -o {output} {params} > {log.std} 2>&1"
+        " astral4 -t {threads} -o {output} {params} {input} 1> {log.std} 2>&1"
