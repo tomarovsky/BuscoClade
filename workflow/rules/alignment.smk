@@ -50,3 +50,29 @@ if config["alignment"] == "mafft":
         threads: config["mafft_threads"]
         shell:
             " mafft --thread {threads} {params.options} {input} > {output} 2> {log.std}; "
+
+
+if config["alignment"] == "muscle":
+
+    rule muscle:
+        input:
+            merged_sequences_dir_path / "{N}.fna",
+        output:
+            alignments_dir_path / "fna" / "{N}.fna",
+        params:
+            options=config["muscle_params"],
+        log:
+            std=log_dir_path / "muscle.{N}.log",
+            cluster_log=cluster_log_dir_path / "muscle.{N}.cluster.log",
+            cluster_err=cluster_log_dir_path / "muscle.{N}.cluster.err",
+        benchmark:
+            benchmark_dir_path / "muscle.{N}.benchmark.txt"
+        conda:
+            config["conda"]["buscoclade_main"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_main"]["yaml"])
+        resources:
+            slurm_partition=config["alignment_queue"],
+            runtime=config["muscle_time"],
+            mem_mb=config["muscle_mem_mb"],
+        threads: config["muscle_threads"]
+        shell:
+            " muscle -in {input} -out {output} {params.options} > {log.std} 2>&1; "
