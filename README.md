@@ -7,9 +7,60 @@
 
 Pipeline to construct species phylogenies using [BUSCO](https://busco.ezlab.org/).
 
-![Workflow scheme](./workflow.png)
+```mermaid
+flowchart LR
 
-- Alignment: [PRANK](http://wasabiapp.org/software/prank/), [MAFFT](https://mafft.cbrc.jp/alignment/software/).
+
+%% ----- BUSCO -----
+subgraph BUSCO["Ortholog extraction"]
+B["Single-copy orthologs<br/>BUSCO"]
+end
+
+%% ----- PREPROCESSING -----
+subgraph PREP["Sequence processing"]
+C["Multiple alignment<br/>PRANK / MAFFT / Muscle"]
+D["Alignment filtering<br/>GBlocks / TrimAl"]
+end
+
+%% ----- TREE APPROACH -----
+subgraph TREE["Multispecies coalescent approach"]
+E["Gene tree inference<br/>IQTree"]
+H["Phylogenetic inference<br/>Astral-IV"]
+end
+
+%% ----- CONCAT -----
+subgraph CONCAT["Supermatrix approach"]
+F["Phylogenetic inference<br/>IQTree / MrBayes / PHYLIP / RAxML-NG / RapidNJ"]
+end
+
+%% ----- EDGES -----
+A --> B
+B --> C
+C --> D
+
+C --> E
+E --> H
+
+D --> F
+
+
+%% ----- STYLE -----
+classDef input fill:#e8f4ff,stroke:#2b7cd3,stroke-width:1px
+classDef process fill:#eaf7ea,stroke:#2f9e44,stroke-width:1px
+classDef phylo fill:#fff4e6,stroke:#e67700,stroke-width:1px
+classDef stats fill:#f3e8ff,stroke:#7b3fe4,stroke-width:1px
+
+class A input
+class B,C,D process
+class E,H,F,G phylo
+class S stats
+%% ----- INPUT -----
+subgraph INPUT["Input data"]
+A["Genome assemblies<br/>(FASTA)"]
+end
+```
+
+- Alignment: [PRANK](http://wasabiapp.org/software/prank/), [MAFFT](https://mafft.cbrc.jp/alignment/software/), [MUSCLE](https://doi.org/10.1038/s41467-022-34630-w).
 - Trimming: [GBlocks](https://academic.oup.com/mbe/article/17/4/540/1127654), [TrimAl](http://trimal.cgenomics.org/).
 - Phylogenetic tree constraction: [IQTree](http://www.iqtree.org/), [MrBayes](https://nbisweden.github.io/MrBayes/), [ASTRAL-IV](https://doi.org/10.1093/molbev/msaf172), [RapidNJ](https://birc.au.dk/software/rapidnj), [PHYLIP](https://phylipweb.github.io/phylip/), [RAxML-NG](https://github.com/amkozlov/raxml-ng).
 - Visualization: [Etetoolkit](http://etetoolkit.org/), [Matplotlib](https://matplotlib.org/stable/).
