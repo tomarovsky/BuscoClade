@@ -8,66 +8,65 @@
 Pipeline to construct species phylogenies from genome assemblies or variant call data (VCF).
 
 ```mermaid
-flowchart LR
+flowchart TD
 
-%% ----- MODE 1 INPUT -----
-subgraph INPUT["Mode 1 — BUSCO-based (default)"]
-A["Genome assemblies<br/>(FASTA)"]
-V["Multi-sample VCF<br/>+ reference genome"]
-V1["Pseudo-genome assembly<br/>GATK FastaAlternateReferenceMaker"]
+%% ----- INPUT -----
+subgraph INPUT["Mode 1: BUSCO-based (default)"]
+A_fa["Genome assemblies<br/>(FASTA)"]
+A_vcf["Per-sample VCFs + reference genome"]
+A_gatk["Pseudo-genome assembly<br/>GATK FastaAlternateReferenceMaker"]
 end
 
 %% ----- BUSCO -----
 subgraph BUSCO["Ortholog extraction"]
-B["Single-copy orthologs<br/>BUSCO"]
+B_busco["Single-copy orthologs<br/>BUSCO"]
 end
 
 %% ----- PREPROCESSING -----
 subgraph PREP["Sequence processing"]
-C["Multiple alignment<br/>PRANK / MAFFT / Muscle"]
-D["Alignment filtering<br/>GBlocks / TrimAl"]
+C_aln["Multiple alignment<br/>PRANK / MAFFT / Muscle"]
+C_flt["Alignment filtering<br/>GBlocks / TrimAl"]
 end
 
 %% ----- TREE APPROACH -----
 subgraph TREE["Multispecies coalescent approach"]
-E["Gene tree inference<br/>IQTree"]
-H["Phylogenetic inference<br/>Astral-IV"]
+D_gt["Gene tree inference<br/>IQTree"]
+D_ast["Phylogenetic inference<br/>Astral-IV"]
 end
 
 %% ----- CONCAT -----
 subgraph CONCAT["Supermatrix approach"]
-F["Phylogenetic inference<br/>IQTree / MrBayes / PHYLIP / RAxML-NG / RapidNJ"]
+E_cat["Concat alignment"]
+E_vcf["Concat alignment<br/>vcf2phylip.py"]
+E_phy["Phylogenetic inference<br/>IQTree / MrBayes / PHYLIP / RAxML-NG / RapidNJ"]
 end
 
 %% ----- MODE 2 -----
-subgraph VCF2PHYLIP["Mode 2 — vcf2phylip (optional, vcf2phylip: True)"]
-V2["Concat alignment<br/>vcf2phylip.py"]
-end
+M2["Multi-sample VCF<br/>(Mode 2: If vcf2phylip: True)"]
 
 %% ----- EDGES: MODE 1 -----
-A --> B
-V --> V1
-V1 --> B
-B --> C
-C --> D
-C --> E
-E --> H
-D --> F
+A_fa --> B_busco
+A_vcf --> A_gatk
+A_gatk --> B_busco
+B_busco --> C_aln
+C_aln --> C_flt
+C_flt --> D_gt
+D_gt --> D_ast
+C_flt --> E_cat
+E_cat --> E_phy
 
 %% ----- EDGES: MODE 2 -----
-V --> V2
-V2 --> F
+M2 --> E_vcf
+E_vcf --> E_phy
 
 %% ----- STYLE -----
 classDef input fill:#e8f4ff,stroke:#2b7cd3,stroke-width:1px
 classDef process fill:#eaf7ea,stroke:#2f9e44,stroke-width:1px
 classDef phylo fill:#fff4e6,stroke:#e67700,stroke-width:1px
-classDef vcf fill:#fef3f3,stroke:#c0392b,stroke-width:1px
 
-class A,V input
-class V1,B,C,D process
-class E,H,F phylo
-class V2 vcf
+class A_fa,A_vcf,M2 input
+class A_gatk,B_busco,C_aln,C_flt,E_cat,E_vcf process
+class D_gt,D_ast,E_phy phylo
 ```
 
 - **Ortholog extraction:** [BUSCO](https://busco.ezlab.org/)
