@@ -42,7 +42,7 @@ E_phy["Phylogenetic inference<br/>IQTree / MrBayes / PHYLIP / RAxML-NG / RapidNJ
 end
 
 %% ----- MODE 2 -----
-M2["Multi-sample VCF<br/>(Mode 2: If vcf2phylip: True)"]
+M2["Mode 2: Multi-sample VCF<br/>(If vcf2phylip: True)"]
 
 %% ----- EDGES: MODE 1 -----
 A_fa --> B_busco
