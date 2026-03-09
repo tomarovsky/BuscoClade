@@ -15,6 +15,9 @@
 # +------------------------+
 # | Pipeline configuration |
 # +------------------------+
+# ---- VCF based ----
+vcf2phylip: False # .vcf to concat_alignment reconstruction
+
 # ---- Assembly statistics ----
 quastcore: True
 
@@ -39,7 +42,6 @@ draw_phylotrees: True
 # | Tool parameters |
 # +-----------------+
 # ---- VCF based ----
-vcf2phylip: False # .vcf to concat_alignment reconstruction
 gatk_path: "$TOOLS/gatk-4.6.2.0/" # gatk directory
 
 # ---- Assembly statistics ----
@@ -97,6 +99,7 @@ tree_visualization_params: "" # Specify vizualisation outgroup as it should be n
 # ---- Input ----
 genome_dir: "input/genomes/"
 vcf_reconstruct_dir: "input/vcf_reconstruct/"
+vcf2phylip_dir: "input/vcf2phylip/"
 
 # ---- Output ----
 output_dir: "results/"

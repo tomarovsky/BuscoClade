@@ -4,6 +4,8 @@ import os
 
 import pandas as pd
 
+configfile: "config/default.yaml"
+
 
 # ---- Constants ----
 FASTA_EXTENSIONS = [".fasta.gz", ".fna.gz", ".fa.gz", ".fasta", ".fna", ".fa"]
@@ -13,6 +15,7 @@ FASTA_PATTERNS = [f"*{ext}" for ext in FASTA_EXTENSIONS]
 # -- Input --
 genome_dir_path = Path(config["genome_dir"]).resolve()
 vcf_reconstruct_dir_path = Path(config["vcf_reconstruct_dir"]).resolve()
+vcf2phylip_dir_path = Path(config["vcf2phylip_dir"]).resolve()
 
 # -- Logs and benchmarks --
 cluster_log_dir_path = Path(config["cluster_log_dir"])
@@ -171,10 +174,10 @@ if "species_list" not in config:
         config["species_list"] = get_species_list(genome_species, vcf_reconstruct_species)
     else:
         # VCF2Phylip specific processing
-        vcf_files = list(vcf_reconstruct_dir_path.rglob("*.vcf.gz"))
-        if len(vcf_files) != 1:
-            raise ValueError(f"vcf2phylip requires exactly one VCF in {vcf_reconstruct_dir_path}, " f"found {len(vcf_files)}: {vcf_files}")
-        vcf_file = vcf_files[0]
+        vcf_file = list(vcf2phylip_dir_path.rglob("*.vcf.gz"))
+        if len(vcf_file) != 1:
+            raise ValueError(f"vcf2phylip requires exactly one VCF in {vcf2phylip_dir_path}, " f"found {len(vcf_file)}: {vcf_file}")
+        vcf_file = vcf_file[0]
         prefix = vcf_file.name.replace(".vcf.gz", "")
         config["species_list"] = extract_samples_from_vcf(vcf_file)
 
