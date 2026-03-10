@@ -22,10 +22,10 @@ vcf2phylip: False # .vcf to concat_alignment reconstruction
 quastcore: True
 
 # ---- Alignment ----
-alignment: "prank" # 'prank', 'mafft' or 'muscle'
+alignment: "mafft" # 'mafft', 'muscle' or 'prank'
 
 # ---- Filtration ----
-filtration: "gblocks" # 'gblocks' or 'trimal'
+filtration: "clipkit" # 'clipkit', 'trimal' or 'gblocks'
 
 # ---- Рhylogenetic tree inference ----
 iqtree: True
@@ -60,6 +60,7 @@ mafft_params: "--reorder --auto"
 muscle_params: ""
 
 # ---- Filtration ----
+clipkit_params: "--mode smart-gap" # '--codon' to trim codon-based alignment
 gblocks_params: "-t=Codons"
 trimal_params: "-automated1"
 
@@ -147,6 +148,7 @@ busco_threads: 8
 mafft_threads: 1
 muscle_threads: 1
 prank_threads: 1
+clipkit_threads: 1
 gblocks_threads: 1
 trimal_threads: 1
 iqtree_threads: 8
@@ -164,6 +166,7 @@ busco_mem_mb: 10000
 mafft_mem_mb: 2000
 muscle_mem_mb: 2000
 prank_mem_mb: 2000
+clipkit_mem_mb: 2000
 gblocks_mem_mb: 2000
 trimal_mem_mb: 2000
 iqtree_mem_mb: 10000
@@ -181,6 +184,7 @@ busco_time: "150h"
 mafft_time: "10h"
 muscle_time: "10h"
 prank_time: "100h"
+clipkit_time: "10h"
 gblocks_time: "10h"
 trimal_time: "10h"
 iqtree_time: "100h"

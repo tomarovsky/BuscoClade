@@ -56,3 +56,29 @@ if config.get("filtration") == "trimal":
             " trimal -in {input} -out {params.prefix} {params.options} > {log.std} 2>&1; "
             " trimal -in {params.prefix} -out {output} -nogaps >> {log.std} 2>&1; "
             " rm {params.prefix} >> {log.std} 2>&1; "
+
+
+if config.get("filtration") == "clipkit":
+
+    rule clipkit:
+        input:
+            alignments_dir_path / "fna" / "{N}.fna",
+        output:
+            filtered_alignments_dir_path / "fna" / "{N}.fna",
+        params:
+            options=config["clipkit_params"],
+        log:
+            std=log_dir_path / "clipkit.{N}.log",
+            cluster_log=cluster_log_dir_path / "clipkit.{N}.cluster.log",
+            cluster_err=cluster_log_dir_path / "clipkit.{N}.cluster.err",
+        benchmark:
+            benchmark_dir_path / "clipkit.{N}.benchmark.txt"
+        conda:
+            config["conda"]["buscoclade_main"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_main"]["yaml"])
+        resources:
+            slurm_partition=config["filtration_queue"],
+            runtime=config["clipkit_time"],
+            mem_mb=config["clipkit_mem_mb"],
+        threads: config["clipkit_threads"]
+        shell:
+            " clipkit {input} --output {output} --threads {threads} {params.options} > {log.std} 2>&1; "

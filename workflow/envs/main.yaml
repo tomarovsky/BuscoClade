@@ -8,6 +8,7 @@ dependencies:
     - prank
     - mafft
     - muscle
+    - clipkit
     - gblocks
     - trimal
     - iqtree

@@ -24,8 +24,8 @@ end
 
 %% ----- PREPROCESSING -----
 subgraph PREP["Sequence processing"]
-C_aln["Multiple alignment<br/>PRANK / MAFFT / Muscle"]
-C_flt["Alignment filtering<br/>GBlocks / TrimAl"]
+C_aln["Multiple alignment<br/>MAFFT / Muscle / PRANK"]
+C_flt["Alignment filtering<br/>ClipKIT / GBlocks / TrimAl"]
 end
 
 %% ----- TREE APPROACH -----
@@ -71,8 +71,8 @@ class D_gt,D_ast,E_phy phylo
 
 - **Ortholog extraction:** [BUSCO](https://busco.ezlab.org/)
 - **VCF-based reconstruction:** [GATK FastaAlternateReferenceMaker](https://gatk.broadinstitute.org/hc/en-us/articles/360037594571-FastaAlternateReferenceMaker), [vcf2phylip](https://github.com/edgardomortiz/vcf2phylip)
-- **Alignment:** [PRANK](http://wasabiapp.org/software/prank/), [MAFFT](https://mafft.cbrc.jp/alignment/software/), [MUSCLE](https://doi.org/10.1038/s41467-022-34630-w)
-- **Trimming:** [GBlocks](https://academic.oup.com/mbe/article/17/4/540/1127654), [TrimAl](http://trimal.cgenomics.org/)
+- **Alignment:** [MAFFT](https://mafft.cbrc.jp/alignment/software/), [MUSCLE](https://doi.org/10.1038/s41467-022-34630-w), [PRANK](http://wasabiapp.org/software/prank/)
+- **Trimming:** [ClipKIT](https://github.com/JLSteenwyk/ClipKIT), [TrimAl](http://trimal.cgenomics.org/), [GBlocks](https://academic.oup.com/mbe/article/17/4/540/1127654)
 - **Phylogenetic tree construction:** [IQTree](http://www.iqtree.org/), [MrBayes](https://nbisweden.github.io/MrBayes/), [ASTRAL-IV](https://doi.org/10.1093/molbev/msaf172), [RapidNJ](https://birc.au.dk/software/rapidnj), [PHYLIP](https://phylipweb.github.io/phylip/), [RAxML-NG](https://github.com/amkozlov/raxml-ng)
 - **Visualization:** [Etetoolkit](http://etetoolkit.org/), [Matplotlib](https://matplotlib.org/stable/)
 
