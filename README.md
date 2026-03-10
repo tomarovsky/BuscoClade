@@ -148,8 +148,8 @@ Enable or disable tools and modes:
 vcf2phylip: False       # set True to enable Mode 2 (vcf2phylip)
 quastcore: True         # assembly statistics
 
-alignment: "prank"      # 'prank', 'mafft', or 'muscle'
-filtration: "gblocks"   # 'gblocks' or 'trimal'
+alignment: "mafft"      # 'mafft', 'muscle' or 'prank'
+filtration: "clipkit"   # 'clipkit', 'trimal' or 'gblocks'
 
 iqtree: True
 astral: True
