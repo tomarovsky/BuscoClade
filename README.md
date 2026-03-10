@@ -11,7 +11,7 @@ Pipeline to construct species phylogenies from genome assemblies or variant call
 flowchart TD
 
 %% ----- INPUT -----
-subgraph INPUT["Mode 1: BUSCO-based (default)"]
+subgraph INPUT["Mode 1: BUSCO-based"]
 A_fa["Genome assemblies<br/>(FASTA)"]
 A_vcf["Per-sample VCFs + reference genome"]
 A_gatk["Pseudo-genome assembly<br/>GATK FastaAlternateReferenceMaker"]
