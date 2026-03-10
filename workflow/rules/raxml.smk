@@ -30,6 +30,6 @@ rule raxml:
             rm -rf {params.outdir}/*;
         fi
         mkdir -p {params.outdir};
-        raxml-ng --all --msa {input} --prefix {params.outdir}/{params.prefix} {params.options} 1> {log.std} 2>&1;
+        raxml-ng --threads {threads} --all --msa {input} --prefix {params.outdir}/{params.prefix} {params.options} 1> {log.std} 2>&1;
         mv {params.support} {output.treefile};
         """
