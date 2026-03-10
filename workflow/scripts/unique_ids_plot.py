@@ -11,7 +11,28 @@ import argparse
 
 def read_species_ids(file_path):
     with open(file_path, "r") as file:
-        return {line.strip() for line in file}
+        return {line.strip() for line in file if line.strip()}
+
+
+def plot_supervenn(sets, labels, ax, title, min_width_for_annotation, widths_minmax_ratio=None):
+    # Filter out empty sets
+    filtered = [(s, l) for s, l in zip(sets, labels) if s]
+    if not filtered:
+        ax.text(0.5, 0.5, "No data available", ha="center", va="center", fontsize=14, transform=ax.transAxes)
+        ax.set_title(title, fontsize=16, fontweight="bold")
+        return
+    filtered_sets, filtered_labels = zip(*filtered)
+    kwargs = dict(
+        sets_ordering=None,
+        chunks_ordering="size",
+        min_width_for_annotation=min_width_for_annotation,
+        rotate_col_annotations=True,
+        col_annotations_area_height=1.4,
+    )
+    if widths_minmax_ratio is not None:
+        kwargs["widths_minmax_ratio"] = widths_minmax_ratio
+    supervenn(list(filtered_sets), list(filtered_labels), ax=ax, **kwargs)
+    ax.set_title(title, fontsize=16, fontweight="bold")
 
 
 def main():
@@ -19,34 +40,8 @@ def main():
     single_copy_sets = [read_species_ids(file) for file in args.single_copy_ids_files]
     multi_copy_sets = [read_species_ids(file) for file in args.multi_copy_ids_files]
     fig, ax = plt.subplots(2, 1, figsize=(30, len(labels)), dpi=300)
-
-    supervenn(
-        single_copy_sets,
-        labels,
-        ax=ax[0],
-        sets_ordering=None,
-        chunks_ordering="size",
-        min_width_for_annotation=50,
-        rotate_col_annotations=True,
-        col_annotations_area_height=1.4,
-        # widths_minmax_ratio=0.005,
-    )
-
-    supervenn(
-        multi_copy_sets,
-        labels,
-        ax=ax[1],
-        sets_ordering=None,
-        chunks_ordering="size",
-        min_width_for_annotation=10,
-        rotate_col_annotations=True,
-        col_annotations_area_height=1.4,
-        widths_minmax_ratio=0.005,
-    )
-
-    ax[0].set_title("Single copy BUSCOs", fontsize=16, fontweight="bold")
-    ax[1].set_title("Multi copy BUSCOs", fontsize=16, fontweight="bold")
-
+    plot_supervenn(single_copy_sets, labels, ax[0], "Single copy BUSCOs", min_width_for_annotation=50)
+    plot_supervenn(multi_copy_sets, labels, ax[1], "Multi copy BUSCOs", min_width_for_annotation=10, widths_minmax_ratio=0.005)
     plt.tight_layout()
     plt.savefig(args.outplot)
 

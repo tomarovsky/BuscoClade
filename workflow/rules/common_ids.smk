@@ -41,8 +41,7 @@ rule species_multi_copy_ids:  # get multi copy ids for each species
         mem_mb=config["processing_mem_mb"],
     threads: config["processing_threads"]
     shell:
-        " ls {input} | grep -P '.fna$' | sed 's/.fna//' > {output} 2> {log.std}; "
-
+        " ls {input}/*.fna 2>/dev/null | xargs -I{{}} basename {{}} .fna > {output} 2> {log.std} || touch {output}; "
 
 rule common_ids:  # get common IDs for all species given config["gene_blacklist"] and split them into files
     input:
