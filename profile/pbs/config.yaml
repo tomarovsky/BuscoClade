@@ -1,0 +1,20 @@
+executor: cluster-generic
+cluster-generic-submit-cmd: qsub
+    -l select=1:ncpus={threads}:mem={resources.mem_mb}mb
+    -l walltime={resources.runtime}
+    -q {resources.pbs_queue}
+    -N smk-{rule}
+    -o {log.cluster_log}
+    -e {log.cluster_err}
+    -V # Passes environment variables to the job (needed for conda)
+scheduler: greedy
+max-jobs-per-second: 10
+max-status-checks-per-second: 1
+local-cores: 1
+use-conda: True
+jobs: 100
+printshellcmds: True
+rerun-incomplete: True
+latency-wait: 60
+cluster-generic-cancel-cmd: qdel
+cluster-generic-cancel-nargs: 50
