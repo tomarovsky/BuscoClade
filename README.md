@@ -1,8 +1,8 @@
 # Snakemake workflow: BuscoClade
 
-![BuscoClade logo](logo.png)
 [![Snakemake](https://img.shields.io/badge/snakemake==9.16-brightgreen.svg)](https://snakemake.github.io)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+![BuscoClade logo](logo.png)
 
 ## Description
 
