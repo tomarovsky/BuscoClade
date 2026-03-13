@@ -14,62 +14,66 @@ Pipeline to construct species phylogenies from genome assemblies or variant call
 flowchart TD
 
 %% ----- INPUT -----
-subgraph INPUT["BUSCO-based phylogeny"]
-A_fa["Genome assemblies<br/>(FASTA)"]
-A_vcf["Per-sample VCFs + reference genome"]
-A_gatk["Pseudo-genome assembly<br/>GATK FastaAlternateReferenceMaker"]
+subgraph INPUT["Input data"]
+A_fa["Genome assemblies (FASTA)"]
+A_vcf["Per-sample VCFs + reference"]
+A_vcf2["Multi-sample VCF"]
 end
 
 %% ----- BUSCO -----
 subgraph BUSCO["Ortholog extraction"]
-B_busco["Single-copy orthologs<br/>BUSCO"]
+B_busco["BUSCO"]
 end
 
 %% ----- PREPROCESSING -----
 subgraph PREP["Sequence processing"]
-C_aln["Multiple alignment<br/>MAFFT / Muscle / PRANK"]
-C_flt["Alignment filtering<br/>ClipKIT / GBlocks / TrimAl"]
+subgraph ALN["Multiple alignment"]
+C_mafft["MAFFT"]
+C_muscle["MUSCLE"]
+C_prank["PRANK"]
+end
+subgraph FLT["Trimming"]
+C_clipkit["ClipKIT"]
+C_gblocks["GBlocks"]
+C_trimal["TrimAl"]
+end
 end
 
-%% ----- TREE APPROACH -----
-subgraph TREE["Multispecies coalescent approach"]
-D_gt["Gene tree inference<br/>IQTree"]
-D_ast["Phylogenetic inference<br/>Astral-IV"]
-end
-
-%% ----- CONCAT -----
+%% ----- PHYLOGENY -----
+subgraph PHYLO["Phylogenetic tree inference"]
 subgraph CONCAT["Supermatrix approach"]
-E_cat["Concat alignment"]
-E_vcf["Concat alignment<br/>vcf2phylip.py"]
-E_phy["Phylogenetic inference<br/>IQTree / MrBayes / PHYLIP / RAxML-NG / RapidNJ"]
+E_iqtree["IQTree"]
+E_mrbayes["MrBayes"]
+E_phylip["PHYLIP"]
+E_raxml["RAxML-NG"]
+E_rapidnj["RapidNJ"]
 end
-
-%% ----- VCF2PHYLIP -----
-M2["Multi-sample VCF<br/>(optional: vcf2phylip: True)"]
+subgraph TREE["Multispecies coalescent"]
+D_ast["Astral-IV"]
+end
+end
 
 %% ----- EDGES: MAIN -----
 A_fa --> B_busco
-A_vcf --> A_gatk
-A_gatk --> B_busco
-B_busco --> C_aln
-C_aln --> C_flt
-C_flt --> D_gt
-D_gt --> D_ast
-C_flt --> E_cat
-E_cat --> E_phy
+A_vcf -->|"GATK FastaAlternateReferenceMaker"| B_busco
+B_busco --> ALN
+ALN --> FLT
+FLT -->|"Concat alignment"| CONCAT
+FLT -->|"IQTree per gene"| TREE
 
 %% ----- EDGES: VCF2PHYLIP -----
-M2 --> E_vcf
-E_vcf --> E_phy
+A_vcf2 -. "vcf2phylip.py" .-> CONCAT
 
 %% ----- STYLE -----
 classDef input fill:#e8f4ff,stroke:#2b7cd3,stroke-width:1px
 classDef process fill:#eaf7ea,stroke:#2f9e44,stroke-width:1px
 classDef phylo fill:#fff4e6,stroke:#e67700,stroke-width:1px
+classDef optional fill:#e8f4ff,stroke:#2b7cd3,stroke-width:1px,stroke-dasharray:4 4
 
-class A_fa,A_vcf,M2 input
-class A_gatk,B_busco,C_aln,C_flt,E_cat,E_vcf process
-class D_gt,D_ast,E_phy phylo
+class A_fa,A_vcf input
+class B_busco,C_mafft,C_muscle,C_prank,C_clipkit,C_gblocks,C_trimal process
+class D_ast,E_iqtree,E_mrbayes,E_phylip,E_raxml,E_rapidnj phylo
+class A_vcf2 optional
 ```
 
 - **Ortholog extraction:** [BUSCO](https://busco.ezlab.org/)
