@@ -14,7 +14,7 @@ Pipeline to construct species phylogenies from genome assemblies or variant call
 flowchart TD
 
 %% ----- INPUT -----
-subgraph INPUT["Mode 1: BUSCO-based"]
+subgraph INPUT["BUSCO-based phylogeny"]
 A_fa["Genome assemblies<br/>(FASTA)"]
 A_vcf["Per-sample VCFs + reference genome"]
 A_gatk["Pseudo-genome assembly<br/>GATK FastaAlternateReferenceMaker"]
@@ -44,10 +44,10 @@ E_vcf["Concat alignment<br/>vcf2phylip.py"]
 E_phy["Phylogenetic inference<br/>IQTree / MrBayes / PHYLIP / RAxML-NG / RapidNJ"]
 end
 
-%% ----- MODE 2 -----
-M2["Mode 2: Multi-sample VCF<br/>(If vcf2phylip: True)"]
+%% ----- VCF2PHYLIP -----
+M2["Multi-sample VCF<br/>(optional: vcf2phylip: True)"]
 
-%% ----- EDGES: MODE 1 -----
+%% ----- EDGES: MAIN -----
 A_fa --> B_busco
 A_vcf --> A_gatk
 A_gatk --> B_busco
@@ -58,7 +58,7 @@ D_gt --> D_ast
 C_flt --> E_cat
 E_cat --> E_phy
 
-%% ----- EDGES: MODE 2 -----
+%% ----- EDGES: VCF2PHYLIP -----
 M2 --> E_vcf
 E_vcf --> E_phy
 
@@ -93,15 +93,13 @@ git clone https://github.com/tomarovsky/BuscoClade.git
 
 ### Step 2. Prepare input data
 
-BuscoClade has two running modes:
+#### FASTA assemblies
 
-#### Mode 1: BUSCO-based phylogeny (default)
+Place genome assemblies into `input/genomes/`. The file prefix is used as the sample name in the output phylogeny. Supported extensions: `.fasta`, `.fna`, `.fa`, and their gzipped versions (`.fasta.gz`, `.fna.gz`, `.fa.gz`).
 
-The main mode. Accepts genome assemblies in FASTA format, optionally supplemented with VCF-reconstructed pseudo-genomes. Both input types can be used simultaneously.
+#### Per-sample VCFs + reference genome
 
-**Option A — FASTA assemblies:** Place genome assemblies into the `genomes/` directory. The file prefix is used as the sample name in the output phylogeny. Supported extensions: `.fasta`, `.fna`, `.fa`, and their gzipped versions (`.fasta.gz`, `.fna.gz`, `.fa.gz`).
-
-**Option B — per-sample VCFs + reference genome:** If you have per-sample VCFs, the pipeline reconstructs pseudo-genome assemblies using GATK `FastaAlternateReferenceMaker`, then feeds them into the standard BUSCO workflow alongside any FASTA assemblies from Option A.
+If you have per-sample VCFs, the pipeline can reconstruct pseudo-genome assemblies using GATK `FastaAlternateReferenceMaker`, which are then fed into the standard BUSCO workflow alongside any FASTA assemblies.
 
 Place per-sample VCF files and the corresponding reference genome together into a subdirectory under `input/vcf_reconstruct/`. Each subdirectory is processed independently, which allows reconstructing pseudo-genomes against different references in a single run:
 
@@ -122,14 +120,11 @@ input/
 
 The directory name is used only for organization — the VCF file prefix determines the sample name in the output phylogeny. No additional config changes are needed; the pipeline detects subdirectories automatically.
 
-#### Mode 2: vcf2phylip (optional, off by default)
+#### Multi-sample VCF via vcf2phylip (optional)
 
-An alternative shortcut that builds a concatenated phylip alignment directly from a multi-sample VCF using `vcf2phylip.py`, bypassing BUSCO and sequence alignment entirely.
+As an alternative to the BUSCO-based pipeline, a concatenated phylip alignment can be built directly from a multi-sample VCF using `vcf2phylip.py`, bypassing BUSCO and sequence alignment entirely. When `vcf2phylip: True` is set, only this route is executed.
 
-To use this mode:
-
-1. Place exactly one multi-sample `.vcf.gz` file into `input/vcf2phylip/`.
-2. Enable the mode in the config: `vcf2phylip: True`.
+Place exactly one multi-sample `.vcf.gz` file into `input/vcf2phylip/` and enable the option in the config:
 
 ```
 input/
@@ -137,7 +132,9 @@ input/
         all_samples.vcf.gz    # exactly one multi-sample VCF
 ```
 
-The two modes are mutually exclusive: when `vcf2phylip: True` is set, only Mode 2 runs. To use the BUSCO-based pipeline (Mode 1), keep `vcf2phylip: False`.
+```yaml
+vcf2phylip: True
+```
 
 ### Step 3. Configure workflow
 
@@ -148,7 +145,7 @@ Modify `config/default.yaml` (recommended: copy it and pass with `--configfile`)
 Enable or disable tools and modes:
 
 ```yaml
-vcf2phylip: False       # set True to enable Mode 2 (vcf2phylip)
+vcf2phylip: False       # set True to use vcf2phylip instead of BUSCO-based pipeline
 quastcore: True         # assembly statistics
 
 alignment: "mafft"      # 'mafft', 'muscle' or 'prank'
@@ -168,7 +165,7 @@ draw_phylotrees: True
 
 Key parameters to configure before running:
 
-**VCF-based reconstruction (Mode 1B):**
+**VCF-based reconstruction:**
 - `gatk_path`: Path to the GATK directory (e.g. `"$TOOLS/gatk-4.6.2.0/"`).
 
 **BUSCO:**
@@ -181,7 +178,7 @@ Key parameters to configure before running:
 - `prank_params`, `mafft_params`, `muscle_params`
 
 **Filtration:**
-- `gblocks_params`, `trimal_params`
+- `clipkit_params`, `gblocks_params`, `trimal_params`
 
 **Phylogenetic inference:**
 - `iqtree_params`: e.g. `"-keep-ident -m TESTNEW -bb 1000"`. Add `-o 'OUTGROUP'` to set an outgroup.
@@ -238,7 +235,7 @@ Remove `--dry-run` to start the actual run.
 
 ### Starting from completed BUSCO results
 
-Move genome assemblies (or create empty placeholder files) into `genomes/`, then place BUSCO output directories under `results/busco/`. Expected structure for `Ailurus_fulgens.fasta`:
+Move genome assemblies (or create empty placeholder files) into `input/genomes/`, then place BUSCO output directories under `results/busco/`. Expected structure for `Ailurus_fulgens.fasta`:
 
 ```
 results/
