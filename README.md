@@ -28,25 +28,17 @@ end
 %% ----- PREPROCESSING -----
 subgraph PREP["Sequence processing"]
 subgraph ALN["Multiple alignment"]
-C_mafft["MAFFT"]
-C_muscle["MUSCLE"]
-C_prank["PRANK"]
+C_aln["MAFFT / MUSCLE / PRANK"]
 end
 subgraph FLT["Trimming"]
-C_clipkit["ClipKIT"]
-C_gblocks["GBlocks"]
-C_trimal["TrimAl"]
+C_flt["ClipKIT / GBlocks / TrimAl"]
 end
 end
 
 %% ----- PHYLOGENY -----
 subgraph PHYLO["Phylogenetic tree inference"]
 subgraph CONCAT["Supermatrix approach"]
-E_iqtree["IQTree"]
-E_mrbayes["MrBayes"]
-E_phylip["PHYLIP"]
-E_raxml["RAxML-NG"]
-E_rapidnj["RapidNJ"]
+E_phy["IQTree / MrBayes / PHYLIP / RAxML-NG / RapidNJ"]
 end
 subgraph TREE["Multispecies coalescent"]
 D_ast["Astral-IV"]
@@ -56,13 +48,13 @@ end
 %% ----- EDGES: MAIN -----
 A_fa --> B_busco
 A_vcf -->|"GATK FastaAlternateReferenceMaker"| B_busco
-B_busco --> ALN
-ALN --> FLT
-FLT -->|"Concat alignment"| CONCAT
-FLT -->|"IQTree per gene"| TREE
+B_busco --> C_aln
+C_aln --> C_flt
+C_flt -->|"Concat alignment"| E_phy
+C_flt -->|"IQTree per gene"| D_ast
 
 %% ----- EDGES: VCF2PHYLIP -----
-A_vcf2 -. "vcf2phylip.py" .-> CONCAT
+A_vcf2 -. "vcf2phylip.py" .-> E_phy
 
 %% ----- STYLE -----
 classDef input fill:#e8f4ff,stroke:#2b7cd3,stroke-width:1px
@@ -71,8 +63,8 @@ classDef phylo fill:#fff4e6,stroke:#e67700,stroke-width:1px
 classDef optional fill:#e8f4ff,stroke:#2b7cd3,stroke-width:1px,stroke-dasharray:4 4
 
 class A_fa,A_vcf input
-class B_busco,C_mafft,C_muscle,C_prank,C_clipkit,C_gblocks,C_trimal process
-class D_ast,E_iqtree,E_mrbayes,E_phylip,E_raxml,E_rapidnj phylo
+class B_busco,C_aln,C_flt process
+class D_ast,E_phy phylo
 class A_vcf2 optional
 ```
 
