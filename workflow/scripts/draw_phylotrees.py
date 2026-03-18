@@ -72,8 +72,8 @@ def add_legend(ts):
     ts.legend_position = (0, 0)
 
 
-def normalize_phylip_support(t):
-    """Rescale PHYLIP support values from 0-1 to 0-100."""
+def normalize_support(t):
+    """Normalize support values from 0-1 to 0-100."""
     for node in t.traverse():
         if not node.is_leaf() and hasattr(node, "support") and node.support is not None:
             node.support = round(node.support * 100, 2)
@@ -167,9 +167,9 @@ def process_tree(args):
     except Exception as e:
         sys.exit(f"Error reading tree file: {e}")
 
-    if args.phylip_support:
-        normalize_phylip_support(t)
-        print("PHYLIP support values normalized: multiplied by 100 (0-1 -> 0-100 scale).")
+    if args.normalize_support:
+        normalize_support(t)
+        print("Support values normalized: multiplied by 100 (0-1 -> 0-100 scale).")
 
     if args.outgroup:
         root_tree(t, args.outgroup)
@@ -200,8 +200,8 @@ def main():
     opt.add_argument("-g", "--outgroup", help="Outgroup species name(s), comma-separated")
     opt.add_argument("--dpi", type=int, default=300, help="DPI for rendering (default: 300)")
     opt.add_argument("--show", action="store_true", help="Open an interactive GUI window")
-    opt.add_argument("--phylip-support", action="store_true",
-                     help="Rescale PHYLIP bootstrap support values from 0-1 to 0-100 scale")
+    opt.add_argument("--normalize-support", action="store_true",
+                     help="Normalize support values from 0-1 to 0-100 scale")
 
     args = parser.parse_args()
 

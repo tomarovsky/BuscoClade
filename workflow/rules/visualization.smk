@@ -110,7 +110,7 @@ rule phylip_tree_visualization:
         mem_mb=config["processing_mem_mb"],
     threads: config["processing_threads"]
     shell:
-        " QT_QPA_PLATFORM=offscreen workflow/scripts/draw_phylotrees.py -i {input} --phylip-support "
+        " QT_QPA_PLATFORM=offscreen workflow/scripts/draw_phylotrees.py -i {input} --normalize-support "
         " -o {params.prefix} {params.options} 1> {log.std} 2>&1; "
 
 
