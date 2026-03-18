@@ -67,7 +67,7 @@ rule gatk_vcf_index:
         mem_mb=config["processing_mem_mb"],
     threads: config["processing_threads"],
     shell:
-        " {params.gatk_path}/gatk --java-options -Xmx{resources.mem_mb}m IndexFeatureFile -I {input}"
+        " {params.gatk_path}/gatk --java-options -Xmx{resources.mem_mb}m IndexFeatureFile -I {input} 1> {log.std} 2>&1; "
 
 
 rule gatk_altref:
