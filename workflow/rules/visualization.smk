@@ -1,12 +1,12 @@
 rule iqtree_tree_visualization:
     input:
-        iqtree_dir_path / "fna" / f"{fasta_filename}.treefile",
+        iqtree_dir_path / f"{fasta_filename}.treefile",
     output:
-        iqtree_dir_path / "fna" / f"{fasta_filename}.length_and_support_tree.svg",
-        iqtree_dir_path / "fna" / f"{fasta_filename}.only_support_tree.svg",
-        iqtree_dir_path / "fna" / f"{fasta_filename}.only_tree.svg",
+        iqtree_dir_path / f"{fasta_filename}.length_and_support_tree.svg",
+        iqtree_dir_path / f"{fasta_filename}.only_support_tree.svg",
+        iqtree_dir_path / f"{fasta_filename}.only_tree.svg",
     params:
-        prefix=iqtree_dir_path / "fna" / f"{fasta_filename}",
+        prefix=iqtree_dir_path / f"{fasta_filename}",
         options=config["tree_visualization_params"],
     log:
         std=log_dir_path / "iqtree_tree_visualization.log",
@@ -110,7 +110,7 @@ rule phylip_tree_visualization:
         mem_mb=config["processing_mem_mb"],
     threads: config["processing_threads"]
     shell:
-        " QT_QPA_PLATFORM=offscreen workflow/scripts/draw_phylotrees.py -i {input} "
+        " QT_QPA_PLATFORM=offscreen workflow/scripts/draw_phylotrees.py -i {input} --phylip-support "
         " -o {params.prefix} {params.options} 1> {log.std} 2>&1; "
 
 
