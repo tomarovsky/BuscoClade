@@ -2,16 +2,16 @@ rule iqtree:
     input:
         concat_alignments_dir_path / fasta_filename,
     output:
-        iqtree_dir_path / "fna" / f"{fasta_filename}.bionj",
-        iqtree_dir_path / "fna" / f"{fasta_filename}.ckp.gz",
-        iqtree_dir_path / "fna" / f"{fasta_filename}.iqtree",
-        iqtree_dir_path / "fna" / f"{fasta_filename}.log",
-        iqtree_dir_path / "fna" / f"{fasta_filename}.mldist",
-        iqtree_dir_path / "fna" / f"{fasta_filename}.model.gz",
-        iqtree_dir_path / "fna" / f"{fasta_filename}.treefile",
+        iqtree_dir_path / f"{fasta_filename}.bionj",
+        iqtree_dir_path / f"{fasta_filename}.ckp.gz",
+        iqtree_dir_path / f"{fasta_filename}.iqtree",
+        iqtree_dir_path / f"{fasta_filename}.log",
+        iqtree_dir_path / f"{fasta_filename}.mldist",
+        iqtree_dir_path / f"{fasta_filename}.model.gz",
+        iqtree_dir_path / f"{fasta_filename}.treefile",
     params:
         options=config["iqtree_params"],
-        outdir=iqtree_dir_path / "fna",
+        outdir=iqtree_dir_path,
         prefix=fasta_filename,
     log:
         std=log_dir_path / "iqtree.log",

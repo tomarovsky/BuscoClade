@@ -69,7 +69,7 @@ def get_fasta_files(directory: Path) -> list[Path]:
     seen = set()
     files = []
     for pattern in FASTA_PATTERNS:
-        for f in sorted(directory.glob(pattern)):
+        for f in sorted(directory.rglob(pattern)):
             if f.is_file() and f not in seen:
                 seen.add(f)
                 files.append(f)
@@ -199,9 +199,9 @@ output_files = []
 if config.get("vcf2phylip"):
     output_files.append(concat_alignments_dir_path / fasta_filename)
     if config.get("iqtree"):
-        output_files.append(iqtree_dir_path / "fna" / f"{fasta_filename}.treefile")
+        output_files.append(iqtree_dir_path / f"{fasta_filename}.treefile")
         if config.get("draw_phylotrees"):
-            output_files.append(iqtree_dir_path / "fna" / f"{fasta_filename}.length_and_support_tree.svg")
+            output_files.append(iqtree_dir_path / f"{fasta_filename}.length_and_support_tree.svg")
     if config.get("rapidnj"):
         output_files.append(concat_alignments_dir_path / stockholm_filename)
         output_files.append(rapidnj_dir_path / rapidnj_tree)
@@ -233,9 +233,9 @@ else:
             )
             output_files.append(concat_alignments_dir_path / fasta_filename)
             if config.get("iqtree"):
-                output_files.append(iqtree_dir_path / "fna" / f"{fasta_filename}.treefile")
+                output_files.append(iqtree_dir_path / f"{fasta_filename}.treefile")
                 if config.get("draw_phylotrees"):
-                    output_files.append(iqtree_dir_path / "fna" / f"{fasta_filename}.length_and_support_tree.svg")
+                    output_files.append(iqtree_dir_path / f"{fasta_filename}.length_and_support_tree.svg")
             if config.get("astral"):
                 output_files.append(astral_dir_path / astral_tree)
                 if config.get("draw_phylotrees"):
