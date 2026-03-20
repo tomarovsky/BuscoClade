@@ -33,7 +33,7 @@ astral: True
 rapidnj: True
 phylip: True
 raxml: True
-mrbayes: False
+mrbayes: True
 
 # ---- Рhylogenetic tree visualization ----
 draw_phylotrees: True

@@ -17,6 +17,8 @@ dependencies:
     - rapidnj
     - phylip
     - raxml-ng
+    - mrbayes
+    - gotree
     - bedtools
     - bcftools
     - samtools

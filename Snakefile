@@ -256,7 +256,7 @@ else:
                     output_files.append(raxml_dir_path / f"{fasta_filename}.only_tree.svg")
             if config.get("mrbayes"):
                 output_files.append(concat_alignments_dir_path / nexus_filename)
-                output_files.append(mrbayes_dir_path / "fna")
+                output_files.append(mrbayes_dir_path / f"{fasta_filename}.nex.con.tre.nwk")
 
 
 localrules:
