@@ -23,6 +23,13 @@ log_dir_path = Path(config["log_dir"])
 benchmark_dir_path = Path(config["benchmark_dir"])
 output_dir_path = Path(config["output_dir"])
 
+# ---- Create directories ----
+onstart:
+    os.makedirs(cluster_log_dir_path, exist_ok=True)
+    os.makedirs(log_dir_path, exist_ok=True)
+    os.makedirs(benchmark_dir_path, exist_ok=True)
+    os.makedirs(output_dir_path, exist_ok=True)
+
 # -- Results --
 quastcore_dir_path = output_dir_path / config["quastcore_dir"]
 altref_dir_path = output_dir_path / config["altref_dir"]
