@@ -51,8 +51,6 @@ rule gatk_vcf_index:
         "{vcf}",
     output:
         "{vcf}.tbi",
-    params:
-        gatk_path=config["gatk_path"],
     log:
         std=log_dir_path / "gatk_vcf_index.{vcf}.log",
         cluster_log=cluster_log_dir_path / "gatk_vcf_index.{vcf}.cluster.log",
@@ -67,7 +65,7 @@ rule gatk_vcf_index:
         mem_mb=config["processing_mem_mb"],
     threads: config["processing_threads"],
     shell:
-        " {params.gatk_path}/gatk --java-options -Xmx{resources.mem_mb}m IndexFeatureFile -I {input} 1> {log.std} 2>&1; "
+        " gatk --java-options -Xmx{resources.mem_mb}m IndexFeatureFile -I {input} 1> {log.std} 2>&1; "
 
 
 rule gatk_altref:
@@ -80,7 +78,6 @@ rule gatk_altref:
     output:
         altref_dir_path / "{species}.fasta",
     params:
-        gatk_path=config["gatk_path"],
         sample=lambda wc: wc.species.split(".")[0],
     log:
         std=log_dir_path / "gatk_altref.{species}.log",
@@ -96,7 +93,7 @@ rule gatk_altref:
         mem_mb=config["processing_mem_mb"],
     threads: config["processing_threads"],
     shell:
-        " {params.gatk_path}/gatk --java-options -Xmx{resources.mem_mb}m FastaAlternateReferenceMaker "
+        " gatk --java-options -Xmx{resources.mem_mb}m FastaAlternateReferenceMaker "
         " --output {output} --reference {input.ref} --variant {input.vcf} --showHidden true --use-iupac-sample {params.sample} 1> {log.std} 2>&1; "
 
 

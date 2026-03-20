@@ -3,7 +3,7 @@ channels:
     - conda-forge
     - bioconda
 dependencies:
-    - openjdk=17
+    - gatk4
     - picard
     - samtools
     - bcftools

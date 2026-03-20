@@ -41,9 +41,6 @@ draw_phylotrees: True
 # +-----------------+
 # | Tool parameters |
 # +-----------------+
-# ---- VCF based ----
-gatk_path: "$TOOLS/gatk-4.6.2.0/" # gatk directory
-
 # ---- Assembly statistics ----
 quastcore_params: ""
 

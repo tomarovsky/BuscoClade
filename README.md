@@ -161,9 +161,6 @@ draw_phylotrees: True
 
 Key parameters to configure before running:
 
-**VCF-based reconstruction:**
-- `gatk_path`: Path to the GATK directory (e.g. `"$TOOLS/gatk-4.6.2.0/"`).
-
 **BUSCO:**
 - `busco_dataset_path`: Path to a pre-downloaded OrthoDB dataset (e.g. `"$TOOLS/busco_datasets/mammalia_odb12/"`).
 - `busco_options`: Use `"--offline"` to run without internet access.
