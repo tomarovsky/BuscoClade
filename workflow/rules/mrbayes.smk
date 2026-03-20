@@ -4,6 +4,7 @@ rule mrbayes:
     output:
         mrbayes_dir_path / f"{fasta_filename}.nex.con.tre",
     params:
+        mrbayes_path=config["mrbayes_path"],
         output_dir=mrbayes_dir_path,
         options=config["mrbayes_params"],
     log:
@@ -12,8 +13,6 @@ rule mrbayes:
         cluster_err=cluster_log_dir_path / "mrbayes.cluster.err",
     benchmark:
         benchmark_dir_path / "mrbayes.benchmark.txt"
-    conda:
-        config["conda"]["buscoclade_main"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_main"]["yaml"])
     resources:
         slurm_partition=config["mrbayes_queue"],
         runtime=config["mrbayes_time"],
@@ -25,7 +24,7 @@ rule mrbayes:
         " LOGFILE=$(readlink -f {log.std}); "
         " ln -sf $INPUT {params.output_dir}/; "
         " cd {params.output_dir}; "
-        " mpirun -np {threads} mb-mpi $(basename {input}) {params.options} 1> $LOGFILE 2>&1; "
+        " mpirun -np {threads} {params.mrbayes_path}/mb-mpi $(basename {input}) {params.options} 1> $LOGFILE 2>&1; "
 
 
 rule mrbayes_convert:
