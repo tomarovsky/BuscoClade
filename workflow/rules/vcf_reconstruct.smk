@@ -1,4 +1,7 @@
 localrules:
+    samtools_index,
+    gatk_vcf_index,
+    picard_index,
     link_altref_to_genomes_dir,
 
 
