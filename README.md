@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-  <i>Snakemake-based workflow to construct species phylogenies from genome assemblies or variant call data</i>
+  <i>Snakemake-based workflow to construct species phylogenies using BUSCOs</i>
 </p>
 
 <p align="center" style="text-decoration: none; border: none;">
