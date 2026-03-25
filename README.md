@@ -1,12 +1,23 @@
-# Snakemake workflow: BuscoClade
+<p align="center">
+  <h1 align="center">BuscoClade</h1>
+</p>
 
-[![Snakemake](https://img.shields.io/badge/snakemake-9.16-brightgreen.svg)](https://snakemake.github.io)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+<p align="center">
+  <i>Snakemake-based workflow to construct species phylogenies from genome assemblies or variant call data</i>
+</p>
+
+<p align="center" style="text-decoration: none; border: none;">
+	<a href="https://snakemake.github.io" style="text-decoration: none">
+		<img alt="Snakemake" src="https://img.shields.io/badge/Snakemake-9.16-dfb034?style=flat&logo=snakemake&logoColor=ffffff&labelColor=00623d"></a>
+	<a href="https://opensource.org/licenses/MIT" style="text-decoration: none">
+		<img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-dfb034?style=flat&logo=opensourceinitiative&logoColor=ffffff&labelColor=00623d"></a>
+	<a href="https://github.com/tomarovsky/BuscoClade/stargazers" style="text-decoration: none">
+		<img alt="Stars" src="https://img.shields.io/github/stars/tomarovsky/BuscoClade?style=flat&logo=starship&color=dfb034&logoColor=ffffff&labelColor=00623d"></a>
+</p>
+
 ![BuscoClade logo](logo.png)
 
-## Description
-
-Pipeline to construct species phylogenies from genome assemblies or variant call data (VCF).
+---
 
 ## Workflow
 
