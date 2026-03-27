@@ -1,5 +1,12 @@
 if config.get("alignment") == "prank":
 
+    def parse_time_to_minutes(time_str):
+        return sum(
+            int(v) * {"h": 60, "m": 1}.get(u, 1)
+            for v, u in re.findall(r"(\d+)([hm]?)", str(time_str))
+            if v
+        )
+
     rule prank:
         input:
             merged_sequences_dir_path / "{N}.fna",
@@ -8,6 +15,7 @@ if config.get("alignment") == "prank":
         params:
             prefix=lambda wildcards, output: output[0][:-4],
             options=config["prank_params"],
+            timeout=lambda wildcards: f"{parse_time_to_minutes(config['prank_time']) - 15}m",
         log:
             std=log_dir_path / "prank.{N}.log",
             cluster_log=cluster_log_dir_path / "prank.{N}.cluster.log",
@@ -22,8 +30,17 @@ if config.get("alignment") == "prank":
             mem_mb=config["prank_mem_mb"],
         threads: config["prank_threads"]
         shell:
-            " prank -d={input} -o={params.prefix} {params.options} 1> {log.std} 2>&1; "
-            " mv {params.prefix}.best.fas {output} >> {log.std} 2>&1; "
+            " timeout --kill-after=5m {params.timeout} "
+            " prank -d={input} -o={params.prefix} {params.options} 1> {log.std} 2>&1 "
+            " || {{ exit_code=$?; "
+            " if [ $exit_code -ne 0 ]; then "
+            "     echo 'PRANK failed or timed out (exit code: '$exit_code') for {wildcards.N}' >> {log.std}; "
+            "     touch {output}; "
+            " fi; "
+            " }}; "
+            " if [ ! -f {output} ]; then "
+            "     mv {params.prefix}.best.fas {output} >> {log.std} 2>&1; "
+            " fi; "
 
 
 if config["alignment"] == "mafft":

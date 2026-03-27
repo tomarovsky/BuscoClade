@@ -22,11 +22,14 @@ if config.get("filtration") == "gblocks":
             mem_mb=config["gblocks_mem_mb"],
         threads: config["gblocks_threads"]
         shell:
-            " mkdir -p {params.outdir}; set +e; "
-            " Gblocks {input} {params.options} 1> {log.std} 2>&1; "
-            " rm -r {input}-gb.htm; mv {input}-gb {output} "
-            # Gblocks always returns 1 exit code
-            # If Gblocks exits with an error, the output files will not exist
+            " if [ -s {input} ]; then "
+            "     mkdir -p {params.outdir}; set +e; "
+            "     Gblocks {input} {params.options} 1> {log.std} 2>&1; "
+            "     rm -r {input}-gb.htm; mv {input}-gb {output}; "
+            " else "
+            "     echo 'Skipping Gblocks for {wildcards.N}: empty input' > {log.std}; "
+            "     cp {input} {output}; "
+            " fi "
 
 
 if config.get("filtration") == "trimal":
@@ -53,9 +56,14 @@ if config.get("filtration") == "trimal":
             mem_mb=config["trimal_mem_mb"],
         threads: config["trimal_threads"]
         shell:
-            " trimal -in {input} -out {params.prefix} {params.options} > {log.std} 2>&1; "
-            " trimal -in {params.prefix} -out {output} -nogaps >> {log.std} 2>&1; "
-            " rm {params.prefix} >> {log.std} 2>&1; "
+            " if [ -s {input} ]; then "
+            "     trimal -in {input} -out {params.prefix} {params.options} > {log.std} 2>&1; "
+            "     trimal -in {params.prefix} -out {output} -nogaps >> {log.std} 2>&1; "
+            "     rm {params.prefix} >> {log.std} 2>&1; "
+            " else "
+            "     echo 'Skipping trimal for {wildcards.N}: empty input' > {log.std}; "
+            "     cp {input} {output}; "
+            " fi "
 
 
 if config.get("filtration") == "clipkit":
@@ -81,4 +89,9 @@ if config.get("filtration") == "clipkit":
             mem_mb=config["clipkit_mem_mb"],
         threads: config["clipkit_threads"]
         shell:
-            " clipkit {input} --output {output} --threads {threads} {params.options} > {log.std} 2>&1; "
+            " if [ -s {input} ]; then "
+            "     clipkit {input} --output {output} --threads {threads} {params.options} > {log.std} 2>&1; "
+            " else "
+            "     echo 'Skipping clipkit for {wildcards.N}: empty input' > {log.std}; "
+            "     cp {input} {output}; "
+            " fi "

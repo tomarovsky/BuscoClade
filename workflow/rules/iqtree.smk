@@ -27,5 +27,5 @@ rule iqtree:
         mem_mb=config["iqtree_mem_mb"],
     threads: config["iqtree_threads"]
     shell:
-        " mkdir -p {params.outdir}; iqtree -nt {threads} -s {input} "
-        " --prefix {params.outdir}/{params.prefix} {params.options} 1> {log.std} 2>&1; "
+        " mkdir -p {params.outdir}; "
+        " iqtree -nt {threads} -s {input} --prefix {params.outdir}/{params.prefix} {params.options} 1> {log.std} 2>&1; "

@@ -28,7 +28,12 @@ rule iqtree_per_fna:
     threads: config["iqtree_per_fna_threads"]
     shell:
         " mkdir -p {params.outdir}; "
-        " iqtree -nt {threads} -s {input} --prefix {params.prefix} {params.options} > {log.std} 2>&1; "
+        " if [ -s {input} ]; then "
+        "     iqtree -nt {threads} -s {input} --prefix {params.prefix} {params.options} > {log.std} 2>&1; "
+        " else "
+        "     echo 'Skipping iqtree for {wildcards.N}: empty input' > {log.std}; "
+        "     touch {output}; "
+        " fi "
 
 
 rule concat_newick_files:

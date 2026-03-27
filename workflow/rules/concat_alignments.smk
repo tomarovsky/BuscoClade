@@ -46,8 +46,7 @@ rule concat_nexus:
         mem_mb=config["processing_mem_mb"],
     threads: config["processing_threads"]
     shell:
-        " workflow/scripts/fasta_to_nexus.py -i {input} "
-        " -t {params.type} -b {params.block} -o {output} 1> {log.std} 2>&1; "
+        " workflow/scripts/fasta_to_nexus.py -i {input} -t {params.type} -b {params.block} -o {output} 1> {log.std} 2>&1; "
 
 
 rule concat_stockholm:
