@@ -194,7 +194,7 @@ def main():
         "-w",
         "--colored_metrics_whitelist",
         type=lambda s: list(map(str, s.split(","))),
-        default=["q1", "pp1"],
+        default=["pp1", "pp2", "pp3", "q1", "q2", "q3"],
         help="comma-separated list of metrics for colorification (default metric color is 'Black')",
     )
 
