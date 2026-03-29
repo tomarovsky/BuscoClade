@@ -1,116 +1,90 @@
 localrules:
-    samtools_index,
-    gatk_vcf_index,
-    picard_index,
-    link_altref_to_genomes_dir,
+    tabix_index,
+    link_ref_to_genomes_dir,
 
 
-rule samtools_index:
+rule tabix_index:
     input:
-        "{reference}.fasta",
+        "{vcf}.vcf.gz",
     output:
-        "{reference}.fasta.fai",
+        "{vcf}.vcf.gz.tbi",
     log:
-        std=log_dir_path / "samtools_index.{reference}.log",
-        cluster_log=cluster_log_dir_path / "samtools_index.{reference}.cluster.log",
-        cluster_err=cluster_log_dir_path / "samtools_index.{reference}.cluster.err",
+        std=log_dir_path / "tabix_index.{vcf}.log",
+        cluster_log=cluster_log_dir_path / "tabix_index.{vcf}.cluster.log",
+        cluster_err=cluster_log_dir_path / "tabix_index.{vcf}.cluster.err",
     benchmark:
-        benchmark_dir_path / "samtools_index.{reference}.benchmark.txt"
+        benchmark_dir_path / "tabix_index.{vcf}.benchmark.txt"
     conda:
-        config["conda"]["buscoclade_gatk"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_gatk"]["yaml"])
-    resources:
-        slurm_partition=config["processing_queue"],
-        runtime=config["processing_time"],
-        mem_mb=config["processing_mem_mb"],
-    threads: config["processing_threads"],
+        config["conda"]["buscoclade_main"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_main"]["yaml"])
     shell:
-        " samtools faidx {input} 1> {log.std} 2>&1; "
+        " tabix -p vcf {input} 1> {log.std} 2>&1; "
 
 
-rule picard_index:
+rule link_ref_to_genomes_dir:
+    """Creates a symlink for the VCF reference genome in genomes/ so busco_metaeuk can find it."""
+    wildcard_constraints:
+        ref_prefix="|".join(vcf_reconstruct_refs) if vcf_reconstruct_refs else "^$"
     input:
-        "{reference}.fasta",
+        lambda wc: next(
+            v["reference"] for v in vcf_reconstruct_map.values()
+            if v["ref_prefix"] == wc.ref_prefix
+        ),
     output:
-        "{reference}.dict",
+        genome_dir_path / "{ref_prefix}.fasta",
     log:
-        std=log_dir_path / "picard_index.{reference}.log",
-        cluster_log=cluster_log_dir_path / "picard_index.{reference}.cluster.log",
-        cluster_err=cluster_log_dir_path / "picard_index.{reference}.cluster.err",
-    benchmark:
-        benchmark_dir_path / "picard_index.{reference}.benchmark.txt"
-    conda:
-        config["conda"]["buscoclade_gatk"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_gatk"]["yaml"])
-    resources:
-        slurm_partition=config["processing_queue"],
-        runtime=config["processing_time"],
-        mem_mb=config["processing_mem_mb"],
-    threads: config["processing_threads"],
-    shell:
-        " picard CreateSequenceDictionary -R {input} 1> {log.std} 2>&1; "
-
-
-rule gatk_vcf_index:
-    input:
-        "{vcf}",
-    output:
-        "{vcf}.tbi",
-    log:
-        std=log_dir_path / "gatk_vcf_index.{vcf}.log",
-        cluster_log=cluster_log_dir_path / "gatk_vcf_index.{vcf}.cluster.log",
-        cluster_err=cluster_log_dir_path / "gatk_vcf_index.{vcf}.cluster.err",
-    benchmark:
-        benchmark_dir_path / "gatk_vcf_index.{vcf}.benchmark.txt"
-    conda:
-        config["conda"]["buscoclade_gatk"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_gatk"]["yaml"])
-    resources:
-        slurm_partition=config["processing_queue"],
-        runtime=config["processing_time"],
-        mem_mb=config["processing_mem_mb"],
-    threads: config["processing_threads"],
-    shell:
-        " gatk --java-options -Xmx{resources.mem_mb}m IndexFeatureFile -I {input} 1> {log.std} 2>&1; "
-
-
-rule gatk_altref:
-    input:
-        ref=lambda wc: vcf_reconstruct_map[wc.species]["reference"],
-        refidx_picard=lambda wc: vcf_reconstruct_map[wc.species]["reference"].with_suffix(".dict"),
-        refidx_samtools=lambda wc: vcf_reconstruct_map[wc.species]["reference"].with_suffix(".fasta.fai"),
-        vcf=lambda wc: vcf_reconstruct_map[wc.species]["vcf"],
-        vcfidx=lambda wc: vcf_reconstruct_map[wc.species]["vcf"].with_name(vcf_reconstruct_map[wc.species]["vcf"].name + ".tbi"),
-    output:
-        altref_dir_path / "{species}.fasta",
-    params:
-        sample=lambda wc: wc.species.split(".")[0],
-    log:
-        std=log_dir_path / "gatk_altref.{species}.log",
-        cluster_log=cluster_log_dir_path / "gatk_altref.{species}.cluster.log",
-        cluster_err=cluster_log_dir_path / "gatk_altref.{species}.cluster.err",
-    benchmark:
-        benchmark_dir_path / "gatk_altref.{species}.benchmark.txt"
-    conda:
-        config["conda"]["buscoclade_gatk"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_gatk"]["yaml"])
-    resources:
-        slurm_partition=config["processing_queue"],
-        runtime=config["processing_time"],
-        mem_mb=config["processing_mem_mb"],
-    threads: config["processing_threads"],
-    shell:
-        " gatk --java-options -Xmx{resources.mem_mb}m FastaAlternateReferenceMaker "
-        " --output {output} --reference {input.ref} --variant {input.vcf} --showHidden true --use-iupac-sample {params.sample} 1> {log.std} 2>&1; "
-
-
-rule link_altref_to_genomes_dir:
-    input:
-        altref_dir_path / "{species}.fasta",
-    output:
-        genome_dir_path / "{species}.fasta",
-    log:
-        std=log_dir_path / "link_altref_to_genomes_dir.{species}.log",
-        cluster_log=cluster_log_dir_path / "link_altref_to_genomes_dir.{species}.cluster.log",
-        cluster_err=cluster_log_dir_path / "link_altref_to_genomes_dir.{species}.cluster.err",
+        std=log_dir_path / "link_ref_to_genomes_dir.{ref_prefix}.log",
+        cluster_log=cluster_log_dir_path / "link_ref_to_genomes_dir.{ref_prefix}.cluster.log",
+        cluster_err=cluster_log_dir_path / "link_ref_to_genomes_dir.{ref_prefix}.cluster.err",
     shell:
         " ln -sr {input} {output} 1> {log.std} 2>&1; "
+
+
+rule apply_vcf_to_busco:
+    wildcard_constraints:
+        species="|".join(vcf_reconstruct_map.keys()) if vcf_reconstruct_map else "^$"
+    input:
+        busco_seqs=lambda wc: expand(
+            rules.busco_metaeuk.output.single_copy_busco_sequences,
+            species=vcf_reconstruct_map[wc.species]["ref_prefix"]
+        )[0],
+        busco_summary=lambda wc: expand(
+            rules.busco_metaeuk.output.summary,
+            species=vcf_reconstruct_map[wc.species]["ref_prefix"]
+        )[0],
+        ref=lambda wc: vcf_reconstruct_map[wc.species]["reference"],
+        vcf=lambda wc: vcf_reconstruct_map[wc.species]["vcf"],
+        vcf_tbi=lambda wc: str(vcf_reconstruct_map[wc.species]["vcf"]) + ".tbi",
+    output:
+        seqs=directory(busco_dir_path / "{species}/busco_sequences/single_copy_busco_sequences"),
+        multi_copy=directory(busco_dir_path / "{species}/busco_sequences/multi_copy_busco_sequences"),
+        summary=busco_dir_path / "{species}/short_summary_{species}.txt",
+    params:
+        sample=lambda wc: vcf_reconstruct_map[wc.species]["vcf"].stem.split(".")[0],
+        iupac="--iupac" if config.get("apply_vcf_iupac") else "",
+    log:
+        std=log_dir_path / "apply_vcf_to_busco.{species}.log",
+        cluster_log=cluster_log_dir_path / "apply_vcf_to_busco.{species}.cluster.log",
+        cluster_err=cluster_log_dir_path / "apply_vcf_to_busco.{species}.cluster.err",
+    benchmark:
+        benchmark_dir_path / "apply_vcf_to_busco.{species}.benchmark.txt"
+    conda:
+        config["conda"]["buscoclade_main"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_main"]["yaml"])
+    resources:
+        slurm_partition=config["processing_queue"],
+        runtime=config["processing_time"],
+        mem_mb=config["processing_mem_mb"],
+    threads: config["processing_threads"]
+    shell:
+        " python workflow/scripts/apply_vcf_to_busco.py "
+        " --busco-dir {input.busco_seqs} "
+        " --ref {input.ref} "
+        " --vcf {input.vcf} "
+        " --sample {params.sample} "
+        " --output-dir {output.seqs} "
+        " {params.iupac} "
+        " 1> {log.std} 2>&1; "
+        " mkdir -p {output.multi_copy}; "
+        " touch {output.summary} "
 
 
 if config.get("vcf2phylip"):
