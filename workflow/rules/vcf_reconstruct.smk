@@ -23,10 +23,10 @@ rule tabix_index:
 rule link_ref_to_genomes_dir:
     """Creates a symlink for the VCF reference genome in genomes/ so busco_metaeuk can find it."""
     wildcard_constraints:
-        ref_prefix="|".join(vcf_reconstruct_refs) if vcf_reconstruct_refs else "^$"
+        ref_prefix="|".join(altref_refs) if altref_refs else "^$"
     input:
         lambda wc: next(
-            v["reference"] for v in vcf_reconstruct_map.values()
+            v["reference"] for v in altref_map.values()
             if v["ref_prefix"] == wc.ref_prefix
         ),
     output:
@@ -41,25 +41,25 @@ rule link_ref_to_genomes_dir:
 
 rule apply_vcf_to_busco:
     wildcard_constraints:
-        species="|".join(vcf_reconstruct_map.keys()) if vcf_reconstruct_map else "^$"
+        species="|".join(altref_map.keys()) if altref_map else "^$"
     input:
         busco_seqs=lambda wc: expand(
             rules.busco_metaeuk.output.single_copy_busco_sequences,
-            species=vcf_reconstruct_map[wc.species]["ref_prefix"]
+            species=altref_map[wc.species]["ref_prefix"]
         )[0],
         busco_summary=lambda wc: expand(
             rules.busco_metaeuk.output.summary,
-            species=vcf_reconstruct_map[wc.species]["ref_prefix"]
+            species=altref_map[wc.species]["ref_prefix"]
         )[0],
-        ref=lambda wc: vcf_reconstruct_map[wc.species]["reference"],
-        vcf=lambda wc: vcf_reconstruct_map[wc.species]["vcf"],
-        vcf_tbi=lambda wc: str(vcf_reconstruct_map[wc.species]["vcf"]) + ".tbi",
+        ref=lambda wc: altref_map[wc.species]["reference"],
+        vcf=lambda wc: altref_map[wc.species]["vcf"],
+        vcf_tbi=lambda wc: str(altref_map[wc.species]["vcf"]) + ".tbi",
     output:
         seqs=directory(busco_dir_path / "{species}/busco_sequences/single_copy_busco_sequences"),
         multi_copy=directory(busco_dir_path / "{species}/busco_sequences/multi_copy_busco_sequences"),
         summary=busco_dir_path / "{species}/short_summary_{species}.txt",
     params:
-        sample=lambda wc: vcf_reconstruct_map[wc.species]["vcf"].stem.split(".")[0],
+        sample=lambda wc: altref_map[wc.species]["vcf"].stem.split(".")[0],
         iupac="--iupac" if config.get("apply_vcf_iupac") else "",
     log:
         std=log_dir_path / "apply_vcf_to_busco.{species}.log",
