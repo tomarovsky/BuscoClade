@@ -34,7 +34,6 @@ onstart:
 
 # -- Results --
 quastcore_dir_path = output_dir_path / config["quastcore_dir"]
-altref_dir_path = output_dir_path / config["altref_dir"]
 busco_dir_path = output_dir_path / config["busco_dir"]
 species_ids_dir_path = output_dir_path / config["species_ids_dir"]
 common_ids_dir_path = output_dir_path / config["common_ids_dir"]
@@ -103,14 +102,21 @@ def get_vcf_reconstruct_map(vcf_dir: Path) -> dict:
             for vcf_file in vcf_subdir.glob("*.vcf.gz"):
                 vcf_id = vcf_file.stem.split(".")[0]
                 alt_name = f"{vcf_id}.{ref_prefix}.AltRef"
-                vcf_mapping[alt_name] = {"vcf": vcf_file, "reference": ref_file}
+                vcf_mapping[alt_name] = {
+                    "vcf": vcf_file,
+                    "reference": ref_file,
+                    "ref_prefix": ref_prefix,
+                }
 
     return vcf_mapping
 
 
-def get_species_list(vcf_species: list, genome_species: list) -> list:
-    """Merges and returns final species list."""
-    return sorted(set(vcf_species + genome_species))
+def get_species_list(vcf_species: list, genome_species: list, ref_species: list) -> list:
+    """Merges and returns final species list, optionally including VCF reference genomes."""
+    all_species = set(vcf_species + genome_species)
+    if config.get("vcf_reconstruct_ref_as_species"):
+        all_species.update(ref_species)
+    return sorted(all_species)
 
 
 def extract_samples_from_vcf(vcf_file: Path) -> list:
@@ -153,11 +159,17 @@ def expand_fna_from_merged_sequences(wildcards, template, busco_blacklist=None):
 def get_genome_file(wildcards) -> Path:
     """
     Finds genome file for a given species, trying all known extensions.
-    For VCF-reconstructed species the file will be created by link_altref_to_genomes_dir,
-    so we return the expected .fasta path without checking existence.
+    VCF-reconstructed species (AltRef) do not have a genome file — BUSCO is not run on them directly.
+    For VCF reference genomes, returns the expected symlink path in genomes/.
     """
-
     if wildcards.species in vcf_reconstruct_map:
+        raise ValueError(
+            f"get_genome_file called for VCF species '{wildcards.species}' — "
+            "BUSCO should not be run directly on VCF-reconstructed species."
+        )
+
+    # Reference genomes from vcf_reconstruct: symlink will be created by link_ref_to_genomes_dir
+    if wildcards.species in vcf_reconstruct_refs:
         return genome_dir_path / f"{wildcards.species}.fasta"
 
     for f in get_fasta_files(genome_dir_path):
@@ -168,19 +180,25 @@ def get_genome_file(wildcards) -> Path:
 
 
 def get_all_genome_files() -> list[Path]:
-    """Returns genome files for all species in species_list, in the same order."""
-    return [get_genome_file(type("W", (), {"species": s})()) for s in config["species_list"]]
+    """Returns genome files for all species in species_list, skipping VCF-reconstructed species."""
+    return [
+        get_genome_file(type("W", (), {"species": s})())
+        for s in config["species_list"]
+        if s not in vcf_reconstruct_map
+    ]
 
 
 # ---- Input data ----
-genome_species = sorted({get_fasta_stem(f) for f in get_fasta_files(genome_dir_path)})
 vcf_reconstruct_map = get_vcf_reconstruct_map(vcf_reconstruct_dir_path)
 vcf_reconstruct_species = list(vcf_reconstruct_map.keys())
+vcf_reconstruct_refs = sorted({v["ref_prefix"] for v in vcf_reconstruct_map.values()})
+
+genome_species = sorted({get_fasta_stem(f) for f in get_fasta_files(genome_dir_path)} - set(vcf_reconstruct_refs))
 
 # Species list configuration
 if "species_list" not in config:
     if not config.get("vcf2phylip"):
-        config["species_list"] = get_species_list(genome_species, vcf_reconstruct_species)
+        config["species_list"] = get_species_list(vcf_reconstruct_species, genome_species, vcf_reconstruct_refs)
     else:
         # VCF2Phylip specific processing
         vcf_file = list(vcf2phylip_dir_path.rglob("*.vcf.gz"))
@@ -226,20 +244,21 @@ if config.get("vcf2phylip"):
         if config.get("draw_phylotrees"):
             output_files.append(raxml_dir_path / f"{fasta_filename}.only_tree.svg")
 else:
+    if vcf_reconstruct_species:
+        output_files.append(expand(busco_dir_path / "{species}/short_summary_{species}.txt", species=vcf_reconstruct_refs))
     output_files.append(expand(busco_dir_path / "{species}/short_summary_{species}.txt", species=config["species_list"]))
     output_files.append(lambda w: expand_fna_from_merged_sequences(w, merged_sequences_dir_path / "{N}.fna", busco_blacklist=busco_blacklist))
     output_files.append(species_ids_dir_path / "unique_species_ids.svg")
     output_files.append(busco_dir_path / "busco_summaries.svg")
 
     if config.get("quastcore"):
-        output_files.append(quastcore_dir_path / "assembly_stats.csv")
+        if get_all_genome_files():
+            output_files.append(quastcore_dir_path / "assembly_stats.csv")
 
     if config.get("alignment"):
         output_files.append(lambda w: expand_fna_from_merged_sequences(w, alignments_dir_path / "fna" / "{N}.fna", busco_blacklist=busco_blacklist))
         if config.get("filtration"):
-            output_files.append(
-                lambda w: expand_fna_from_merged_sequences(w, filtered_alignments_dir_path / "fna" / "{N}.fna", busco_blacklist=busco_blacklist)
-            )
+            output_files.append(lambda w: expand_fna_from_merged_sequences(w, filtered_alignments_dir_path / "fna" / "{N}.fna", busco_blacklist=busco_blacklist))
             output_files.append(concat_alignments_dir_path / fasta_filename)
             if config.get("iqtree"):
                 output_files.append(iqtree_dir_path / f"{fasta_filename}.treefile")
