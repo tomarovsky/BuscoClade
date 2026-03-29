@@ -1,8 +1,8 @@
 rule busco_metaeuk:
     wildcard_constraints:
         species="|".join(
-            [s for s in config["species_list"] if s not in vcf_reconstruct_map]
-            + vcf_reconstruct_refs
+            [s for s in config["species_list"] if s not in altref_map]
+            + altref_refs
         )
     input:
         get_genome_file,
