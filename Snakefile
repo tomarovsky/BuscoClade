@@ -16,7 +16,7 @@ FASTA_PATTERNS = [f"*{ext}" for ext in FASTA_EXTENSIONS]
 # ---- Setup paths ----
 # -- Input --
 genome_dir_path = Path(config["genome_dir"]).resolve()
-vcf_reconstruct_dir_path = Path(config["vcf_reconstruct_dir"]).resolve()
+altref_dir_path = Path(config["vcf_reconstruct_dir"]).resolve()
 vcf2phylip_dir_path = Path(config["vcf2phylip_dir"]).resolve()
 
 # -- Logs and benchmarks --
@@ -49,17 +49,20 @@ phylip_dir_path = output_dir_path / config["phylip_dir"]
 raxml_dir_path = output_dir_path / config["raxml_dir"]
 
 # ---- Setup filenames ----
-fasta_filename = "{}.fna".format(config["alignment_file_prefix"])
-nexus_filename = "{}.fna.nex".format(config["alignment_file_prefix"])
-phylip_filename = "{}.fna.phy".format(config["alignment_file_prefix"])
-stockholm_filename = "{}.fna.sth".format(config["alignment_file_prefix"])
-astral_input_trees = "{}.iqtree_per_fna.concat.treefile".format(config["alignment_file_prefix"])
-astral_filtered_trees = "{0}.iqtree_per_fna.concat.{1}.treefile".format(config["alignment_file_prefix"], config["nodes_filtrataion_by_support"])
-astral_tree = "{0}.{1}.fna.astral.treefile".format(config["alignment_file_prefix"], config["nodes_filtrataion_by_support"])
-rapidnj_tree = "{}.fna.rapidnj.treefile".format(config["alignment_file_prefix"])
-rapidnj_matrix = "{}.fna.rapidnj.matrix".format(config["alignment_file_prefix"])
-phylip_tree = "{}.fna.phy.namefix.treefile".format(config["alignment_file_prefix"])
-raxml_tree = "{}.fna.raxml.treefile".format(config["alignment_file_prefix"])
+pfx = config["alignment_file_prefix"]
+sup = config["nodes_filtrataion_by_support"]
+
+fasta_filename        = f"{pfx}.fna"
+nexus_filename        = f"{pfx}.fna.nex"
+phylip_filename       = f"{pfx}.fna.phy"
+stockholm_filename    = f"{pfx}.fna.sth"
+astral_input_trees    = f"{pfx}.iqtree_per_fna.concat.treefile"
+astral_filtered_trees = f"{pfx}.iqtree_per_fna.concat.{sup}.treefile"
+astral_tree           = f"{pfx}.{sup}.fna.astral.treefile"
+rapidnj_tree          = f"{pfx}.fna.rapidnj.treefile"
+rapidnj_matrix        = f"{pfx}.fna.rapidnj.matrix"
+phylip_tree           = f"{pfx}.fna.phy.namefix.treefile"
+raxml_tree            = f"{pfx}.fna.raxml.treefile"
 
 
 # ---- Necessary functions ----
@@ -84,9 +87,14 @@ def get_fasta_files(directory: Path) -> list[Path]:
     return files
 
 
-def get_vcf_reconstruct_map(vcf_dir: Path) -> dict:
-    """Returns a dictionary where keys are species names and values are dictionaries of VCF and FASTA files."""
-    vcf_mapping = {}
+def get_altref_map(vcf_dir: Path) -> dict:
+    """
+    Scans vcf_reconstruct/ subdirectories and returns a mapping of AltRef species names
+    to their VCF file, reference FASTA, and reference prefix.
+
+    Key format: "{vcf_id}.{ref_prefix}.AltRef"
+    """
+    altref_mapping = {}
 
     if vcf_dir.exists():
         for vcf_subdir in vcf_dir.iterdir():
@@ -102,20 +110,23 @@ def get_vcf_reconstruct_map(vcf_dir: Path) -> dict:
             for vcf_file in vcf_subdir.glob("*.vcf.gz"):
                 vcf_id = vcf_file.stem.split(".")[0]
                 alt_name = f"{vcf_id}.{ref_prefix}.AltRef"
-                vcf_mapping[alt_name] = {
+                altref_mapping[alt_name] = {
                     "vcf": vcf_file,
                     "reference": ref_file,
                     "ref_prefix": ref_prefix,
                 }
 
-    return vcf_mapping
+    return altref_mapping
 
 
-def get_species_list(vcf_species: list, genome_species: list, ref_species: list) -> list:
-    """Merges and returns final species list, optionally including VCF reference genomes."""
-    all_species = set(vcf_species + genome_species)
+def get_species_list(altref_species: list, genome_species: list, altref_refs: list) -> list:
+    """
+    Merges genome and AltRef species into a single sorted list.
+    Reference genomes are included only if vcf_reconstruct_ref_as_species is True.
+    """
+    all_species = set(altref_species + genome_species)
     if config.get("vcf_reconstruct_ref_as_species"):
-        all_species.update(ref_species)
+        all_species.update(altref_refs)
     return sorted(all_species)
 
 
@@ -158,18 +169,19 @@ def expand_fna_from_merged_sequences(wildcards, template, busco_blacklist=None):
 
 def get_genome_file(wildcards) -> Path:
     """
-    Finds genome file for a given species, trying all known extensions.
-    VCF-reconstructed species (AltRef) do not have a genome file — BUSCO is not run on them directly.
-    For VCF reference genomes, returns the expected symlink path in genomes/.
+    Returns the genome FASTA path for a given species wildcard.
+    - AltRef species (from VCF reconstruction) are not allowed here —
+      BUSCO is not run on them directly.
+    - Reference genomes from vcf_reconstruct/ are expected as symlinks in genomes/.
+    - Regular genome assemblies are looked up directly in genomes/.
     """
-    if wildcards.species in vcf_reconstruct_map:
+    if wildcards.species in altref_map:
         raise ValueError(
-            f"get_genome_file called for VCF species '{wildcards.species}' — "
+            f"get_genome_file called for AltRef species '{wildcards.species}' — "
             "BUSCO should not be run directly on VCF-reconstructed species."
         )
 
-    # Reference genomes from vcf_reconstruct: symlink will be created by link_ref_to_genomes_dir
-    if wildcards.species in vcf_reconstruct_refs:
+    if wildcards.species in altref_refs:
         return genome_dir_path / f"{wildcards.species}.fasta"
 
     for f in get_fasta_files(genome_dir_path):
@@ -180,38 +192,119 @@ def get_genome_file(wildcards) -> Path:
 
 
 def get_all_genome_files() -> list[Path]:
-    """Returns genome files for all species in species_list, skipping VCF-reconstructed species."""
+    """Returns genome files for all non-AltRef species in species_list."""
     return [
         get_genome_file(type("W", (), {"species": s})())
         for s in config["species_list"]
-        if s not in vcf_reconstruct_map
+        if s not in altref_map
     ]
 
 
+def get_vcf2phylip_outputs() -> list:
+    """Returns output files for the vcf2phylip route."""
+    files = [concat_alignments_dir_path / fasta_filename]
+    if config.get("iqtree"):
+        files.append(iqtree_dir_path / f"{fasta_filename}.treefile")
+        if config.get("draw_phylotrees"):
+            files.append(iqtree_dir_path / f"{fasta_filename}.length_and_support_tree.svg")
+    if config.get("rapidnj"):
+        files.append(concat_alignments_dir_path / stockholm_filename)
+        files.append(rapidnj_dir_path / rapidnj_tree)
+        if config.get("draw_phylotrees"):
+            files.append(rapidnj_dir_path / f"{fasta_filename}.only_tree.svg")
+    if config.get("phylip"):
+        files.append(concat_alignments_dir_path / phylip_filename)
+        files.append(phylip_dir_path / phylip_tree)
+        if config.get("draw_phylotrees"):
+            files.append(phylip_dir_path / f"{fasta_filename}.only_tree.svg")
+    if config.get("raxml"):
+        files.append(raxml_dir_path / raxml_tree)
+        if config.get("draw_phylotrees"):
+            files.append(raxml_dir_path / f"{fasta_filename}.only_tree.svg")
+    return files
+
+
+def get_busco_outputs() -> list:
+    """Returns output files for the main BUSCO-based pipeline route."""
+    files = []
+
+    # Ensure BUSCO runs on reference genomes used for AltRef reconstruction
+    if altref_species:
+        files.append(expand(busco_dir_path / "{species}/short_summary_{species}.txt", species=altref_refs))
+
+    files += [
+        expand(busco_dir_path / "{species}/short_summary_{species}.txt", species=config["species_list"]),
+        lambda w: expand_fna_from_merged_sequences(w, merged_sequences_dir_path / "{N}.fna", busco_blacklist=busco_blacklist),
+        species_ids_dir_path / "unique_species_ids.svg",
+        busco_dir_path / "busco_summaries.svg",
+    ]
+
+    if config.get("quastcore") and get_all_genome_files():
+        files.append(quastcore_dir_path / "assembly_stats.csv")
+
+    if config.get("alignment"):
+        files.append(lambda w: expand_fna_from_merged_sequences(w, alignments_dir_path / "fna" / "{N}.fna", busco_blacklist=busco_blacklist))
+        if config.get("filtration"):
+            files += [
+                lambda w: expand_fna_from_merged_sequences(w, filtered_alignments_dir_path / "fna" / "{N}.fna", busco_blacklist=busco_blacklist),
+                concat_alignments_dir_path / fasta_filename,
+            ]
+            if config.get("iqtree"):
+                files.append(iqtree_dir_path / f"{fasta_filename}.treefile")
+                if config.get("draw_phylotrees"):
+                    files.append(iqtree_dir_path / f"{fasta_filename}.length_and_support_tree.svg")
+            if config.get("astral"):
+                files.append(astral_dir_path / astral_tree)
+                if config.get("draw_phylotrees"):
+                    files.append(astral_dir_path / f"{astral_tree}.svg")
+            if config.get("rapidnj"):
+                files.append(concat_alignments_dir_path / stockholm_filename)
+                files.append(rapidnj_dir_path / rapidnj_tree)
+                if config.get("draw_phylotrees"):
+                    files.append(rapidnj_dir_path / f"{fasta_filename}.only_tree.svg")
+            if config.get("phylip"):
+                files.append(concat_alignments_dir_path / phylip_filename)
+                files.append(phylip_dir_path / phylip_tree)
+                if config.get("draw_phylotrees"):
+                    files.append(phylip_dir_path / f"{fasta_filename}.only_tree.svg")
+            if config.get("raxml"):
+                files.append(raxml_dir_path / raxml_tree)
+                if config.get("draw_phylotrees"):
+                    files.append(raxml_dir_path / f"{fasta_filename}.only_tree.svg")
+            if config.get("mrbayes"):
+                files.append(concat_alignments_dir_path / nexus_filename)
+                files.append(mrbayes_dir_path / f"{fasta_filename}.nex.con.tre.nwk")
+
+    return files
+
+
 # ---- Input data ----
-vcf_reconstruct_map = get_vcf_reconstruct_map(vcf_reconstruct_dir_path)
-vcf_reconstruct_species = list(vcf_reconstruct_map.keys())
-vcf_reconstruct_refs = sorted({v["ref_prefix"] for v in vcf_reconstruct_map.values()})
+altref_map     = get_altref_map(altref_dir_path)
+altref_species = list(altref_map.keys())
+altref_refs    = sorted({v["ref_prefix"] for v in altref_map.values()})
 
-genome_species = sorted({get_fasta_stem(f) for f in get_fasta_files(genome_dir_path)} - set(vcf_reconstruct_refs))
+genome_species = sorted(
+    {get_fasta_stem(f) for f in get_fasta_files(genome_dir_path)} - set(altref_refs)
+)
 
-# Species list configuration
+# ---- Species list ----
 if "species_list" not in config:
     if not config.get("vcf2phylip"):
-        config["species_list"] = get_species_list(vcf_reconstruct_species, genome_species, vcf_reconstruct_refs)
+        config["species_list"] = get_species_list(altref_species, genome_species, altref_refs)
     else:
-        # VCF2Phylip specific processing
         vcf_file = list(vcf2phylip_dir_path.rglob("*.vcf.gz"))
         if len(vcf_file) != 1:
-            raise ValueError(f"vcf2phylip requires exactly one VCF in {vcf2phylip_dir_path}, " f"found {len(vcf_file)}: {vcf_file}")
+            raise ValueError(
+                f"vcf2phylip requires exactly one VCF in {vcf2phylip_dir_path}, "
+                f"found {len(vcf_file)}: {vcf_file}"
+            )
         vcf_file = vcf_file[0]
         prefix = vcf_file.name.replace(".vcf.gz", "")
         config["species_list"] = extract_samples_from_vcf(vcf_file)
 
     print("Species list:", config["species_list"])
 
-
-# Busco blacklist processing
+# ---- BUSCO blacklist ----
 busco_blacklist = None
 if "busco_blacklist" in config:
     blacklist_path = Path(config["busco_blacklist"])
@@ -220,80 +313,13 @@ if "busco_blacklist" in config:
 
 
 # ---- "All" rule ----
-
-output_files = []
-
-if config.get("vcf2phylip"):
-    output_files.append(concat_alignments_dir_path / fasta_filename)
-    if config.get("iqtree"):
-        output_files.append(iqtree_dir_path / f"{fasta_filename}.treefile")
-        if config.get("draw_phylotrees"):
-            output_files.append(iqtree_dir_path / f"{fasta_filename}.length_and_support_tree.svg")
-    if config.get("rapidnj"):
-        output_files.append(concat_alignments_dir_path / stockholm_filename)
-        output_files.append(rapidnj_dir_path / rapidnj_tree)
-        if config.get("draw_phylotrees"):
-            output_files.append(rapidnj_dir_path / f"{fasta_filename}.only_tree.svg")
-    if config.get("phylip"):
-        output_files.append(concat_alignments_dir_path / phylip_filename)
-        output_files.append(phylip_dir_path / phylip_tree)
-        if config.get("draw_phylotrees"):
-            output_files.append(phylip_dir_path / f"{fasta_filename}.only_tree.svg")
-    if config.get("raxml"):
-        output_files.append(raxml_dir_path / raxml_tree)
-        if config.get("draw_phylotrees"):
-            output_files.append(raxml_dir_path / f"{fasta_filename}.only_tree.svg")
-else:
-    if vcf_reconstruct_species:
-        output_files.append(expand(busco_dir_path / "{species}/short_summary_{species}.txt", species=vcf_reconstruct_refs))
-    output_files.append(expand(busco_dir_path / "{species}/short_summary_{species}.txt", species=config["species_list"]))
-    output_files.append(lambda w: expand_fna_from_merged_sequences(w, merged_sequences_dir_path / "{N}.fna", busco_blacklist=busco_blacklist))
-    output_files.append(species_ids_dir_path / "unique_species_ids.svg")
-    output_files.append(busco_dir_path / "busco_summaries.svg")
-
-    if config.get("quastcore"):
-        if get_all_genome_files():
-            output_files.append(quastcore_dir_path / "assembly_stats.csv")
-
-    if config.get("alignment"):
-        output_files.append(lambda w: expand_fna_from_merged_sequences(w, alignments_dir_path / "fna" / "{N}.fna", busco_blacklist=busco_blacklist))
-        if config.get("filtration"):
-            output_files.append(lambda w: expand_fna_from_merged_sequences(w, filtered_alignments_dir_path / "fna" / "{N}.fna", busco_blacklist=busco_blacklist))
-            output_files.append(concat_alignments_dir_path / fasta_filename)
-            if config.get("iqtree"):
-                output_files.append(iqtree_dir_path / f"{fasta_filename}.treefile")
-                if config.get("draw_phylotrees"):
-                    output_files.append(iqtree_dir_path / f"{fasta_filename}.length_and_support_tree.svg")
-            if config.get("astral"):
-                output_files.append(astral_dir_path / astral_tree)
-                if config.get("draw_phylotrees"):
-                    output_files.append(astral_dir_path / f"{astral_tree}.svg")
-            if config.get("rapidnj"):
-                output_files.append(concat_alignments_dir_path / stockholm_filename)
-                output_files.append(rapidnj_dir_path / rapidnj_tree)
-                if config.get("draw_phylotrees"):
-                    output_files.append(rapidnj_dir_path / f"{fasta_filename}.only_tree.svg")
-            if config.get("phylip"):
-                output_files.append(concat_alignments_dir_path / phylip_filename)
-                output_files.append(phylip_dir_path / phylip_tree)
-                if config.get("draw_phylotrees"):
-                    output_files.append(phylip_dir_path / f"{fasta_filename}.only_tree.svg")
-            if config.get("raxml"):
-                output_files.append(raxml_dir_path / raxml_tree)
-                if config.get("draw_phylotrees"):
-                    output_files.append(raxml_dir_path / f"{fasta_filename}.only_tree.svg")
-            if config.get("mrbayes"):
-                output_files.append(concat_alignments_dir_path / nexus_filename)
-                output_files.append(mrbayes_dir_path / f"{fasta_filename}.nex.con.tre.nwk")
-
-
 localrules:
     all,
 
 
 rule all:
     input:
-        output_files,
+        get_vcf2phylip_outputs() if config.get("vcf2phylip") else get_busco_outputs(),
 
 
 # ---- Load rules ----
