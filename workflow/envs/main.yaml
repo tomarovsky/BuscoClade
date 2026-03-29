@@ -5,6 +5,7 @@ channels:
 dependencies:
     - busco=6.0.0
     - biopython
+    - pysam
     - prank
     - mafft
     - muscle
