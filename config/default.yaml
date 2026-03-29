@@ -6,9 +6,6 @@
     "buscoclade_ete3":
         "yaml": "workflow/envs/ete3.yaml"
         "name": "buscoclade_ete3"
-    "buscoclade_gatk":
-        "yaml": "workflow/envs/gatk.yaml"
-        "name": "buscoclade_gatk"
 
 "use_existing_envs": False # if True, pipeline will use pre-installed envs
 
@@ -50,6 +47,10 @@ busco_options: "--offline"
 busco_mode: "genome"
 busco_blacklist: "input/BUSCO.blacklist"
 busco_histogram_colors: "#23b4e8,#008dbf,#fbbc04,#ea4335" # per S, D, F, M BUSCOs
+
+# ---- VCF reconstruction ----
+apply_vcf_iupac: True
+vcf_reconstruct_ref_as_species: True
 
 # ---- Alignment ----
 prank_params: "-codon"
@@ -101,7 +102,6 @@ vcf2phylip_dir: "input/vcf2phylip/"
 
 # ---- Output ----
 output_dir: "results/"
-altref_dir: "altref_genomes/"
 quastcore_dir: "assembly_stats/"
 busco_dir: "busco/"
 main_ids_dir: "ids/"
