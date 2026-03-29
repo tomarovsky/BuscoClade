@@ -12,6 +12,9 @@ def main():
         print(file_name)
         with open(file_name, "r") as file:
             lines = file.readlines()
+            if len(lines) < 9:
+                print(f"Skipping empty or incomplete file: {file_name}")
+                continue
             target_line = lines[8]
             matches = re.findall(r"\d+\.\d+|\d+", target_line)
             numbers = [float(match) if "." in match else int(match) for match in matches]
