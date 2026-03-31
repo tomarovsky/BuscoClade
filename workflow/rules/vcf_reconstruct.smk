@@ -87,7 +87,7 @@ rule apply_vcf_to_busco:
         " {params.iupac} "
         " 1> {log.std} 2>&1; "
         " mkdir -p {output.multi_copy}; "
-        " touch {output.summary} "
+        " ln -s {input.busco_summary} {output.summary}; "
 
 
 if config.get("vcf2phylip"):
