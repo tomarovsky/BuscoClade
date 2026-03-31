@@ -9,7 +9,7 @@
 # +------------------------+
 # | Pipeline configuration |
 # +------------------------+
-# ---- VCF based ----
+# ---- VCF2phylip ----
 vcf2phylip: False # .vcf to concat_alignment reconstruction
 
 # ---- Assembly statistics ----
