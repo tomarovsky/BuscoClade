@@ -49,8 +49,8 @@ busco_blacklist: "input/BUSCO.blacklist"
 busco_histogram_colors: "#23b4e8,#008dbf,#fbbc04,#ea4335" # per S, D, F, M BUSCOs
 
 # ---- VCF reconstruction ----
-apply_vcf_iupac: True
-vcf_reconstruct_ref_as_species: True
+apply_vcf_iupac: False
+vcf_reconstruct_ref_as_species: False
 
 # ---- Alignment ----
 prank_params: "-codon"
