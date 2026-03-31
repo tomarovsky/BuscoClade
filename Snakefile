@@ -19,18 +19,20 @@ genome_dir_path = Path(config["genome_dir"]).resolve()
 altref_dir_path = Path(config["vcf_reconstruct_dir"]).resolve()
 vcf2phylip_dir_path = Path(config["vcf2phylip_dir"]).resolve()
 
-# -- Logs and benchmarks --
-cluster_log_dir_path = Path(config["cluster_log_dir"])
-log_dir_path = Path(config["log_dir"])
-benchmark_dir_path = Path(config["benchmark_dir"])
+# -- Output --
 output_dir_path = Path(config["output_dir"])
+
+# -- Logs and benchmarks --
+log_dir_path = output_dir_path / config["log_dir"]
+cluster_log_dir_path = output_dir_path / config["cluster_log_dir"]
+benchmark_dir_path = output_dir_path / config["benchmark_dir"]
 
 # ---- Create directories ----
 onstart:
-    os.makedirs(cluster_log_dir_path, exist_ok=True)
-    os.makedirs(log_dir_path, exist_ok=True)
-    os.makedirs(benchmark_dir_path, exist_ok=True)
     os.makedirs(output_dir_path, exist_ok=True)
+    os.makedirs(log_dir_path, exist_ok=True)
+    os.makedirs(cluster_log_dir_path, exist_ok=True)
+    os.makedirs(benchmark_dir_path, exist_ok=True)
 
 # -- Results --
 quastcore_dir_path = output_dir_path / config["quastcore_dir"]
