@@ -10,7 +10,7 @@
 "use_existing_envs": False # if True, pipeline will use pre-installed envs
 
 # ============================================================================
-# PIPELINE CONFIGURATION
+# WORKFLOW CONFIGURATION
 # ============================================================================
 # ---- VCF2phylip ----
 vcf2phylip: False # .vcf to concat_alignment reconstruction
