@@ -104,9 +104,9 @@ vcf2phylip_dir: "input/vcf2phylip/"
 output_dir: "results/"
 log_dir: "logs/"
 cluster_log_dir: "cluster_logs/"
+benchmark_dir: "benchmarks/"
 
 # ---- Results ----
-benchmark_dir: "benchmarks/"
 quastcore_dir: "assembly_stats/"
 busco_dir: "busco/"
 main_ids_dir: "ids/"
