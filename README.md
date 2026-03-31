@@ -22,13 +22,16 @@
 ## Workflow
 
 ```mermaid
-flowchart TD
+flowchart LR
 
 %% ----- INPUT -----
 subgraph INPUT["Input data"]
 A_fa["Genome assemblies (FASTA)"]
-A_vcf["Per-sample VCFs + reference"]
 A_vcf2["Multi-sample VCF"]
+subgraph VCF_REF["VCF reconstruction"]
+A_ref["Reference genome (FASTA)"]
+A_vcf["Per-sample VCFs"]
+end
 end
 
 %% ----- BUSCO -----
@@ -39,27 +42,33 @@ end
 %% ----- PREPROCESSING -----
 subgraph PREP["Sequence processing"]
 subgraph ALN["Multiple alignment"]
-C_aln["MAFFT / MUSCLE / PRANK"]
+C_aln["MAFFT\nMUSCLE\nPRANK"]
 end
 subgraph FLT["Trimming"]
-C_flt["ClipKIT / GBlocks / TrimAl"]
+C_flt["ClipKIT\nGBlocks\nTrimAl"]
 end
 end
 
 %% ----- PHYLOGENY -----
 subgraph PHYLO["Phylogenetic tree inference"]
 subgraph CONCAT["Supermatrix approach"]
-E_phy["IQTree / MrBayes / PHYLIP / RAxML-NG / RapidNJ"]
+E_phy["IQTree\nMrBayes\nPHYLIP\nRAxML-NG\nRapidNJ"]
 end
 subgraph TREE["Multispecies coalescent"]
 D_ast["Astral-IV"]
 end
 end
 
+%% ----- MERGE NODE (invisible) -----
+MERGE(( ))
+
 %% ----- EDGES: MAIN -----
 A_fa --> B_busco
-A_vcf -->|"GATK FastaAlternateReferenceMaker"| B_busco
+A_ref -.-> B_busco
 B_busco --> C_aln
+B_busco -.-> MERGE
+A_vcf --> MERGE
+MERGE --> |"apply_vcf_to_busco.py"| C_aln
 C_aln --> C_flt
 C_flt -->|"Concat alignment"| E_phy
 C_flt -->|"IQTree per gene"| D_ast
@@ -72,15 +81,17 @@ classDef input fill:#e8f4ff,stroke:#2b7cd3,stroke-width:1px
 classDef process fill:#eaf7ea,stroke:#2f9e44,stroke-width:1px
 classDef phylo fill:#fff4e6,stroke:#e67700,stroke-width:1px
 classDef optional fill:#e8f4ff,stroke:#2b7cd3,stroke-width:1px,stroke-dasharray:4 4
+classDef merge fill:none,stroke:none,width:0px
 
-class A_fa,A_vcf input
+class A_fa,A_ref,A_vcf input
 class B_busco,C_aln,C_flt process
 class D_ast,E_phy phylo
 class A_vcf2 optional
+class MERGE merge
 ```
 
 - **Ortholog extraction:** [BUSCO](https://busco.ezlab.org/)
-- **VCF-based reconstruction:** [GATK FastaAlternateReferenceMaker](https://gatk.broadinstitute.org/hc/en-us/articles/360037594571-FastaAlternateReferenceMaker), [vcf2phylip](https://github.com/edgardomortiz/vcf2phylip)
+- **VCF-based SNP application:** [apply_vcf_to_busco.py](#vcf-based-snp-application-apply_vcf_to_buscopy), [vcf2phylip](https://github.com/edgardomortiz/vcf2phylip)
 - **Alignment:** [MAFFT](https://mafft.cbrc.jp/alignment/software/), [MUSCLE](https://doi.org/10.1038/s41467-022-34630-w), [PRANK](http://wasabiapp.org/software/prank/)
 - **Trimming:** [ClipKIT](https://github.com/JLSteenwyk/ClipKIT), [TrimAl](http://trimal.cgenomics.org/), [GBlocks](https://academic.oup.com/mbe/article/17/4/540/1127654)
 - **Phylogenetic tree construction:** [IQTree](http://www.iqtree.org/), [MrBayes](https://nbisweden.github.io/MrBayes/), [ASTRAL-IV](https://doi.org/10.1093/molbev/msaf172), [RapidNJ](https://birc.au.dk/software/rapidnj), [PHYLIP](https://phylipweb.github.io/phylip/), [RAxML-NG](https://github.com/amkozlov/raxml-ng)
@@ -106,9 +117,9 @@ Place genome assemblies into `input/genomes/`. The file prefix is used as the sa
 
 #### Per-sample VCFs + reference genome
 
-If you have per-sample VCFs, the pipeline can reconstruct pseudo-genome assemblies using GATK `FastaAlternateReferenceMaker`, which are then fed into the standard BUSCO workflow alongside any FASTA assemblies.
+If you have per-sample VCFs, the pipeline applies SNPs directly to the BUSCO sequences of a reference sample using `apply_vcf_to_busco.py`. This avoids rebuilding full pseudo-genome assemblies and re-running BUSCO for each sample — instead, BUSCO is run once on the reference, and ortholog sequences for all other samples are reconstructed by applying their SNPs to the reference BUSCO sequences exon-by-exon.
 
-Place per-sample VCF files and the corresponding reference genome together into a subdirectory under `input/vcf_reconstruct/`. Each subdirectory is processed independently, which allows reconstructing pseudo-genomes against different references in a single run:
+Place per-sample VCF files and the corresponding reference genome together into a subdirectory under `input/vcf_reconstruct/`. Each subdirectory is processed independently, which allows reconstructing sequences against different references in a single run:
 
 ```
 input/
@@ -126,6 +137,8 @@ input/
 ```
 
 The directory name is used only for organization — the VCF file prefix determines the sample name in the output phylogeny. No additional config changes are needed; the pipeline detects subdirectories automatically.
+
+BUSCO is run once on the reference genome in each subdirectory. The resulting `single_copy_busco_sequences/` and `metaeuk_output/` are then used by `apply_vcf_to_busco.py` to produce per-sample ortholog sequences.
 
 #### Multi-sample VCF via vcf2phylip (optional)
 
@@ -178,8 +191,14 @@ Key parameters to configure before running:
 - `busco_mode`: Typically `"genome"`.
 - `busco_blacklist`: Path to a file with BUSCO IDs to exclude (optional).
 
+**apply_vcf_to_busco:**
+- `apply_vcf_iupac`: Set `True` to encode heterozygous SNPs as IUPAC ambiguity codes (equivalent to GATK `--use-iupac-sample`). Default: `False` (ALT allele used for het/hom-alt calls).
+- `vcf_reconstruct_ref_as_species`: Set `True` to include the reference genome itself as a sample in the phylogeny. Default: `False`.
+
 **Alignment** (parameters passed directly to the chosen tool):
 - `prank_params`, `mafft_params`, `muscle_params`
+
+> **PRANK timeout:** PRANK can be very slow on long genes when run in codon alignment mode (`-codon`). To prevent the pipeline from stalling, PRANK is automatically terminated 15 minutes before the time limit set by `prank_time` (default: `"100h"`). Genes that hit the timeout are discarded from the analysis.
 
 **Filtration:**
 - `clipkit_params`, `gblocks_params`, `trimal_params`
