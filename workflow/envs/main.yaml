@@ -4,8 +4,6 @@ channels:
     - bioconda
 dependencies:
     - busco=6.0.0
-    - biopython
-    - pysam
     - prank
     - mafft
     - muscle
@@ -22,3 +20,11 @@ dependencies:
     - bedtools
     - bcftools
     - samtools
+    - biopython
+    - pysam
+    - matplotlib
+    - pandas
+    - numpy
+    - ete3
+    - pip:
+          - supervenn

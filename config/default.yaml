@@ -3,9 +3,6 @@
     "buscoclade_main":
         "yaml": "workflow/envs/main.yaml"
         "name": "buscoclade_main"
-    "buscoclade_ete3":
-        "yaml": "workflow/envs/ete3.yaml"
-        "name": "buscoclade_main"
 
 "use_existing_envs": False # if True, pipeline will use pre-installed envs
 
