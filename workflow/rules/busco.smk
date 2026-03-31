@@ -8,6 +8,7 @@ rule busco_metaeuk:
         get_genome_file,
     output:
         busco_outdir=directory(busco_dir_path / "{species}"),
+        metaeuk_output=directory(busco_dir_path / "{species}/metaeuk_output"),
         single_copy_busco_sequences=directory(busco_dir_path / "{species}/busco_sequences/single_copy_busco_sequences"),
         multi_copy_busco_sequences=directory(busco_dir_path / "{species}/busco_sequences/multi_copy_busco_sequences"),
         summary=busco_dir_path / "{species}/short_summary_{species}.txt",

@@ -43,15 +43,18 @@ rule apply_vcf_to_busco:
     wildcard_constraints:
         species="|".join(altref_map.keys()) if altref_map else "^$"
     input:
-        busco_seqs=lambda wc: expand(
+        single_copy_busco_sequences=lambda wc: expand(
             rules.busco_metaeuk.output.single_copy_busco_sequences,
+            species=altref_map[wc.species]["ref_prefix"]
+        )[0],
+        metaeuk_output=lambda wc: expand(
+            rules.busco_metaeuk.output.metaeuk_output,
             species=altref_map[wc.species]["ref_prefix"]
         )[0],
         busco_summary=lambda wc: expand(
             rules.busco_metaeuk.output.summary,
             species=altref_map[wc.species]["ref_prefix"]
         )[0],
-        ref=lambda wc: altref_map[wc.species]["reference"],
         vcf=lambda wc: altref_map[wc.species]["vcf"],
         vcf_tbi=lambda wc: str(altref_map[wc.species]["vcf"]) + ".tbi",
     output:
@@ -76,11 +79,11 @@ rule apply_vcf_to_busco:
     threads: config["processing_threads"]
     shell:
         " python workflow/scripts/apply_vcf_to_busco.py "
-        " --busco-dir {input.busco_seqs} "
-        " --ref {input.ref} "
+        " --single_copy_busco_sequences {input.single_copy_busco_sequences} "
+        " --metaeuk_output {input.metaeuk_output} "
         " --vcf {input.vcf} "
         " --sample {params.sample} "
-        " --output-dir {output.seqs} "
+        " --output_dir {output.seqs} "
         " {params.iupac} "
         " 1> {log.std} 2>&1; "
         " mkdir -p {output.multi_copy}; "
