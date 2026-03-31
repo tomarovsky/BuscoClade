@@ -102,6 +102,8 @@ vcf2phylip_dir: "input/vcf2phylip/"
 
 # ---- Output ----
 output_dir: "results/"
+
+# ---- Logs and benchmarks ----
 log_dir: "logs/"
 cluster_log_dir: "cluster_logs/"
 benchmark_dir: "benchmarks/"
