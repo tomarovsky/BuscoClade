@@ -24,6 +24,9 @@ rule phylip_dnadist:
         mem_mb=config["phylip_mem_mb"],
     threads: config["phylip_threads"]
     shell:
+        " if [ -d {params.outdir} ]; then "
+        "   rm -rf {params.outdir}/*; "
+        " fi; "
         " MYPWD=$(pwd); cd {params.outdir} 2> $MYPWD/{log.std}; "
         ' echo -e "$MYPWD/{input}\n{params.dnadist_params}Y\n" | dnadist > $MYPWD/{log.std} 2>&1; '
         " mv outfile $MYPWD/{output.dnadist} 2> $MYPWD/{log.std}; "
