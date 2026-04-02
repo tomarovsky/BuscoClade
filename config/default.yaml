@@ -4,7 +4,7 @@
 # ---- Conda ----
 "conda":
     "buscoclade_main":
-        "yaml": "workflow/envs/main.yaml"
+        "yaml": "workflow/envs/buscoclade_main.yaml"
         "name": "buscoclade_main"
 
 "use_existing_envs": False # if True, pipeline will use pre-installed envs
