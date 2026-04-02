@@ -26,9 +26,7 @@ rule phylip_dnadist:
     shell:
         " MYPWD=$(pwd); cd {params.outdir} 2> $MYPWD/{log.std}; "
         ' echo -e "$MYPWD/{input}\n{params.dnadist_params}Y\n" | dnadist > $MYPWD/{log.std} 2>&1; '
-        " mv outfile $MYPWD/ 2> $MYPWD/{log.std}; "
-        " cd $MYPWD 2> $MYPWD/{log.std}; "
-        " mv outfile {output.dnadist} 2> $MYPWD/{log.std}; "
+        " mv outfile $MYPWD/{output.dnadist} 2> $MYPWD/{log.std}; "
 
 
 rule phylip_neighbor:
@@ -56,13 +54,8 @@ rule phylip_neighbor:
     shell:
         " MYPWD=$(pwd); cd {params.outdir} 2> $MYPWD/{log.std}; "
         ' echo -e "$MYPWD/{input}\n{params.neighbor_params}Y\n" | neighbor > $MYPWD/{log.std} 2>&1; '
-        " mv outfile $MYPWD/ 2> $MYPWD/{log.std}; "
-        " cd $MYPWD 2> $MYPWD/{log.std}; "
-        " mv outfile {output.outfile} 2> $MYPWD/{log.std}; "
-        " cd {params.outdir} 2> $MYPWD/{log.std}; "
-        " mv outtree $MYPWD/ 2> $MYPWD/{log.std}; "
-        " cd $MYPWD 2> $MYPWD/{log.std}; "
-        " mv outtree {output.treefile} 2> $MYPWD/{log.std}; "
+        " mv outfile $MYPWD/{output.outfile} 2> $MYPWD/{log.std}; "
+        " mv outtree $MYPWD/{output.treefile} 2> $MYPWD/{log.std}; "
 
 
 rule phylip_tree_namefix:
