@@ -1,0 +1,160 @@
+Bootstrap: docker
+From: condaforge/miniforge3:latest
+
+%labels
+    Version     1.0.0
+    Description Self-contained Apptainer/Singularity image for BuscoClade.
+                Includes the latest pipeline release from GitHub.
+                Input data is mounted at runtime via -B (bind mount).
+
+%arguments
+    BUILD_ENVS=false
+
+%help
+    Self-contained Apptainer/Singularity image for BuscoClade.
+    The latest BuscoClade release is bundled at /opt/buscoclade/.
+    Input genomes and results are mounted from the host at runtime.
+
+    ── Build ────────────────────────────────────────────────────────────────
+
+    Minimal build (Snakemake + pipeline code only, tools deployed at runtime):
+      apptainer build --fakeroot buscoclade.sif buscoclade.def
+
+    Full build (all conda environments pre-built into the image):
+      apptainer build --fakeroot --build-arg BUILD_ENVS=true buscoclade.sif buscoclade.def
+
+    ── Run ──────────────────────────────────────────────────────────────────
+
+    Just run — conda environments are cached automatically in
+    $HOME/.cache/buscoclade/conda on the host:
+
+      apptainer exec \
+          -B /host/path/to/genomes:/opt/buscoclade/genomes \
+          -B /host/path/to/results:/opt/buscoclade/results \
+          buscoclade.sif \
+          --cores 16 --configfile /opt/buscoclade/config/default.yaml
+
+    To override the conda cache location:
+      export BUSCOCLADE_CONDA_PREFIX=/custom/path
+      apptainer exec ... buscoclade.sif --cores 16
+
+    To use a custom config file from the host:
+      -B /host/path/my_config.yaml:/opt/buscoclade/config/my_config.yaml
+
+    ── Notes ─────────────────────────────────────────────────────────────────
+
+    - Mount your genome FASTA files to /opt/buscoclade/genomes/
+    - Mount an empty or existing results directory to /opt/buscoclade/results/
+    - On first run Snakemake will create conda environments (~10-15 min);
+      subsequent runs reuse the cache and start immediately.
+
+%environment
+    export PATH="/opt/conda/bin:$PATH"
+    export MAMBA_NO_BANNER=1
+    export LC_ALL=C.UTF-8
+    export LANG=C.UTF-8
+    export BUSCOCLADE_DIR="/opt/buscoclade"
+
+%post -c /bin/bash
+    set -euo pipefail
+
+    BUILD_ENVS="{{ BUILD_ENVS }}"
+
+    # ── System tools needed for download ─────────────────────────────────────
+    apt-get update -qq && apt-get install -y --no-install-recommends \
+        curl \
+        jq \
+        && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+    # ── Install Snakemake ────────────────────────────────────────────────────
+    mamba install -n base -c conda-forge -c bioconda -c nodefaults \
+        "snakemake=9.16" \
+        --yes --quiet
+
+    # ── Download latest BuscoClade release from GitHub ───────────────────────
+    echo ">>> Fetching latest BuscoClade release info..."
+    REPO="tomarovsky/BuscoClade"
+    API_URL="https://api.github.com/repos/${REPO}/releases/latest"
+
+    RELEASE_INFO=$(curl -fsSL "${API_URL}")
+    TAG=$(echo "${RELEASE_INFO}" | jq -r '.tag_name')
+    TARBALL_URL=$(echo "${RELEASE_INFO}" | jq -r '.tarball_url')
+
+    echo ">>> Latest release: ${TAG}"
+    echo ">>> Downloading from: ${TARBALL_URL}"
+
+    mkdir -p /opt/buscoclade
+    curl -fsSL "${TARBALL_URL}" \
+        | tar -xz --strip-components=1 -C /opt/buscoclade
+
+    echo "${TAG}" > /opt/buscoclade/.release_tag
+    echo ">>> BuscoClade ${TAG} installed to /opt/buscoclade"
+
+    # ── Full mode: pre-build all workflow conda environments ──────────────────
+    if [ "${BUILD_ENVS}" = "true" ]; then
+        echo ">>> Full mode: pre-building conda environments..."
+        ENVS_DIR="/opt/buscoclade/workflow/envs"
+
+        if [ ! -d "${ENVS_DIR}" ]; then
+            echo "ERROR: ${ENVS_DIR} not found in the release archive."
+            exit 1
+        fi
+
+        mkdir -p /opt/buscoclade/envs
+
+        for yaml in "${ENVS_DIR}"/*.yaml "${ENVS_DIR}"/*.yml; do
+            [ -f "${yaml}" ] || continue
+            env_name=$(basename "${yaml}" | sed 's/\.\(yaml\|yml\)$//')
+            echo "  --> Building environment: ${env_name}"
+            mamba env create \
+                --prefix "/opt/buscoclade/envs/${env_name}" \
+                --file "${yaml}" \
+                --yes --quiet
+        done
+
+        echo ">>> All environments built successfully."
+    else
+        echo ">>> Minimal mode: skipping environment pre-build."
+    fi
+
+    # ── Clean up ─────────────────────────────────────────────────────────────
+    mamba clean --all --yes
+
+%runscript
+    #!/bin/bash
+    set -euo pipefail
+
+    # Conda environments are cached on the host under $HOME/.cache/buscoclade/conda
+    # so they persist across runs and are never written to the read-only container.
+    # Override by setting BUSCOCLADE_CONDA_PREFIX before calling apptainer exec.
+    if [ -d "/opt/buscoclade/envs" ]; then
+        # Full image: use pre-built environments bundled in the image
+        CONDA_PREFIX="/opt/buscoclade/envs"
+    else
+        # Minimal image: cache on the host
+        CONDA_PREFIX="${BUSCOCLADE_CONDA_PREFIX:-${HOME}/.cache/buscoclade/conda}"
+        mkdir -p "${CONDA_PREFIX}"
+    fi
+
+    exec snakemake \
+        --directory /opt/buscoclade \
+        --use-conda \
+        --conda-frontend mamba \
+        --conda-prefix "${CONDA_PREFIX}" \
+        "$@"
+
+%test
+    echo "=== Checking image ==="
+    mamba --version
+    snakemake --version
+    echo "--- BuscoClade release ---"
+    cat /opt/buscoclade/.release_tag
+    echo "--- Pipeline structure ---"
+    ls /opt/buscoclade/
+    if [ -d /opt/buscoclade/envs ]; then
+        echo "--- Pre-built environments ---"
+        ls /opt/buscoclade/envs/
+    else
+        echo "Minimal image: conda environments will be cached on the host at runtime."
+    fi
+    echo "=== OK ==="
