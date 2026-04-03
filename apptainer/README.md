@@ -79,6 +79,8 @@ apptainer run --unsquash \
     --cores 10
 ```
 
+> **Note:** When using the full image, add `use_existing_envs=True` to the `--config` flag.
+
 ### Dry run
 
 ```bash
