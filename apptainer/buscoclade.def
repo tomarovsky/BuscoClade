@@ -137,6 +137,7 @@ From: condaforge/miniforge3:latest
         # Full image: use pre-built environments bundled in the image
         CONDA_PREFIX="/opt/buscoclade/envs"
         exec snakemake \
+            --snakefile /opt/buscoclade/Snakefile \
             --directory /opt/buscoclade \
             --use-conda \
             --conda-frontend mamba \
@@ -148,6 +149,7 @@ From: condaforge/miniforge3:latest
         CONDA_PREFIX="${BUSCOCLADE_CONDA_PREFIX:-${HOME}/.cache/buscoclade/conda}"
         mkdir -p "${CONDA_PREFIX}"
         exec snakemake \
+            --snakefile /opt/buscoclade/Snakefile \
             --directory /opt/buscoclade \
             --use-conda \
             --conda-frontend mamba \
