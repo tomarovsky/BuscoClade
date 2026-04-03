@@ -22,7 +22,7 @@ jobs:
 
             - name: Build minimal SIF
               run: |
-                  sudo apptainer build --fakeroot \
+                  sudo apptainer build \
                     --build-arg BUILD_ENVS=false \
                     buscoclade-minimal.sif apptainer/buscoclade.def
 
@@ -52,7 +52,7 @@ jobs:
 
             - name: Build full SIF
               run: |
-                  sudo apptainer build --fakeroot \
+                  sudo apptainer build \
                     --build-arg BUILD_ENVS=true \
                     buscoclade-full.sif apptainer/buscoclade.def
 
