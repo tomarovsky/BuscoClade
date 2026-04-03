@@ -29,10 +29,15 @@ jobs:
             - name: Push minimal image
               run: |
                   REPO=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
-                  TAG=${{ github.event.release.tag_name }}
+                  TAG="${{ github.event.release.tag_name }}"
+                  # Fallback: if not a release, use short SHA commit
+                  if [ -z "${TAG}" ]; then
+                      TAG="dev-${{ github.sha }}"
+                      TAG="${TAG:0:10}"
+                  fi
                   echo "${{ secrets.GITHUB_TOKEN }}" | \
-                    apptainer registry login --username "${{ github.actor }}" \
-                    --password-stdin oras://ghcr.io
+                      apptainer registry login --username "${{ github.actor }}" \
+                      --password-stdin oras://ghcr.io
                   apptainer push buscoclade-minimal.sif oras://ghcr.io/${REPO}:${TAG}-minimal
                   apptainer push buscoclade-minimal.sif oras://ghcr.io/${REPO}:latest
 
@@ -59,8 +64,12 @@ jobs:
             - name: Push full image
               run: |
                   REPO=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
-                  TAG=${{ github.event.release.tag_name }}
+                  TAG="${{ github.event.release.tag_name }}"
+                  if [ -z "${TAG}" ]; then
+                      TAG="dev-${{ github.sha }}"
+                      TAG="${TAG:0:10}"
+                  fi
                   echo "${{ secrets.GITHUB_TOKEN }}" | \
-                    apptainer registry login --username "${{ github.actor }}" \
-                    --password-stdin oras://ghcr.io
+                      apptainer registry login --username "${{ github.actor }}" \
+                      --password-stdin oras://ghcr.io
                   apptainer push buscoclade-full.sif oras://ghcr.io/${REPO}:${TAG}-full
