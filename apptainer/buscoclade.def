@@ -142,7 +142,6 @@ From: condaforge/miniforge3:latest
             --use-conda \
             --conda-frontend mamba \
             --conda-prefix "${CONDA_PREFIX}" \
-            --config use_existing_envs=True \
             "$@"
     else
         # Minimal image: cache on the host
