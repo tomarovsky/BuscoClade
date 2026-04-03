@@ -2,7 +2,7 @@ Bootstrap: docker
 From: condaforge/miniforge3:latest
 
 %labels
-    Version     1.0.0
+    Version     3.1
     Description Self-contained Apptainer/Singularity image for BuscoClade.
                 Includes the latest pipeline release from GitHub.
                 Input data is mounted at runtime via -B (bind mount).
@@ -75,7 +75,7 @@ From: condaforge/miniforge3:latest
 
     # ── Install Snakemake ────────────────────────────────────────────────────
     mamba install -n base -c conda-forge -c bioconda -c nodefaults \
-        "snakemake=9.16" \
+        "snakemake=9.16" snakemake-executor-plugin-cluster-generic \
         --yes --quiet
 
     # ── Download latest BuscoClade release from GitHub ───────────────────────
