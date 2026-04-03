@@ -20,30 +20,37 @@ From: condaforge/miniforge3:latest
     Minimal build (Snakemake + pipeline code only, tools deployed at runtime):
       apptainer build --fakeroot buscoclade.sif buscoclade.def
 
-    Full build (all conda environments pre-built into the image):
+    Full build (conda environments pre-built into the image):
       apptainer build --fakeroot --build-arg BUILD_ENVS=true buscoclade.sif buscoclade.def
 
     ── Run ──────────────────────────────────────────────────────────────────
 
+    NOTE: Use --unsquash to avoid squashfuse timeout issues.
+
     Just run — conda environments are cached automatically in
     $HOME/.cache/buscoclade/conda on the host:
 
-      apptainer exec \
-          -B /host/path/to/genomes:/opt/buscoclade/genomes \
-          -B /host/path/to/results:/opt/buscoclade/results \
+      mkdir -p test/.snakemake;
+      mkdir -p test/results;
+      apptainer run --unsquash \
+          -B test/.snakemake:/opt/buscoclade/.snakemake \
+          -B test/input/:/opt/buscoclade/input \
+          -B test/results/:/opt/buscoclade/results \
+          -B $TOOLS/tools/busco_datasets/_odb12/:/opt/_odb12/ \
           buscoclade.sif \
-          --cores 16 --configfile /opt/buscoclade/config/default.yaml
+          --config busco_dataset_path="/opt/_odb12/" \
+          --cores 10 -p
 
     To override the conda cache location:
       export BUSCOCLADE_CONDA_PREFIX=/custom/path
-      apptainer exec ... buscoclade.sif --cores 16
+      apptainer run ... buscoclade.sif ...
 
     To use a custom config file from the host:
       -B /host/path/my_config.yaml:/opt/buscoclade/config/my_config.yaml
 
     ── Notes ─────────────────────────────────────────────────────────────────
 
-    - Mount your genome FASTA files to /opt/buscoclade/genomes/
+    - Mount your input files (genomes/ and vcf_reconstruct/) to /opt/buscoclade/input/
     - Mount an empty or existing results directory to /opt/buscoclade/results/
     - On first run Snakemake will create conda environments (~10-15 min);
       subsequent runs reuse the cache and start immediately.
@@ -96,7 +103,7 @@ From: condaforge/miniforge3:latest
         ENVS_DIR="/opt/buscoclade/workflow/envs"
 
         if [ ! -d "${ENVS_DIR}" ]; then
-            echo "ERROR: ${ENVS_DIR} not found in the release archive."
+            echo "ERROR: ${ENVS_DIR} not found."
             exit 1
         fi
 
