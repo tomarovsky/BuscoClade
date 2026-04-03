@@ -30,23 +30,23 @@ From: condaforge/miniforge3:latest
     Just run — conda environments are cached automatically in
     $HOME/.cache/buscoclade/conda on the host:
 
-      mkdir -p test/.snakemake;
-      mkdir -p test/results;
+      mkdir -p /host/path/to/.snakemake;
+      mkdir -p /host/path/to/results;
       apptainer run --unsquash \
-          -B test/.snakemake:/opt/buscoclade/.snakemake \
-          -B test/input/:/opt/buscoclade/input \
-          -B test/results/:/opt/buscoclade/results \
-          -B $TOOLS/tools/busco_datasets/_odb12/:/opt/_odb12/ \
+          -B /host/path/to/.snakemake:/opt/buscoclade/.snakemake \
+          -B /host/path/to/input/:/opt/buscoclade/input \
+          -B /host/path/to/results/:/opt/buscoclade/results \
+          -B /host/path/to/busco_datasets/ortho_odb12/:/opt/ortho_odb12/ \
           buscoclade.sif \
-          --config busco_dataset_path="/opt/_odb12/" \
-          --cores 10 -p
+          --config busco_dataset_path="/opt/ortho_odb12/" \
+          --cores 10
 
     To override the conda cache location:
       export BUSCOCLADE_CONDA_PREFIX=/custom/path
       apptainer run ... buscoclade.sif ...
 
     To use a custom config file from the host:
-      -B /host/path/my_config.yaml:/opt/buscoclade/config/my_config.yaml
+      -B /host/path/to/my_config.yaml:/opt/buscoclade/config/my_config.yaml
 
     ── Notes ─────────────────────────────────────────────────────────────────
 
