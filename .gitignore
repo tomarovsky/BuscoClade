@@ -10,6 +10,9 @@ pyproject.toml
 # Test directory
 tests/
 
+# apptainer dev
+apptainer/buscoclade_dev*
+
 # Snakemake dir
 .snakemake/
 
