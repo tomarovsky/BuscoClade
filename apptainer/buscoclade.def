@@ -114,7 +114,6 @@ From: condaforge/miniforge3:latest
             env_name=$(basename "${yaml}" | sed 's/\.\(yaml\|yml\)$//')
             echo "  --> Building environment: ${env_name}"
             mamba env create \
-                --prefix "/opt/buscoclade/envs/${env_name}" \
                 --file "${yaml}" \
                 --yes --quiet
         done
@@ -137,18 +136,24 @@ From: condaforge/miniforge3:latest
     if [ -d "/opt/buscoclade/envs" ]; then
         # Full image: use pre-built environments bundled in the image
         CONDA_PREFIX="/opt/buscoclade/envs"
+        exec snakemake \
+            --directory /opt/buscoclade \
+            --use-conda \
+            --conda-frontend mamba \
+            --conda-prefix "${CONDA_PREFIX}" \
+            --config use_existing_envs=True \
+            "$@"
     else
         # Minimal image: cache on the host
         CONDA_PREFIX="${BUSCOCLADE_CONDA_PREFIX:-${HOME}/.cache/buscoclade/conda}"
         mkdir -p "${CONDA_PREFIX}"
+        exec snakemake \
+            --directory /opt/buscoclade \
+            --use-conda \
+            --conda-frontend mamba \
+            --conda-prefix "${CONDA_PREFIX}" \
+            "$@"
     fi
-
-    exec snakemake \
-        --directory /opt/buscoclade \
-        --use-conda \
-        --conda-frontend mamba \
-        --conda-prefix "${CONDA_PREFIX}" \
-        "$@"
 
 %test
     echo "=== Checking image ==="
