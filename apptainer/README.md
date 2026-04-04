@@ -24,10 +24,10 @@ The easiest way to get started — no build required:
 apptainer pull buscoclade.sif oras://ghcr.io/tomarovsky/buscoclade:latest
 
 # Specific release, minimal
-apptainer pull buscoclade.sif oras://ghcr.io/tomarovsky/buscoclade:v1.0.0-minimal
+apptainer pull buscoclade.sif oras://ghcr.io/tomarovsky/buscoclade:vX.Y.Z-minimal
 
 # Specific release, full (conda envs pre-built, no wait on first run)
-apptainer pull buscoclade.sif oras://ghcr.io/tomarovsky/buscoclade:v1.0.0-full
+apptainer pull buscoclade.sif oras://ghcr.io/tomarovsky/buscoclade:vX.Y.Z-full
 ```
 
 ---
