@@ -2,6 +2,19 @@
 
 - [[Home]]
 - [[Usage]]
+  - [Deploy workflow](Usage#step-1-deploy-workflow)
+  - [Prepare input data](Usage#step-2-prepare-input-data)
+  - [Configure workflow](Usage#step-3-configure-workflow)
+  - [Execute workflow](Usage#step-4-execute-workflow)
 - [[Configuration]]
+  - [Pipeline configuration](Configuration#pipeline-configuration)
+  - [Tool parameters](Configuration#tool-parameters)
 - [[Apptainer]]
+  - [Pull image](Apptainer#1-pull-pre-built-image-from-ghcr)
+  - [Build locally](Apptainer#2-build-locally)
+  - [Run the pipeline](Apptainer#3-run-the-pipeline)
+  - [Conda environment cache](Apptainer#5-conda-environment-cache)
+  - [Troubleshooting](Apptainer#7-troubleshooting)
 - [[Advanced Usage|Advanced-Usage]]
+  - [Starting from completed BUSCO results](Advanced-Usage#starting-from-completed-busco-results)
+  - [Gap-aware AltRef insertion](Advanced-Usage#gap-aware-altref-insertion)
