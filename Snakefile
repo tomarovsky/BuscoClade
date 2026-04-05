@@ -41,6 +41,7 @@ species_ids_dir_path = output_dir_path / config["species_ids_dir"]
 common_ids_dir_path = output_dir_path / config["common_ids_dir"]
 merged_sequences_dir_path = output_dir_path / config["merged_sequences_dir"]
 alignments_dir_path = output_dir_path / config["alignments_dir"]
+pre_altref_alignments_dir_path = output_dir_path / config["pre_altref_alignments_dir"]
 filtered_alignments_dir_path = output_dir_path / config["filtered_alignments_dir"]
 concat_alignments_dir_path = output_dir_path / config["concat_alignments_dir"]
 iqtree_dir_path = output_dir_path / config["iqtree_dir"]
@@ -245,10 +246,14 @@ def get_busco_outputs() -> list:
         files.append(quastcore_dir_path / "assembly_stats.csv")
 
     if config.get("alignment"):
-        files.append(lambda w: expand_fna_from_merged_sequences(w, alignments_dir_path / "fna" / "{N}.fna", busco_blacklist=busco_blacklist))
+        files.append(lambda w: expand_fna_from_merged_sequences(
+            w, alignments_dir_path / "fna" / "{N}.fna", busco_blacklist=busco_blacklist
+        ))
         if config.get("filtration"):
             files += [
-                lambda w: expand_fna_from_merged_sequences(w, filtered_alignments_dir_path / "fna" / "{N}.fna", busco_blacklist=busco_blacklist),
+                lambda w: expand_fna_from_merged_sequences(
+                    w, filtered_alignments_dir_path / "fna" / "{N}.fna", busco_blacklist=busco_blacklist
+                ),
                 concat_alignments_dir_path / fasta_filename,
             ]
             if config.get("iqtree"):
@@ -285,6 +290,14 @@ altref_map     = get_altref_map(altref_dir_path)
 altref_species = list(altref_map.keys())
 altref_refs    = sorted({v["ref_prefix"] for v in altref_map.values()})
 
+# ---- Gap-aware AltRef insertion ----
+altref_gapaware = config.get("altref_gapaware_insertion", False)
+
+# ref_prefix → [altref_sp1, altref_sp2, ...]  (используется в alignment.smk)
+ref_to_altrefs = {}
+for _sp, _info in altref_map.items():
+    ref_to_altrefs.setdefault(_info["ref_prefix"], []).append(_sp)
+
 genome_species = sorted(
     {get_fasta_stem(f) for f in get_fasta_files(genome_dir_path)} - set(altref_refs)
 )
@@ -305,6 +318,17 @@ if "species_list" not in config:
         config["species_list"] = extract_samples_from_vcf(vcf_file)
 
     print("Species list:", config["species_list"])
+
+
+# Species без AltRef для raw-выравнивания (refs остаются — на них проецируются гэпы)
+species_list_for_raw_alignment = (
+    sorted(
+        {s for s in config["species_list"] if s not in altref_map}
+        | set(altref_refs)  # refs всегда нужны как шаблоны гэпов
+    )
+    if altref_gapaware and altref_map
+    else config["species_list"]
+)
 
 # ---- BUSCO blacklist ----
 busco_blacklist = None
