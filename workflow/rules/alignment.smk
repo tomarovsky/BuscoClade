@@ -158,7 +158,7 @@ if altref_gapaware and altref_map:
             mem_mb=config["processing_mem_mb"],
         threads: config["processing_threads"]
         shell:
-            " python workflow/scripts/add_altref_to_alignment.py "
+            " workflow/scripts/add_altref_to_alignment.py "
             " --raw_aln {input.raw_aln} "
             " --busco_dir {params.busco_dir} "
             " --ref_to_altrefs '{params.ref_to_altrefs}' "

@@ -62,7 +62,7 @@ rule apply_vcf_to_busco:
         multi_copy=directory(busco_dir_path / "{species}/busco_sequences/multi_copy_busco_sequences"),
         summary=busco_dir_path / "{species}/short_summary_{species}.txt",
     params:
-        sample=lambda wc: altref_map[wc.species]["vcf"].stem.split(".")[0],
+        sample=lambda wc: altref_map[wc.species]["vcf_id"],
         iupac="--iupac" if config.get("apply_vcf_iupac") else "",
     log:
         std=log_dir_path / "apply_vcf_to_busco.{species}.log",
@@ -78,7 +78,7 @@ rule apply_vcf_to_busco:
         mem_mb=config["processing_mem_mb"],
     threads: config["processing_threads"]
     shell:
-        " python workflow/scripts/apply_vcf_to_busco.py "
+        " workflow/scripts/apply_vcf_to_busco.py "
         " --single_copy_busco_sequences {input.single_copy_busco_sequences} "
         " --metaeuk_output {input.metaeuk_output} "
         " --vcf {input.vcf} "
