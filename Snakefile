@@ -115,6 +115,7 @@ def get_altref_map(vcf_dir: Path) -> dict:
                 alt_name = f"{vcf_id}.{ref_prefix}.AltRef"
                 altref_mapping[alt_name] = {
                     "vcf": vcf_file,
+                    "vcf_id": vcf_id,
                     "reference": ref_file,
                     "ref_prefix": ref_prefix,
                 }
