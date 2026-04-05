@@ -51,9 +51,9 @@ busco_histogram_colors: "#23b4e8,#008dbf,#fbbc04,#ea4335" # per S, D, F, M BUSCO
 # ---- VCF reconstruction ----
 # Applies SNPs from VCF files to BUSCO genes of the reference genome,
 # producing pseudo-reference sequences (AltRef species) for phylogenetics.
-apply_vcf_iupac: True # encode heterozygous SNPs as IUPAC ambiguity codes
-vcf_reconstruct_ref_as_species: True # include ref.fasta itself as a species in the tree
-altref_gapaware_insertion: True # Insert AltRef sequences into alignments using gap positions of the corresponding reference
+apply_vcf_iupac: False # encode heterozygous SNPs as IUPAC ambiguity codes
+vcf_reconstruct_ref_as_species: False # include ref.fasta itself as a species in the tree
+altref_gapaware_insertion: False # Insert AltRef sequences into alignments using gap positions of the corresponding reference
 # instead of re-aligning (faster, recommended when working with many VCF samples using PRANK as aligner)
 
 # ---- Alignment ----
