@@ -116,7 +116,7 @@ It is recommended to leave the directory structure unchanged.
 
 ### Resources
 
-Per-tool Slurm settings: partition (`*_queue`), threads (`*_threads`), memory
+Per-tool Slurm/PBS settings: partition (`*_queue`), threads (`*_threads`), memory
 in MB (`*_mem_mb`), and runtime (`*_time`). Adjust these to match your cluster
 configuration. Note that BUSCO and PRANK are the most time-consuming steps and
 may require generous time limits (default: `150h` and `100h` respectively).
