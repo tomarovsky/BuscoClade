@@ -131,7 +131,7 @@ Place genome assemblies into `input/genomes/`. The file prefix is used as the sa
 
 #### Per-sample VCFs + reference genome
 
-If you have per-sample VCFs, the pipeline applies SNPs directly to the BUSCO sequences of a reference sample using `apply_vcf_to_busco.py`. This avoids rebuilding full pseudo-genome assemblies and re-running BUSCO for each sample — instead, BUSCO is run once on the reference, and ortholog sequences for all other samples are reconstructed by applying their SNPs to the reference BUSCO sequences exon-by-exon.
+If you have per-sample VCFs, the pipeline applies SNPs directly to the BUSCO sequences of a reference genome using `apply_vcf_to_busco.py`. Each VCF file must contain exactly one sample. Only SNPs are used — indels present in the VCF are ignored. This avoids rebuilding full pseudo-genome assemblies and re-running BUSCO for each sample — instead, BUSCO is run once on the reference, and ortholog sequences for all other samples are reconstructed by applying their SNPs to the reference BUSCO sequences exon-by-exon.
 
 Place per-sample VCF files and the corresponding reference genome together into a subdirectory under `input/vcf_reconstruct/`. Each subdirectory is processed independently, which allows reconstructing sequences against different references in a single run:
 
@@ -208,6 +208,7 @@ Modify `config/default.yaml` (recommended: copy it and pass with `--configfile`)
 |---|---|---|
 | `apply_vcf_iupac` | `False` | Encode heterozygous SNPs as IUPAC ambiguity codes (equivalent to GATK `--use-iupac-sample`); if `False`, ALT allele is used for het/hom-alt calls |
 | `vcf_reconstruct_ref_as_species` | `False` | Include the reference genome itself as a sample in the output phylogeny |
+| `altref_gapaware_insertion` | `False` | Insert AltRef sequences into alignments using gap positions of the corresponding reference instead of re-aligning; recommended when working with many VCF samples using PRANK as aligner; see [Gap-aware AltRef insertion](#gap-aware-altref-insertion) |
 
 **Alignment**
 
@@ -311,6 +312,37 @@ results/
             short_summary.specific.mammalia_odb10.Ailurus_fulgens.json
             short_summary.specific.mammalia_odb10.Ailurus_fulgens.txt
 ```
+
+---
+
+## Gap-aware AltRef insertion
+
+When `altref_gapaware_insertion: True`, BuscoClade uses an alternative strategy to incorporate VCF-reconstructed (AltRef) sequences into multiple alignments. Instead of including them in the aligner input — which multiplies wall time linearly with the number of VCF samples — the pipeline runs the aligner only on the reference genomes and FASTA-assembled species, then inserts each AltRef sequence into the finished alignment by copying the gap pattern of its reference.
+
+This is always valid in BuscoClade because `apply_vcf_to_busco.py` uses only SNPs — indels present in the VCF are ignored. Each input VCF must contain exactly one sample. As a result, every AltRef gene has exactly the same ungapped length as the corresponding reference gene, and the reference gap positions in the alignment are directly transferable to the AltRef sequence.
+
+**Execution flow with `altref_gapaware_insertion: True`:**
+
+```
+raw_merged_sequences/          ← refs + FASTA species only (no AltRef)
+        │
+        ▼
+alignments/pre_altref/         ← aligner output (MAFFT / MUSCLE / PRANK)
+        │
+        │  add_altref_to_alignment.py
+        ▼
+alignments/raw/                ← AltRef sequences inserted using reference gap positions
+```
+> References removed if `vcf_reconstruct_ref_as_species: False`
+
+AltRef species for which a BUSCO gene file is missing (e.g. the gene was fragmented or absent in the VCF reconstruction) are skipped with a warning rather than causing the pipeline to fail.
+
+**When to use this option:**
+
+| Scenario | Recommendation |
+|---|---|
+| Many VCF samples (>5–10) | `altref_gapaware_insertion: True` — significant speedup |
+| Few VCF samples | Either setting works; `False` is simpler |
 
 ---
 
