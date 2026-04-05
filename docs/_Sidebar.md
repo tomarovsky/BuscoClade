@@ -6,9 +6,11 @@
   - [Prepare input data](Usage#step-2-prepare-input-data)
   - [Configure workflow](Usage#step-3-configure-workflow)
   - [Execute workflow](Usage#step-4-execute-workflow)
+  - [Running on a cluster](Usage#running-on-a-cluster)
 - [[Configuration]]
   - [Pipeline configuration](Configuration#pipeline-configuration)
   - [Tool parameters](Configuration#tool-parameters)
+  - [Cluster resources](Configuration#cluster-resources)
 - [[Apptainer]]
   - [Pull image](Apptainer#1-pull-pre-built-image-from-ghcr)
   - [Build locally](Apptainer#2-build-locally)
