@@ -17,7 +17,7 @@ rule phylip_dnadist:
     benchmark:
         benchmark_dir_path / "phylip_dnadist.benchmark.txt"
     conda:
-        config["conda"]["buscoclade_main"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_main"]["yaml"])
+        main_env
     resources:
         slurm_partition=config["phylip_queue"],
         runtime=config["phylip_time"],
@@ -48,7 +48,7 @@ rule phylip_neighbor:
     benchmark:
         benchmark_dir_path / "phylip_neighbor.benchmark.txt"
     conda:
-        config["conda"]["buscoclade_main"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_main"]["yaml"])
+        main_env
     resources:
         slurm_partition=config["phylip_queue"],
         runtime=config["phylip_time"],

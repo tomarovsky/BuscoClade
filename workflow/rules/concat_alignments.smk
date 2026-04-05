@@ -12,7 +12,7 @@ if config.get("vcf2phylip") != True:
         benchmark:
             benchmark_dir_path / "concat_fasta.benchmark.txt"
         conda:
-            config["conda"]["buscoclade_main"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_main"]["yaml"])
+            main_env
         resources:
             slurm_partition=config["processing_queue"],
             runtime=config["processing_time"],
@@ -38,7 +38,7 @@ rule concat_nexus:
     benchmark:
         benchmark_dir_path / "concat_nexus.benchmark.txt"
     conda:
-        config["conda"]["buscoclade_main"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_main"]["yaml"])
+        main_env
     resources:
         slurm_partition=config["processing_queue"],
         runtime=config["processing_time"],
@@ -60,7 +60,7 @@ rule concat_stockholm:
     benchmark:
         benchmark_dir_path / "concat_stockholm.benchmark.txt"
     conda:
-        config["conda"]["buscoclade_main"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_main"]["yaml"])
+        main_env
     resources:
         slurm_partition=config["processing_queue"],
         runtime=config["processing_time"],
@@ -83,7 +83,7 @@ rule concat_phylip:
     benchmark:
         benchmark_dir_path / "concat_phylip.benchmark.txt"
     conda:
-        config["conda"]["buscoclade_main"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_main"]["yaml"])
+        main_env
     resources:
         slurm_partition=config["processing_queue"],
         runtime=config["processing_time"],

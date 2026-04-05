@@ -13,7 +13,7 @@ rule rapidnj:
     benchmark:
         benchmark_dir_path / "rapidnj_tree.benchmark.txt"
     conda:
-        config["conda"]["buscoclade_main"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_main"]["yaml"])
+        main_env
     resources:
         slurm_partition=config["rapidnj_queue"],
         runtime=config["rapidnj_time"],

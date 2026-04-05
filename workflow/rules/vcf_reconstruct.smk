@@ -15,7 +15,7 @@ rule tabix_index:
     benchmark:
         benchmark_dir_path / "tabix_index.{vcf}.benchmark.txt"
     conda:
-        config["conda"]["buscoclade_main"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_main"]["yaml"])
+        main_env
     shell:
         " tabix -p vcf {input} 1> {log.std} 2>&1; "
 
@@ -71,7 +71,7 @@ rule apply_vcf_to_busco:
     benchmark:
         benchmark_dir_path / "apply_vcf_to_busco.{species}.benchmark.txt"
     conda:
-        config["conda"]["buscoclade_main"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_main"]["yaml"])
+        main_env
     resources:
         slurm_partition=config["processing_queue"],
         runtime=config["processing_time"],

@@ -81,6 +81,8 @@ checkpoint merged_sequences:  # get merged sequences by common IDs
         cluster_err=cluster_log_dir_path / "merged_sequences.cluster.err",
     benchmark:
         benchmark_dir_path / "merged_sequences.benchmark.txt"
+    conda:
+        main_env
     resources:
         slurm_partition=config["processing_queue"],
         runtime=config["processing_time"],

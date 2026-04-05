@@ -25,7 +25,7 @@ rule busco_metaeuk:
     benchmark:
         benchmark_dir_path / "busco.{species}.benchmark.txt"
     conda:
-        config["conda"]["buscoclade_main"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_main"]["yaml"])
+        main_env
     resources:
         slurm_partition=config["busco_queue"],
         runtime=config["busco_time"],

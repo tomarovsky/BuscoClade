@@ -51,6 +51,13 @@ rapidnj_dir_path = output_dir_path / config["rapidnj_dir"]
 phylip_dir_path = output_dir_path / config["phylip_dir"]
 raxml_dir_path = output_dir_path / config["raxml_dir"]
 
+# ---- Conda environment ----
+main_env = (
+    config["conda"]["buscoclade_main"]["name"]
+    if config["use_existing_envs"]
+    else "../../%s" % config["conda"]["buscoclade_main"]["yaml"]
+)
+
 # ---- Setup filenames ----
 pfx = config["alignment_file_prefix"]
 sup = config["nodes_filtrataion_by_support"]

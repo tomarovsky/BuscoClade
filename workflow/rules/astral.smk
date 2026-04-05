@@ -20,7 +20,7 @@ rule iqtree_per_fna:
     benchmark:
         benchmark_dir_path / "iqtree_per_fna.{N}.benchmark.txt"
     conda:
-        config["conda"]["buscoclade_main"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_main"]["yaml"])
+        main_env
     resources:
         slurm_partition=config["astral_queue"],
         runtime=config["iqtree_per_fna_time"],
@@ -48,7 +48,7 @@ rule concat_newick_files:
     benchmark:
         benchmark_dir_path / "concat_newick_files.benchmark.txt"
     conda:
-        config["conda"]["buscoclade_main"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_main"]["yaml"])
+        main_env
     resources:
         slurm_partition=config["processing_queue"],
         runtime=config["processing_time"],
@@ -72,7 +72,7 @@ rule nodes_filtrataion_by_support:
     benchmark:
         benchmark_dir_path / "nodes_filtrataion_by_support.benchmark.txt"
     conda:
-        config["conda"]["buscoclade_main"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_main"]["yaml"])
+        main_env
     resources:
         slurm_partition=config["processing_queue"],
         runtime=config["processing_time"],
@@ -96,7 +96,7 @@ rule astral_tree:
     benchmark:
         benchmark_dir_path / "astral_tree.benchmark.txt"
     conda:
-        config["conda"]["buscoclade_main"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_main"]["yaml"])
+        main_env
     resources:
         slurm_partition=config["astral_queue"],
         runtime=config["astral_time"],

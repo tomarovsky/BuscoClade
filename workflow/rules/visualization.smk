@@ -15,7 +15,7 @@ rule iqtree_tree_visualization:
     benchmark:
         benchmark_dir_path / "iqtree_tree_visualization.benchmark.txt"
     conda:
-        config["conda"]["buscoclade_main"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_main"]["yaml"])
+        main_env
     resources:
         slurm_partition=config["processing_queue"],
         runtime=config["processing_time"],
@@ -44,7 +44,7 @@ rule astral_tree_visualization:
     benchmark:
         benchmark_dir_path / "astral_tree_visualization.benchmark.txt"
     conda:
-        config["conda"]["buscoclade_main"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_main"]["yaml"])
+        main_env
     resources:
         slurm_partition=config["processing_queue"],
         runtime=config["processing_time"],
@@ -75,7 +75,7 @@ rule rapidnj_tree_visualization:
     benchmark:
         benchmark_dir_path / "rapidnj_tree_visualization.benchmark.txt"
     conda:
-        config["conda"]["buscoclade_main"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_main"]["yaml"])
+        main_env
     resources:
         slurm_partition=config["processing_queue"],
         runtime=config["processing_time"],
@@ -103,7 +103,7 @@ rule phylip_tree_visualization:
     benchmark:
         benchmark_dir_path / "phylip_tree_visualization.benchmark.txt"
     conda:
-        config["conda"]["buscoclade_main"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_main"]["yaml"])
+        main_env
     resources:
         slurm_partition=config["processing_queue"],
         runtime=config["processing_time"],
@@ -131,7 +131,7 @@ rule raxml_tree_visualization:
     benchmark:
         benchmark_dir_path / "raxml_tree_visualization.benchmark.txt",
     conda:
-        config["conda"]["buscoclade_main"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_main"]["yaml"])
+        main_env
     resources:
         slurm_partition=config["processing_queue"],
         runtime=config["processing_time"],
@@ -153,7 +153,7 @@ rule species_ids_plot:
         cluster_log=cluster_log_dir_path / "species_ids_plot.cluster.log",
         cluster_err=cluster_log_dir_path / "species_ids_plot.cluster.err",
     conda:
-        config["conda"]["buscoclade_main"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_main"]["yaml"])
+        main_env
     benchmark:
         benchmark_dir_path / "species_ids_plot.benchmark.txt"
     resources:
@@ -176,7 +176,7 @@ rule busco_summaries_to_tsv:
         cluster_log=cluster_log_dir_path / "busco_summaries_to_tsv.cluster.log",
         cluster_err=cluster_log_dir_path / "busco_summaries_to_tsv.cluster.err",
     conda:
-        config["conda"]["buscoclade_main"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_main"]["yaml"])
+        main_env
     resources:
         slurm_partition=config["processing_queue"],
         runtime=config["processing_time"],
@@ -200,7 +200,7 @@ rule busco_histogram:
     benchmark:
         benchmark_dir_path / "busco_histogram.benchmark.txt"
     conda:
-        config["conda"]["buscoclade_main"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_main"]["yaml"])
+        main_env
     resources:
         slurm_partition=config["processing_queue"],
         runtime=config["processing_time"],

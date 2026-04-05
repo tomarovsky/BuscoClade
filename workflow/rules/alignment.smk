@@ -47,7 +47,7 @@ if config.get("alignment") == "prank":
         benchmark:
             benchmark_dir_path / "prank.{N}.benchmark.txt"
         conda:
-            config["conda"]["buscoclade_main"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_main"]["yaml"])
+            main_env
         resources:
             slurm_partition=config["alignment_queue"],
             runtime=config["prank_time"],
@@ -83,7 +83,7 @@ if config["alignment"] == "mafft":
         benchmark:
             benchmark_dir_path / "mafft.{N}.benchmark.txt"
         conda:
-            config["conda"]["buscoclade_main"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_main"]["yaml"])
+            main_env
         resources:
             slurm_partition=config["alignment_queue"],
             runtime=config["mafft_time"],
@@ -109,7 +109,7 @@ if config["alignment"] == "muscle":
         benchmark:
             benchmark_dir_path / "muscle.{N}.benchmark.txt"
         conda:
-            config["conda"]["buscoclade_main"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_main"]["yaml"])
+            main_env
         resources:
             slurm_partition=config["alignment_queue"],
             runtime=config["muscle_time"],
@@ -151,7 +151,7 @@ if altref_gapaware and altref_map:
         benchmark:
             benchmark_dir_path / "add_altref_to_alignment.{N}.benchmark.txt"
         conda:
-            config["conda"]["buscoclade_main"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_main"]["yaml"])
+            main_env
         resources:
             slurm_partition=config["processing_queue"],
             runtime=config["processing_time"],

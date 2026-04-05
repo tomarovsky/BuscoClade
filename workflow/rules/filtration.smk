@@ -15,7 +15,7 @@ if config.get("filtration") == "gblocks":
         benchmark:
             benchmark_dir_path / "gblocks.{N}.benchmark.txt"
         conda:
-            config["conda"]["buscoclade_main"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_main"]["yaml"])
+            main_env
         resources:
             slurm_partition=config["filtration_queue"],
             runtime=config["gblocks_time"],
@@ -49,7 +49,7 @@ if config.get("filtration") == "trimal":
         benchmark:
             benchmark_dir_path / "trimal.{N}.benchmark.txt"
         conda:
-            config["conda"]["buscoclade_main"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_main"]["yaml"])
+            main_env
         resources:
             slurm_partition=config["filtration_queue"],
             runtime=config["trimal_time"],
@@ -82,7 +82,7 @@ if config.get("filtration") == "clipkit":
         benchmark:
             benchmark_dir_path / "clipkit.{N}.benchmark.txt"
         conda:
-            config["conda"]["buscoclade_main"]["name"] if config["use_existing_envs"] else ("../../%s" % config["conda"]["buscoclade_main"]["yaml"])
+            main_env
         resources:
             slurm_partition=config["filtration_queue"],
             runtime=config["clipkit_time"],
