@@ -30,7 +30,6 @@ rule concat_nexus:
     output:
         concat_alignments_dir_path / nexus_filename,
     params:
-        type="DNA",
         block=config["mrbayes_block"],
     log:
         std=log_dir_path / "concat_nexus.log",
@@ -46,7 +45,7 @@ rule concat_nexus:
         mem_mb=config["processing_mem_mb"],
     threads: config["processing_threads"]
     shell:
-        " workflow/scripts/fasta_to_nexus.py -i {input} -t {params.type} -b {params.block} -o {output} 1> {log.std} 2>&1; "
+        " workflow/scripts/fasta_convert.py -i {input} -o {output} -f nexus --block {params.block} 1> {log.std} 2>&1; "
 
 
 rule concat_stockholm:
@@ -68,7 +67,7 @@ rule concat_stockholm:
         mem_mb=config["processing_mem_mb"],
     threads: config["processing_threads"]
     shell:
-        " workflow/scripts/fasta_to_stockholm.py -i {input} -o {output} 1> {log.std} 2>&1 "
+        " workflow/scripts/fasta_convert.py -i {input} -o {output} -f stockholm 1> {log.std} 2>&1 "
 
 
 rule concat_phylip:
@@ -91,4 +90,4 @@ rule concat_phylip:
         mem_mb=config["processing_mem_mb"],
     threads: config["processing_threads"]
     shell:
-        " workflow/scripts/fasta_to_phylip.py -i {input} -o {output.phy} 1> {log.std} 2>&1; "
+        " workflow/scripts/fasta_convert.py -i {input} -o {output.phy} -f phylip 1> {log.std} 2>&1; "
