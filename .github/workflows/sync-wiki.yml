@@ -1,0 +1,30 @@
+name: Sync docs to Wiki
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'docs/**.md'
+
+jobs:
+  sync-wiki:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Clone wiki
+        run: git clone https://github.com/${{ github.repository }}.wiki.git wiki
+
+      - name: Copy docs to wiki
+        run: cp docs/*.md wiki/
+
+      - name: Push to wiki
+        run: |
+          cd wiki
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .
+          git diff --staged --quiet || git commit -m "Sync wiki from docs/ (${{ github.sha }})"
+          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.wiki.git
