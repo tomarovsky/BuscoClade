@@ -81,3 +81,86 @@ the file and pass it with `--configfile` rather than editing it directly.
 | Parameter | Default | Description |
 |---|---|---|
 | `tree_visualization_params` | `""` | Add `"--outgroup 'Species name'"` to root trees; multiple outgroups: `"--outgroup 'sp1,sp2'"` |
+
+---
+ 
+## Cluster resources
+ 
+Per-tool resource allocation for Slurm and PBS cluster execution. These
+parameters are passed automatically via the Snakemake profile — you do not
+need to set them manually on the command line.
+ 
+### Partitions / queues
+ 
+| Parameter | Default | Description |
+|---|---|---|
+| `processing_queue` | `"main"` | Partition for lightweight processing jobs |
+| `busco_queue` | `"main"` | Partition for BUSCO |
+| `alignment_queue` | `"main"` | Partition for alignment |
+| `filtration_queue` | `"main"` | Partition for trimming |
+| `iqtree_queue` | `"main"` | Partition for IQ-TREE |
+| `astral_queue` | `"main"` | Partition for ASTRAL |
+| `rapidnj_queue` | `"main"` | Partition for RapidNJ |
+| `phylip_queue` | `"main"` | Partition for PHYLIP |
+| `raxml_queue` | `"main"` | Partition for RAxML-NG |
+| `mrbayes_queue` | `"main"` | Partition for MrBayes |
+ 
+### Threads
+ 
+| Parameter | Default |
+|---|---|
+| `processing_threads` | `1` |
+| `busco_threads` | `8` |
+| `mafft_threads` | `1` |
+| `muscle_threads` | `1` |
+| `prank_threads` | `1` |
+| `clipkit_threads` | `1` |
+| `trimal_threads` | `1` |
+| `gblocks_threads` | `1` |
+| `iqtree_threads` | `8` |
+| `iqtree_per_fna_threads` | `1` |
+| `astral_threads` | `4` |
+| `rapidnj_threads` | `4` |
+| `phylip_threads` | `1` |
+| `raxml_threads` | `4` |
+| `mrbayes_threads` | `8` |
+ 
+### Memory (MB)
+ 
+| Parameter | Default |
+|---|---|
+| `processing_mem_mb` | `2000` |
+| `busco_mem_mb` | `10000` |
+| `mafft_mem_mb` | `2000` |
+| `muscle_mem_mb` | `2000` |
+| `prank_mem_mb` | `2000` |
+| `clipkit_mem_mb` | `2000` |
+| `trimal_mem_mb` | `2000` |
+| `gblocks_mem_mb` | `2000` |
+| `iqtree_mem_mb` | `10000` |
+| `iqtree_per_fna_mem_mb` | `2000` |
+| `astral_mem_mb` | `10000` |
+| `rapidnj_mem_mb` | `8000` |
+| `phylip_mem_mb` | `4000` |
+| `raxml_mem_mb` | `10000` |
+| `mrbayes_mem_mb` | `10000` |
+ 
+### Runtime
+ 
+| Parameter | Default |
+|---|---|
+| `processing_time` | `"5h"` |
+| `busco_time` | `"150h"` |
+| `mafft_time` | `"10h"` |
+| `muscle_time` | `"10h"` |
+| `prank_time` | `"100h"` |
+| `clipkit_time` | `"10h"` |
+| `trimal_time` | `"10h"` |
+| `gblocks_time` | `"10h"` |
+| `iqtree_time` | `"100h"` |
+| `iqtree_per_fna_time` | `"100h"` |
+| `astral_time` | `"50h"` |
+| `rapidnj_time` | `"150h"` |
+| `phylip_time` | `"50h"` |
+| `raxml_time` | `"100h"` |
+| `mrbayes_time` | `"100h"` |
