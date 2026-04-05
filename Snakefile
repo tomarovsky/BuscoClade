@@ -13,6 +13,13 @@ configfile: "config/default.yaml"
 FASTA_EXTENSIONS = [".fasta.gz", ".fna.gz", ".fa.gz", ".fasta", ".fna", ".fa"]
 FASTA_PATTERNS = [f"*{ext}" for ext in FASTA_EXTENSIONS]
 
+# ---- Conda environment ----
+main_env = (
+    config["conda"]["buscoclade_main"]["name"]
+    if config["use_existing_envs"]
+    else "../../%s" % config["conda"]["buscoclade_main"]["yaml"]
+)
+
 # ---- Setup paths ----
 # -- Input --
 genome_dir_path = Path(config["genome_dir"]).resolve()
@@ -51,12 +58,6 @@ rapidnj_dir_path = output_dir_path / config["rapidnj_dir"]
 phylip_dir_path = output_dir_path / config["phylip_dir"]
 raxml_dir_path = output_dir_path / config["raxml_dir"]
 
-# ---- Conda environment ----
-main_env = (
-    config["conda"]["buscoclade_main"]["name"]
-    if config["use_existing_envs"]
-    else "../../%s" % config["conda"]["buscoclade_main"]["yaml"]
-)
 
 # ---- Setup filenames ----
 pfx = config["alignment_file_prefix"]
