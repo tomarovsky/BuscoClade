@@ -49,8 +49,12 @@ busco_blacklist: "input/BUSCO.blacklist"
 busco_histogram_colors: "#23b4e8,#008dbf,#fbbc04,#ea4335" # per S, D, F, M BUSCOs
 
 # ---- VCF reconstruction ----
-apply_vcf_iupac: False
-vcf_reconstruct_ref_as_species: False
+# Applies SNPs from VCF files to BUSCO genes of the reference genome,
+# producing pseudo-reference sequences (AltRef species) for phylogenetics.
+apply_vcf_iupac: True # encode heterozygous SNPs as IUPAC ambiguity codes
+vcf_reconstruct_ref_as_species: True # include ref.fasta itself as a species in the tree
+altref_gapaware_insertion: True # Insert AltRef sequences into alignments using gap positions of the corresponding reference
+# instead of re-aligning (faster, recommended when working with many VCF samples using PRANK as aligner)
 
 # ---- Alignment ----
 prank_params: "-codon"
@@ -115,6 +119,7 @@ main_ids_dir: "ids/"
 species_ids_dir: "ids/species_ids/"
 common_ids_dir: "ids/common_ids/"
 merged_sequences_dir: "ids/merged_sequences/"
+pre_altref_alignments_dir: "alignments/pre_altref/"
 alignments_dir: "alignments/raw/"
 filtered_alignments_dir: "alignments/filtered/"
 concat_alignments_dir: "concat_alignments/"
