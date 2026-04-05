@@ -135,7 +135,23 @@ mamba activate snakemake
 Dry run to preview all steps:
 
 ```bash
-snakemake --profile profile/slurm/ --configfile config/default.yaml --dry-run
+snakemake --configfile config/default.yaml --dry-run
 ```
 
 Remove `--dry-run` to start the actual run.
+
+### Running on a cluster
+ 
+BuscoClade includes ready-made profiles for Slurm and PBS. Pass `--profile`
+instead of `--cores` to submit jobs to the scheduler:
+ 
+```bash
+# Slurm
+snakemake --profile profiles/slurm/ --configfile config/default.yaml
+ 
+# PBS
+snakemake --profile profiles/pbs/ --configfile config/default.yaml
+```
+ 
+Resource allocation (partition, threads, memory, runtime) is configured
+per-tool in the config file — see [[Configuration#cluster-resources]].
