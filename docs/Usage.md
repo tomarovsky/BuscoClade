@@ -7,7 +7,13 @@ Apptainer container — see [[Apptainer]] for instructions.
 
 ## Step 1. Deploy workflow
 
-### Option A: Apptainer container
+### Option A: Clone repository
+
+```bash
+git clone https://github.com/tomarovsky/BuscoClade.git
+```
+
+### Option B: Apptainer container
 
 Pull the latest image and run immediately:
 
@@ -16,12 +22,6 @@ apptainer pull buscoclade.sif oras://ghcr.io/tomarovsky/buscoclade:latest
 ```
 
 See [[Apptainer]] for full usage instructions.
-
-### Option B: Clone repository
-
-```bash
-git clone https://github.com/tomarovsky/BuscoClade.git
-```
 
 ---
 
