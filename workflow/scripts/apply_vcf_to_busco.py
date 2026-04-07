@@ -20,7 +20,7 @@ Usage:
         [--iupac]
 
 Notes:
-    - Only SNPs are handled; indels are ignored (as in the original pipeline).
+    - Only SNPs are handled; indels are ignored.
     - With --iupac, heterozygous SNPs are encoded as IUPAC ambiguity codes in FNA,
       and FAA uses ambiguous translation (X if ambiguous amino acid, otherwise
       the unambiguous amino acid if all codon variants agree).
