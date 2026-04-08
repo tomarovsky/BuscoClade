@@ -58,19 +58,19 @@ rule concat_newick_files:
         " cat {input} > {output} 2> {log.std}; "
 
 
-rule nodes_filtrataion_by_support:
+rule nodes_filtration_by_support:
     input:
         astral_dir_path / astral_input_trees,
     output:
         astral_dir_path / astral_filtered_trees,
     params:
-        support=config["nodes_filtrataion_by_support"],
+        support=config["nodes_filtration_by_support"],
     log:
-        std=log_dir_path / "nodes_filtrataion_by_support.log",
-        cluster_log=cluster_log_dir_path / "nodes_filtrataion_by_support.cluster.log",
-        cluster_err=cluster_log_dir_path / "nodes_filtrataion_by_support.cluster.err",
+        std=log_dir_path / "nodes_filtration_by_support.log",
+        cluster_log=cluster_log_dir_path / "nodes_filtration_by_support.cluster.log",
+        cluster_err=cluster_log_dir_path / "nodes_filtration_by_support.cluster.err",
     benchmark:
-        benchmark_dir_path / "nodes_filtrataion_by_support.benchmark.txt"
+        benchmark_dir_path / "nodes_filtration_by_support.benchmark.txt"
     conda:
         main_env
     resources:
