@@ -55,11 +55,11 @@ input/
         Species2.fasta.gz
     vcf_reconstruct/
         subdir1/                    # one reference per directory
-            reference.fasta
+            reference1.fasta
             SampleA.vcf.gz
             SampleB.vcf.gz
         subdir2/                    # another reference
-            reference.fasta
+            reference2.fasta
             SampleC.vcf.gz
 ```
 
