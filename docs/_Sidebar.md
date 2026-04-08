@@ -6,6 +6,7 @@
   - [Prepare input data](Usage#step-2-prepare-input-data)
   - [Configure workflow](Usage#step-3-configure-workflow)
   - [Execute workflow](Usage#step-4-execute-workflow)
+  - [Inspect output](Usage#step-5-inspect-output)
   - [Running on a cluster](Usage#running-on-a-cluster)
 - [[Configuration]]
   - [Pipeline configuration](Configuration#pipeline-configuration)
