@@ -10,8 +10,10 @@ Two image variants are available:
 
 | Variant | Tag | Contents | First run |
 |---|---|---|---|
-| **Minimal** | `:latest`, `:vX.Y.Z-minimal` | Snakemake + pipeline code | conda envs created on first run (~10–15 min) |
-| **Full** | `:vX.Y.Z-full` | + all pre-built conda envs | starts immediately |
+| **Minimal** | `:latest`, `:vN.N-minimal` | Snakemake + pipeline code | conda envs created on first run (~10–15 min) |
+| **Full** | `:vN.N-full` | + all pre-built conda envs | starts immediately |
+
+> Replace `vN.N` with the version number of the latest release (see [Releases](https://github.com/tomarovsky/BuscoClade/releases)).
 
 ---
 
@@ -170,16 +172,19 @@ The `%runscript` detects them automatically — no extra configuration needed.
 
 ```
 /opt/buscoclade/          # pipeline code (read-only, bundled at build time)
-    workflow/
-    config/
-        default.yaml      # full list of pipeline options
-    input/                # ← mount: -B /host/input:/opt/buscoclade/input
+    .snakemake/           # ← mount: -B /host/path/to/.snakemake:/opt/buscoclade/.snakemake
+    input/                # ← mount: -B /host/path/to/input/:/opt/buscoclade/input
         genomes/
         vcf_reconstruct/
         vcf2phylip/
-    results/              # ← mount: -B /host/results:/opt/buscoclade/results
+    results/              # ← mount: -B /host/path/to/results/:/opt/buscoclade/results
+    config/
+        default.yaml      # full list of pipeline options
+    workflow/
+    resources/
     profile/
         slurm/
+        pbs/
     .release_tag          # bundled pipeline version
 ```
 
