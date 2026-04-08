@@ -66,7 +66,7 @@ the file and pass it with `--configfile` rather than editing it directly.
 |---|---|---|
 | `iqtree_params` | `"-keep-ident -m TESTNEW -bb 1000"` | IQ-TREE flags for the concatenated alignment; add `-o 'OUTGROUP'` to set an outgroup |
 | `iqtree_per_fna_params` | `"-keep-ident -m TESTNEW -bb 1000"` | IQ-TREE flags for per-gene trees (used as input to ASTRAL) |
-| `nodes_filtrataion_by_support` | `70` | Minimum bootstrap support for collapsing nodes before ASTRAL |
+| `nodes_filtration_by_support` | `70` | Minimum bootstrap support for collapsing nodes before ASTRAL |
 | `astral_params` | `"--support 2"` | ASTRAL-IV flags; add `--root 'OUTGROUP'` to set an outgroup |
 | `raxml_params` | `"--model GTR+G --bs-trees 100"` | RAxML-NG flags |
 | `rapidnj_params` | `"-b 1000"` | RapidNJ flags |

@@ -75,7 +75,7 @@ iqtree_params: "-keep-ident -m TESTNEW -bb 1000" # -o 'OUTGROUP'
 
 # Astral:
 iqtree_per_fna_params: "-keep-ident -m TESTNEW -bb 1000"
-nodes_filtrataion_by_support: 70
+nodes_filtration_by_support: 70
 astral_params: "--support 2" # --root 'OUTGROUP'
 
 # MrBayes:

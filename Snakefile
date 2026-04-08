@@ -61,7 +61,7 @@ raxml_dir_path = output_dir_path / config["raxml_dir"]
 
 # ---- Setup filenames ----
 pfx = config["alignment_file_prefix"]
-sup = config["nodes_filtrataion_by_support"]
+sup = config["nodes_filtration_by_support"]
 
 fasta_filename        = f"{pfx}.fna"
 nexus_filename        = f"{pfx}.fna.nex"
