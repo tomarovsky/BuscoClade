@@ -155,3 +155,80 @@ snakemake --profile profiles/pbs/ --configfile config/default.yaml
  
 Resource allocation (partition, threads, memory, runtime) is configured
 per-tool in the config file — see [[Configuration#cluster-resources]].
+
+---
+
+## Step 5. Inspect output
+
+All results are written under `results/` (configurable via `output_dir`):
+
+```
+results/
+    assembly_stats/
+        assembly_stats.csv                         # QuastCore assembly statistics (if quastcore: True)
+    busco/
+        <Species>/                                 # Per-species BUSCO output
+        busco_summaries.tsv                        # BUSCO completeness statistics across all species
+        busco_summaries.svg                        # BUSCO summary histogram
+    ids/
+        species_ids/
+            single_copy/<Species>.ids              # Single-copy BUSCO IDs per species
+            multi_copy/<Species>.ids               # Multi-copy BUSCO IDs per species
+            unique_species_ids.svg                 # Venn diagram of BUSCO ID overlap
+        common_ids/
+            common.ids                             # BUSCO IDs shared across all species
+        merged_sequences/
+            <busco_id>.merged.fna                  # Nucleotide sequences merged across species
+            <busco_id>.merged.faa                  # Protein sequences merged across species
+    alignments/
+        raw/fna/
+            <busco_id>.merged.fna                  # Per-gene multiple alignments
+        filtered/fna/
+            <busco_id>.merged.fna                  # Trimmed alignments
+        pre_altref/                                # Only if altref_gapaware_insertion: True
+    concat_alignments/
+        concat_alignment.fna                       # Concatenated supermatrix (FASTA)
+        concat_alignment.fna.phy                   # PHYLIP format
+        concat_alignment.fna.sth                   # Stockholm format
+        concat_alignment.fna.nex                   # NEXUS format
+    phylogeny/
+        iqtree/
+            concat_alignment.fna.treefile          # Maximum-likelihood tree
+            concat_alignment.fna.contree           # Consensus tree
+            concat_alignment.fna.only_tree.svg             # Tree only
+            concat_alignment.fna.only_support_tree.svg     # Tree with bootstrap support values
+            concat_alignment.fna.length_and_support_tree.svg  # Tree with branch lengths + support
+        astral/
+            iqtree_per_fna/
+                <busco_id>.merged.fna.treefile     # Per-gene IQ-TREE trees (ASTRAL input)
+            concat_alignment.<N>.fna.astral.treefile        # Species tree (N = support threshold)
+            concat_alignment.<N>.fna.astral.treefile.svg    # Tree topology
+            concat_alignment.<N>.fna.astral.treefile.pp.svg # Posterior probabilities
+            concat_alignment.<N>.fna.astral.treefile.q.svg  # Quartet scores
+            concat_alignment.<N>.fna.astral.treefile.tsv    # ASTRAL summary table
+        rapidnj/
+            concat_alignment.fna.rapidnj.treefile  # NJ tree
+            concat_alignment.fna.rapidnj.matrix    # Distance matrix
+            concat_alignment.fna.only_tree.svg
+            concat_alignment.fna.only_support_tree.svg
+            concat_alignment.fna.length_and_support_tree.svg
+        phylip/
+            concat_alignment.fna.phy.treefile      # Raw NJ tree
+            concat_alignment.fna.phy.namefix.treefile  # NJ tree with fixed species names
+            concat_alignment.fna.only_tree.svg
+            concat_alignment.fna.only_support_tree.svg
+            concat_alignment.fna.length_and_support_tree.svg
+        raxml/
+            concat_alignment.fna.raxml.bestTree    # Best-scoring ML tree
+            concat_alignment.fna.raxml.treefile    # Best tree with bootstrap support
+            concat_alignment.fna.raxml.bestModel   # Substitution model
+            concat_alignment.fna.only_tree.svg
+            concat_alignment.fna.only_support_tree.svg
+            concat_alignment.fna.length_and_support_tree.svg
+        mrbayes/                                   # Bayesian inference
+    logs/                                          # Per-rule log files
+    cluster_logs/                                  # Per-rule cluster log files
+    benchmarks/                                    # Runtime and memory benchmarks per rule
+```
+
+The primary outputs are the tree files in `results/phylogeny/`. All `.treefile` files are in Newick format and can be opened with [FigTree](https://tree.bio.ed.ac.uk/software/figtree/)), [iTOL](https://itol.embl.de/), or any standard tree viewer. Each method also produces three SVG visualizations: tree only (`.only_tree.svg`), tree with support values (`.only_support_tree.svg`), and tree with branch lengths and support (`.length_and_support_tree.svg`).
