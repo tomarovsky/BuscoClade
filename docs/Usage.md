@@ -54,11 +54,11 @@ input/
         Species1.fasta
         Species2.fasta.gz
     vcf_reconstruct/
-        project_hg38/               # one reference per directory
+        subdir1/                    # one reference per directory
             reference.fasta
             SampleA.vcf.gz
             SampleB.vcf.gz
-        project_mm39/               # another reference
+        subdir2/                    # another reference
             reference.fasta
             SampleC.vcf.gz
 ```
@@ -138,7 +138,7 @@ Dry run to preview all steps:
 snakemake --configfile config/default.yaml --dry-run
 ```
 
-Remove `--dry-run` to start the actual run.
+Remove `--dry-run` and add `--cores N` to start the actual run.
 
 ### Running on a cluster
  
