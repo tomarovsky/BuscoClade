@@ -29,7 +29,7 @@ the file and pass it with `--configfile` rather than editing it directly.
 
 | Parameter | Default | Description |
 |---|---|---|
-| `busco_dataset_path` | `"$TOOLS/busco_datasets/mammalia_odb12/"` | Path to pre-downloaded OrthoDB dataset |
+| `busco_dataset_path` | `"path/to/busco_datasets/ortho_odb12/"` | Path to pre-downloaded OrthoDB dataset |
 | `busco_options` | `"--offline"` | Extra BUSCO flags; use `"--offline"` to run without internet |
 | `busco_mode` | `"genome"` | BUSCO mode |
 | `busco_blacklist` | `"input/BUSCO.blacklist"` | File with BUSCO IDs to exclude (optional) |
@@ -74,7 +74,7 @@ the file and pass it with `--configfile` rather than editing it directly.
 | `phylip_neighbor_params` | `""` | `"N\n"` for UPGMA; `""` for NJ (default) |
 | `mrbayes_params` | `""` | Extra MrBayes flags |
 | `mrbayes_block` | `"resources/mrbayes.block"` | Path to MrBayes block configuration file |
-| `mrbayes_path` | `"$TOOLS/mrbayes/mrbayes"` | Path to MrBayes binary |
+| `mrbayes_path` | `"path/to/mrbayes-3.2.7/mrbayes"` | Path to MrBayes binary |
 
 ### Visualization
 
