@@ -231,4 +231,4 @@ results/
     benchmarks/                                    # Runtime and memory benchmarks per rule
 ```
 
-The primary outputs are the tree files in `results/phylogeny/`. All `.treefile` files are in Newick format and can be opened with [FigTree](https://tree.bio.ed.ac.uk/software/figtree/)), [iTOL](https://itol.embl.de/), or any standard tree viewer. Each method also produces three SVG visualizations: tree only (`.only_tree.svg`), tree with support values (`.only_support_tree.svg`), and tree with branch lengths and support (`.length_and_support_tree.svg`).
+The primary outputs are the tree files in `results/phylogeny/`. All `.treefile` files are in Newick format and can be opened with [FigTree](https://tree.bio.ed.ac.uk/software/figtree/), [iTOL](https://itol.embl.de/), or any standard tree viewer. Each method also produces three SVG visualizations: tree only (`.only_tree.svg`), tree with support values (`.only_support_tree.svg`), and tree with branch lengths and support (`.length_and_support_tree.svg`).
