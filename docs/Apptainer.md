@@ -175,7 +175,7 @@ The `%runscript` detects them automatically — no extra configuration needed.
     .snakemake/           # ← mount: -B /host/path/to/.snakemake:/opt/buscoclade/.snakemake
     input/                # ← mount: -B /host/path/to/input/:/opt/buscoclade/input
         genomes/
-        vcf_reconstruct/
+        reconstruct/
         vcf2phylip/
     results/              # ← mount: -B /host/path/to/results/:/opt/buscoclade/results
     config/
