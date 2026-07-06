@@ -1,11 +1,12 @@
-# ---- Gap-aware AltRef insertion setup ----
-# altref_gapaware and ref_to_altrefs are expected to be defined in Snakefile:
-#   altref_gapaware = config.get("altref_gapaware_insertion", False)
-#   ref_to_altrefs  = {ref_prefix: [altref_sp, ...], ...}  (built from altref_map)
+# ---- Gap-aware reconstructed-sequence insertion setup ----
+# reconstruct_gapaware and ref_to_reconstructed are expected to be defined in Snakefile:
+#   reconstruct_gapaware = config.get("altref_gapaware_insertion", False)
+#   ref_to_reconstructed = {ref_prefix: [reconstructed_sp, ...], ...}  (built from reconstruct_map)
 #
-# In gap-aware mode, merged_sequences/ contains only non-AltRef species (refs + FASTA
-# assemblies). AltRef sequences are inserted into the finished alignment afterwards by
-# add_altref_to_alignment.py. In standard mode, merged_sequences/ contains all species.
+# In gap-aware mode, merged_sequences/ contains only non-reconstructed species (refs + FASTA
+# assemblies). Reconstructed sequences (VCF- or consensus-derived) are inserted into the
+# finished alignment afterwards by add_altref_to_alignment.py. In standard mode,
+# merged_sequences/ contains all species.
 #
 # IMPORTANT: input must be a lambda so Snakemake defers file-existence checks
 # until after the checkpoint has run. A static Path is evaluated at DAG-build
@@ -16,7 +17,7 @@ def _aligner_input(wildcards):
 
 _aligner_output_dir = (
     pre_altref_alignments_dir_path
-    if altref_gapaware and altref_map
+    if reconstruct_gapaware and reconstruct_map
     else alignments_dir_path / "fna"
 )
 
@@ -119,31 +120,31 @@ if config["alignment"] == "muscle":
             " muscle -in {input} -out {output} {params.options} > {log.std} 2>&1; "
 
 
-# ---- Gap-aware AltRef insertion ----
-# Active only when altref_gapaware_insertion: True and there are AltRef species.
-# Reads raw alignment (refs + non-AltRef species), inserts each AltRef sequence
-# by copying gap positions from its corresponding ref, then optionally removes
-# ref sequences if vcf_reconstruct_ref_as_species: False.
+# ---- Gap-aware reconstructed-sequence insertion ----
+# Active only when altref_gapaware_insertion: True and there are reconstructed species.
+# Reads raw alignment (refs + non-reconstructed species), inserts each reconstructed
+# sequence by copying gap positions from its corresponding ref, then optionally removes
+# ref sequences if reconstruct_refs_as_species: False.
 
-if altref_gapaware and altref_map:
+if reconstruct_gapaware and reconstruct_map:
 
     import json as _json
 
     rule add_altref_to_alignment:
         input:
             raw_aln=pre_altref_alignments_dir_path / "{N}.fna",
-            # Declare dependency on all AltRef busco dirs so Snakemake
-            # knows to wait for apply_vcf_to_busco to finish.
+            # Declare dependency on all reconstructed busco dirs so Snakemake knows
+            # to wait for apply_vcf_to_busco / apply_consensus_to_busco to finish.
             altref_seqs=expand(
                 str(busco_dir_path / "{species}/busco_sequences/single_copy_busco_sequences"),
-                species=altref_species,
+                species=reconstructed_species,
             ),
         output:
             alignments_dir_path / "fna" / "{N}.fna",
         params:
             busco_dir=str(busco_dir_path),
-            ref_to_altrefs=_json.dumps(ref_to_altrefs),
-            keep_refs="--keep_refs" if config.get("vcf_reconstruct_ref_as_species") else "",
+            ref_to_altrefs=_json.dumps(ref_to_reconstructed),
+            keep_refs="--keep_refs" if config.get("reconstruct_refs_as_species") else "",
         log:
             std=log_dir_path / "add_altref_to_alignment.{N}.log",
             cluster_log=cluster_log_dir_path / "add_altref_to_alignment.{N}.cluster.log",
