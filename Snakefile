@@ -4,9 +4,14 @@ import os
 import re
 
 import pandas as pd
+from snakemake.utils import validate
 
 
 configfile: "config/default.yaml"
+
+
+# ---- Validate config (types + typo-catching against the schema) ----
+validate(config, "workflow/schemas/config.schema.yaml")
 
 
 # ---- Constants ----
@@ -23,7 +28,7 @@ main_env = (
 # ---- Setup paths ----
 # -- Input --
 genome_dir_path = Path(config["genome_dir"]).resolve()
-altref_dir_path = Path(config["vcf_reconstruct_dir"]).resolve()
+reconstruct_dir_path = Path(config["reconstruct_dir"]).resolve()
 vcf2phylip_dir_path = Path(config["vcf2phylip_dir"]).resolve()
 
 # -- Output --
@@ -44,11 +49,13 @@ onstart:
 # -- Results --
 quastcore_dir_path = output_dir_path / config["quastcore_dir"]
 busco_dir_path = output_dir_path / config["busco_dir"]
+main_ids_dir_path = output_dir_path / config["main_ids_dir"]
 species_ids_dir_path = output_dir_path / config["species_ids_dir"]
 common_ids_dir_path = output_dir_path / config["common_ids_dir"]
 merged_sequences_dir_path = output_dir_path / config["merged_sequences_dir"]
 alignments_dir_path = output_dir_path / config["alignments_dir"]
 pre_altref_alignments_dir_path = output_dir_path / config["pre_altref_alignments_dir"]
+reconstruct_consensus_dir_path = output_dir_path / config["reconstruct_consensus_dir"]
 filtered_alignments_dir_path = output_dir_path / config["filtered_alignments_dir"]
 concat_alignments_dir_path = output_dir_path / config["concat_alignments_dir"]
 iqtree_dir_path = output_dir_path / config["iqtree_dir"]
@@ -98,47 +105,81 @@ def get_fasta_files(directory: Path) -> list[Path]:
     return files
 
 
-def get_altref_map(vcf_dir: Path) -> dict:
+def get_toplevel_fasta_files(directory: Path) -> list[Path]:
+    """Returns FASTA files directly inside a directory (non-recursive), matching
+    all known extensions. Used to find the reference FASTA at a reconstruct
+    subdir's top level without descending into vcf/ or fasta/."""
+    seen = set()
+    files = []
+    for pattern in FASTA_PATTERNS:
+        for f in sorted(directory.glob(pattern)):
+            if f.is_file() and f not in seen:
+                seen.add(f)
+                files.append(f)
+    return files
+
+
+def get_reconstruct_map(root: Path) -> dict:
     """
-    Scans vcf_reconstruct/ subdirectories and returns a mapping of AltRef species names
-    to their VCF file, reference FASTA, and reference prefix.
+    Scans reconstruct/ subdirectories and returns a mapping of reconstructed
+    species names to their reconstruction source, reference FASTA, and reference
+    prefix. Each subdir holds one reference FASTA at its top level plus optional
+    vcf/ and fasta/ subdirectories:
 
-    Key format: "{vcf_id}.{ref_prefix}.AltRef"
+        <subdir>/reference.fasta          -> reference (BUSCO run once on it)
+        <subdir>/vcf/<sample>.vcf.gz      -> "{sample}.{ref_prefix}.AltRef"    (source: vcf)
+        <subdir>/fasta/<sample>.fasta     -> "{sample}.{ref_prefix}.Consensus" (source: consensus)
     """
-    altref_mapping = {}
+    mapping = {}
 
-    if vcf_dir.exists():
-        for vcf_subdir in vcf_dir.iterdir():
-            if not vcf_subdir.is_dir():
-                continue
+    if not root.exists():
+        return mapping
 
-            ref_files = get_fasta_files(vcf_subdir)
-            if not ref_files:
-                continue
-            ref_file = ref_files[0]
-            ref_prefix = get_fasta_stem(ref_file)
+    for subdir in sorted(root.iterdir()):
+        if not subdir.is_dir():
+            continue
 
-            for vcf_file in vcf_subdir.glob("*.vcf.gz"):
-                vcf_id = vcf_file.stem.split(".")[0]
-                alt_name = f"{vcf_id}.{ref_prefix}.AltRef"
-                altref_mapping[alt_name] = {
-                    "vcf": vcf_file,
-                    "vcf_id": vcf_id,
+        ref_files = get_toplevel_fasta_files(subdir)
+        if not ref_files:
+            continue
+        ref_file = ref_files[0]
+        ref_prefix = get_fasta_stem(ref_file)
+
+        vcf_subdir = subdir / "vcf"
+        if vcf_subdir.is_dir():
+            for vcf_file in sorted(vcf_subdir.glob("*.vcf.gz")):
+                sample = vcf_file.stem.split(".")[0]
+                mapping[f"{sample}.{ref_prefix}.AltRef"] = {
+                    "source": "vcf",
+                    "sample": sample,
                     "reference": ref_file,
                     "ref_prefix": ref_prefix,
+                    "vcf": vcf_file,
                 }
 
-    return altref_mapping
+        fasta_subdir = subdir / "fasta"
+        if fasta_subdir.is_dir():
+            for consensus_file in get_fasta_files(fasta_subdir):
+                sample = get_fasta_stem(consensus_file)
+                mapping[f"{sample}.{ref_prefix}.Consensus"] = {
+                    "source": "consensus",
+                    "sample": sample,
+                    "reference": ref_file,
+                    "ref_prefix": ref_prefix,
+                    "consensus_fasta": consensus_file,
+                }
+
+    return mapping
 
 
-def get_species_list(altref_species: list, genome_species: list, altref_refs: list) -> list:
+def get_species_list(reconstructed: list, genome_species: list, refs: list) -> list:
     """
-    Merges genome and AltRef species into a single sorted list.
-    Reference genomes are included only if vcf_reconstruct_ref_as_species is True.
+    Merges genome and reconstructed species into a single sorted list.
+    Reference genomes are included only if reconstruct_refs_as_species is True.
     """
-    all_species = set(altref_species + genome_species)
-    if config.get("vcf_reconstruct_ref_as_species"):
-        all_species.update(altref_refs)
+    all_species = set(reconstructed + genome_species)
+    if config.get("reconstruct_refs_as_species"):
+        all_species.update(refs)
     return sorted(all_species)
 
 
@@ -182,19 +223,19 @@ def expand_fna_from_merged_sequences(wildcards, template, busco_blacklist=None):
 def get_genome_file(wildcards) -> Path:
     """
     Returns the genome FASTA path for a given species wildcard.
-    - AltRef species (from VCF reconstruction) are not allowed here —
+    - Reconstructed species (VCF- or consensus-derived) are not allowed here —
       BUSCO is not run on them directly.
-    - Reference genomes from vcf_reconstruct/ are expected as symlinks in genomes/.
+    - Reference genomes from reconstruct/ are expected as symlinks in genomes/.
     - Regular genome assemblies are looked up directly in genomes/.
     """
-    if wildcards.species in altref_map:
+    if wildcards.species in reconstruct_map:
         raise ValueError(
-            f"get_genome_file called for AltRef species '{wildcards.species}' — "
-            "BUSCO should not be run directly on VCF-reconstructed species."
+            f"get_genome_file called for reconstructed species '{wildcards.species}' — "
+            "BUSCO should not be run directly on reconstructed species."
         )
 
-    if wildcards.species in altref_refs:
-        return genome_dir_path / f"{wildcards.species}.fasta"
+    if wildcards.species in reconstructed_refs:
+        return genome_dir_path / ref_link_name[wildcards.species]
 
     for f in get_fasta_files(genome_dir_path):
         if get_fasta_stem(f) == wildcards.species:
@@ -204,11 +245,11 @@ def get_genome_file(wildcards) -> Path:
 
 
 def get_all_genome_files() -> list[Path]:
-    """Returns genome files for all non-AltRef species in species_list."""
+    """Returns genome files for all non-reconstructed species in species_list."""
     return [
         get_genome_file(type("W", (), {"species": s})())
         for s in config["species_list"]
-        if s not in altref_map
+        if s not in reconstruct_map
     ]
 
 
@@ -240,14 +281,15 @@ def get_busco_outputs() -> list:
     """Returns output files for the main BUSCO-based pipeline route."""
     files = []
 
-    # Ensure BUSCO runs on reference genomes used for AltRef reconstruction
-    if altref_species:
-        files.append(expand(busco_dir_path / "{species}/short_summary_{species}.txt", species=altref_refs))
+    # Ensure BUSCO runs on reference genomes used for reconstruction
+    if reconstructed_species:
+        files.append(expand(busco_dir_path / "{species}/short_summary_{species}.txt", species=reconstructed_refs))
 
     files += [
         expand(busco_dir_path / "{species}/short_summary_{species}.txt", species=config["species_list"]),
         lambda w: expand_fna_from_merged_sequences(w, merged_sequences_dir_path / "{N}.fna", busco_blacklist=busco_blacklist),
         species_ids_dir_path / "unique_species_ids.svg",
+        main_ids_dir_path / "gene_counts.tsv",
         busco_dir_path / "busco_summaries.svg",
     ]
 
@@ -295,26 +337,42 @@ def get_busco_outputs() -> list:
 
 
 # ---- Input data ----
-altref_map     = get_altref_map(altref_dir_path)
-altref_species = list(altref_map.keys())
-altref_refs    = sorted({v["ref_prefix"] for v in altref_map.values()})
+# reconstruct_map holds both reconstruction sources under one reference:
+#   source == "vcf"       -> reconstructed via apply_vcf_to_busco (SNPs from a VCF)
+#   source == "consensus" -> reconstructed via apply_consensus_to_busco (already-built FASTA)
+reconstruct_map      = get_reconstruct_map(reconstruct_dir_path)
+reconstructed_species = list(reconstruct_map.keys())
+reconstructed_refs   = sorted({v["ref_prefix"] for v in reconstruct_map.values()})
+vcf_species          = [s for s, v in reconstruct_map.items() if v["source"] == "vcf"]
+consensus_species    = [s for s, v in reconstruct_map.items() if v["source"] == "consensus"]
 
-# ---- Gap-aware AltRef insertion ----
-altref_gapaware = config.get("altref_gapaware_insertion", False)
+# ---- Gap-aware reconstructed-sequence insertion ----
+reconstruct_gapaware = config.get("altref_gapaware_insertion", False)
 
-# ref_prefix → [altref_sp1, altref_sp2, ...]  (используется в alignment.smk)
-ref_to_altrefs = {}
-for _sp, _info in altref_map.items():
-    ref_to_altrefs.setdefault(_info["ref_prefix"], []).append(_sp)
+# ref_prefix → [reconstructed_sp1, ...]  (used in alignment.smk; both sources)
+ref_to_reconstructed = {}
+for _sp, _info in reconstruct_map.items():
+    ref_to_reconstructed.setdefault(_info["ref_prefix"], []).append(_sp)
+
+# The reference is symlinked into genomes/ under its ORIGINAL basename (keeping the
+# extension, including .gz) so BUSCO treats it exactly like a native genome assembly.
+# Naming the link "{ref_prefix}.fasta" for a gzipped reference would hand BUSCO gzip
+# bytes under a .fasta name and crash it.
+ref_link_source = {}
+for _info in reconstruct_map.values():
+    ref_link_source.setdefault(_info["ref_prefix"], _info["reference"])
+ref_link_name = {rp: src.name for rp, src in ref_link_source.items()}
+ref_link_source_by_basename = {src.name: src for src in ref_link_source.values()}
+ref_link_basenames = sorted(ref_link_source_by_basename)
 
 genome_species = sorted(
-    {get_fasta_stem(f) for f in get_fasta_files(genome_dir_path)} - set(altref_refs)
+    {get_fasta_stem(f) for f in get_fasta_files(genome_dir_path)} - set(reconstructed_refs)
 )
 
 # ---- Species list ----
 if "species_list" not in config:
     if not config.get("vcf2phylip"):
-        config["species_list"] = get_species_list(altref_species, genome_species, altref_refs)
+        config["species_list"] = get_species_list(reconstructed_species, genome_species, reconstructed_refs)
     else:
         vcf_file = list(vcf2phylip_dir_path.rglob("*.vcf.gz"))
         if len(vcf_file) != 1:
@@ -329,13 +387,15 @@ if "species_list" not in config:
     print("Species list:", config["species_list"])
 
 
-# Species без AltRef для raw-выравнивания (refs остаются — на них проецируются гэпы)
+# Species without reconstructed samples for raw alignment (refs stay — gaps are
+# projected onto them). In gap-aware mode reconstructed samples are inserted after
+# alignment, so only refs + non-reconstructed species go into the aligner input.
 species_list_for_raw_alignment = (
     sorted(
-        {s for s in config["species_list"] if s not in altref_map}
-        | set(altref_refs)  # refs всегда нужны как шаблоны гэпов
+        {s for s in config["species_list"] if s not in reconstruct_map}
+        | set(reconstructed_refs)  # refs are always needed as gap templates
     )
-    if altref_gapaware and altref_map
+    if reconstruct_gapaware and reconstruct_map
     else config["species_list"]
 )
 
@@ -358,7 +418,7 @@ rule all:
 
 
 # ---- Load rules ----
-include: "workflow/rules/vcf_reconstruct.smk"
+include: "workflow/rules/reconstruct.smk"
 include: "workflow/rules/quastcore.smk"
 include: "workflow/rules/busco.smk"
 include: "workflow/rules/common_ids.smk"
