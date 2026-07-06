@@ -3,6 +3,7 @@ dag.svg
 
 # pyproject
 pyproject.toml
+__pycache__/
 
 # zed
 .zed/
