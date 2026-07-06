@@ -27,5 +27,6 @@ dependencies:
   - numpy
   - ete3
   - legacy-cgi
+  - pytest
   - pip:
       - supervenn
