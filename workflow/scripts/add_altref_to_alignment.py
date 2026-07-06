@@ -341,7 +341,7 @@ def parse_args() -> argparse.Namespace:
         help=(
             "Keep reference sequences in the output alignment. "
             "If not set, ref sequences are removed after AltRef insertion "
-            "(use when vcf_reconstruct_ref_as_species: False)."
+            "(use when reconstruct_refs_as_species: False)."
         ),
     )
     p.add_argument(
