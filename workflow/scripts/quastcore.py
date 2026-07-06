@@ -27,7 +27,7 @@ def parse_fasta(path, buffering=None):
     with metaopen(path, "rt", buffering) as f:
         for line in f:
             if line.startswith(">"):
-                header = line[1:].split(" ")[0]
+                header = line[1:].strip().split(" ")[0]
                 seqs[header] = []
             else:
                 seqs[header].append(line.rstrip())
