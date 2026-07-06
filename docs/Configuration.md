@@ -35,13 +35,18 @@ the file and pass it with `--configfile` rather than editing it directly.
 | `busco_blacklist` | `"input/BUSCO.blacklist"` | File with BUSCO IDs to exclude (optional) |
 | `busco_histogram_colors` | `"#23b4e8,#008dbf,#fbbc04,#ea4335"` | Bar colors for S, D, F, M in the BUSCO histogram |
 
-### VCF reconstruction
+### Reconstruction (VCF SNPs and/or consensus FASTAs)
+
+Reconstructs per-sample BUSCO sequences from a reference's BUSCO output. Input goes under
+`input/reconstruct/<subdir>/` — one reference FASTA at the subdir top level plus optional
+`vcf/` (per-sample `.vcf.gz` → `.AltRef`) and `fasta/` (consensus genomes → `.Consensus`)
+directories. See [[Usage#reconstructed-samples-against-a-reference-genome]].
 
 | Parameter | Default | Description |
 |---|---|---|
-| `apply_vcf_iupac` | `False` | Encode heterozygous SNPs as IUPAC ambiguity codes (equivalent to GATK `--use-iupac-sample`); if `False`, ALT allele is used for het/hom-alt calls |
-| `vcf_reconstruct_ref_as_species` | `False` | Include the reference genome itself as a sample in the output phylogeny |
-| `altref_gapaware_insertion` | `False` | Insert AltRef sequences into alignments using gap positions of the corresponding reference instead of re-aligning; recommended when working with many VCF samples; see [[Advanced-Usage#gap-aware-altref-insertion]] |
+| `apply_vcf_iupac` | `False` | (VCF source only) Encode heterozygous SNPs as IUPAC ambiguity codes (equivalent to GATK `--use-iupac-sample`); if `False`, ALT allele is used for het/hom-alt calls |
+| `reconstruct_refs_as_species` | `False` | Include each reference genome itself as a sample in the output phylogeny |
+| `altref_gapaware_insertion` | `False` | Insert reconstructed sequences into alignments using gap positions of the corresponding reference instead of re-aligning; recommended when working with many reconstructed samples; see [[Advanced-Usage#gap-aware-insertion-of-reconstructed-sequences]] |
 
 ### Alignment
 
