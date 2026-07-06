@@ -1,0 +1,1 @@
+One subdirectory per reference. Each subdirectory holds one reference FASTA at its top level, plus an optional vcf/ dir (per-sample .vcf.gz -> {sample}.{ref_prefix}.AltRef) and/or fasta/ dir (per-sample coordinate-identical consensus genomes -> {sample}.{ref_prefix}.Consensus). BUSCO runs once per reference.
