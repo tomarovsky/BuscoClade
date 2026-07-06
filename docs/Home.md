@@ -26,9 +26,10 @@ flowchart LR
 subgraph INPUT["Input data"]
 A_fa["Genome assemblies (FASTA)"]
 A_vcf2["Multi-sample VCF"]
-subgraph VCF_REF["VCF reconstruction"]
+subgraph RECON["Reconstruction"]
 A_ref["Reference genome (FASTA)"]
 A_vcf["Per-sample VCFs"]
+A_cons["Consensus genomes (FASTA)"]
 end
 end
 
@@ -66,7 +67,8 @@ A_ref -.-> B_busco
 B_busco --> C_aln
 B_busco -.-> MERGE
 A_vcf --> MERGE
-MERGE --> |"apply_vcf_to_busco.py"| C_aln
+A_cons --> MERGE
+MERGE --> |"apply_vcf_to_busco.py / apply_consensus_to_busco.py"| C_aln
 C_aln --> C_flt
 C_flt -->|"Concat alignment"| E_phy
 C_flt -->|"IQTree per gene"| D_ast
@@ -81,7 +83,7 @@ classDef phylo fill:#fff4e6,stroke:#e67700,stroke-width:1px
 classDef optional fill:#e8f4ff,stroke:#2b7cd3,stroke-width:1px,stroke-dasharray:4 4
 classDef merge fill:none,stroke:none,width:0px
 
-class A_fa,A_ref,A_vcf input
+class A_fa,A_ref,A_vcf,A_cons input
 class B_busco,C_aln,C_flt process
 class D_ast,E_phy phylo
 class A_vcf2 optional
@@ -89,7 +91,7 @@ class MERGE merge
 ```
 
 - **Ortholog extraction:** [BUSCO](https://busco.ezlab.org/)
-- **VCF-based SNP application:** [apply_vcf_to_busco.py](Advanced-Usage#vcf-based-snp-application), [vcf2phylip](https://github.com/edgardomortiz/vcf2phylip)
+- **Reconstruction from a reference:** [apply_vcf_to_busco.py](Usage#reconstructed-samples-against-a-reference-genome) (VCF SNPs), apply_consensus_to_busco.py (consensus FASTAs), [vcf2phylip](https://github.com/edgardomortiz/vcf2phylip)
 - **Alignment:** [MAFFT](https://mafft.cbrc.jp/alignment/software/), [MUSCLE](https://doi.org/10.1038/s41467-022-34630-w), [PRANK](http://wasabiapp.org/software/prank/)
 - **Trimming:** [ClipKIT](https://github.com/JLSteenwyk/ClipKIT), [TrimAl](http://trimal.cgenomics.org/), [GBlocks](https://academic.oup.com/mbe/article/17/4/540/1127654)
 - **Phylogenetic tree construction:** [IQTree](http://www.iqtree.org/), [MrBayes](https://nbisweden.github.io/MrBayes/), [ASTRAL-IV](https://doi.org/10.1093/molbev/msaf172), [RapidNJ](https://birc.au.dk/software/rapidnj), [PHYLIP](https://phylipweb.github.io/phylip/), [RAxML-NG](https://github.com/amkozlov/raxml-ng)
