@@ -33,43 +33,60 @@ Place genome assemblies into `input/genomes/`. The file prefix is used as the
 sample name in the output phylogeny. Supported extensions: `.fasta`, `.fna`,
 `.fa`, and their gzipped versions (`.fasta.gz`, `.fna.gz`, `.fa.gz`).
 
-### Per-sample VCFs + reference genome
+### Reconstructed samples against a reference genome
 
-If you have per-sample VCFs, the pipeline applies SNPs directly to the BUSCO
-sequences of a reference genome using `apply_vcf_to_busco.py`. Each VCF file
-must contain exactly one sample. Only SNPs are used — indels present in the
-VCF are ignored. This avoids rebuilding full pseudo-genome assemblies and
-re-running BUSCO for each sample — instead, BUSCO is run once on the
-reference, and ortholog sequences for all other samples are reconstructed by
-applying their SNPs to the reference BUSCO sequences exon-by-exon.
+If you have per-sample VCFs and/or already-reconstructed consensus genomes,
+BuscoClade reconstructs their BUSCO ortholog sequences from a reference
+genome's BUSCO output — running BUSCO **once** on the reference instead of
+once per sample. Two sources share the same reference and the same
+substitution-only invariant (which is what makes gap-aware insertion valid):
 
-Place per-sample VCF files and the corresponding reference genome together
-into a subdirectory under `input/vcf_reconstruct/`. Each subdirectory is
-processed independently, which allows reconstructing sequences against
-different references in a single run:
+- **VCF source** (`apply_vcf_to_busco.py`): SNPs from a single-sample VCF are
+  applied to the reference BUSCO sequences exon-by-exon. Indels are ignored.
+  Samples are named `{sample}.{ref_prefix}.AltRef`.
+- **Consensus-FASTA source** (`apply_consensus_to_busco.py`): for an
+  already-reconstructed genome that is **coordinate-identical** to the
+  reference (identical chromosome names and coordinates, substitutions only —
+  no indels, no renaming), the reference's CDS exon regions are sliced
+  directly out of the consensus genome. Samples are named
+  `{sample}.{ref_prefix}.Consensus`.
+
+Place, per subdirectory under `input/reconstruct/`, one reference FASTA at the
+subdirectory top level, plus an optional `vcf/` directory (per-sample
+`.vcf.gz`) and/or an optional `fasta/` directory (per-sample consensus
+genomes). Each subdirectory is processed independently, which allows
+reconstructing against different references in a single run:
 
 ```
 input/
     genomes/
         Species1.fasta
         Species2.fasta.gz
-    vcf_reconstruct/
+    reconstruct/
         subdir1/                    # one reference per directory
-            reference1.fasta
-            SampleA.vcf.gz
-            SampleB.vcf.gz
+            reference1.fasta        # reference (BUSCO runs once on it)
+            vcf/
+                SampleA.vcf.gz      # -> SampleA.reference1.AltRef
+                SampleB.vcf.gz
+            fasta/
+                SampleC.fasta       # -> SampleC.reference1.Consensus
         subdir2/                    # another reference
             reference2.fasta
-            SampleC.vcf.gz
+            fasta/
+                SampleD.fasta
 ```
 
-The directory name is used only for organization — the VCF file prefix
-determines the sample name in the output phylogeny. No additional config
-changes are needed; the pipeline detects subdirectories automatically.
+The subdirectory name is used only for organization — the VCF / FASTA file
+prefix determines the sample name in the output phylogeny. No additional
+config changes are needed; the pipeline detects subdirectories automatically.
+Both `vcf/` and `fasta/` are optional, so a subdirectory can use either source
+or both. Because the reference file name becomes `{ref_prefix}` in every
+sample name, name it deliberately (e.g. `species_1.fasta` rather than
+`reference.species_1.fasta`) for concise tree labels.
 
 BUSCO is run once on the reference genome in each subdirectory. The resulting
-`single_copy_busco_sequences/` and `metaeuk_output/` are then used by
-`apply_vcf_to_busco.py` to produce per-sample ortholog sequences.
+`single_copy_busco_sequences/` and `metaeuk_output/` are then reused to produce
+per-sample ortholog sequences for both sources.
 
 ### Multi-sample VCF via vcf2phylip (optional)
 
@@ -105,7 +122,7 @@ Input and output paths are defined in the config. The defaults are:
 ```yaml
 # Input
 genome_dir:          "input/genomes/"
-vcf_reconstruct_dir: "input/vcf_reconstruct/"
+reconstruct_dir:     "input/reconstruct/"
 vcf2phylip_dir:      "input/vcf2phylip/"
 
 # Output (all under results/)
