@@ -1,0 +1,104 @@
+$schema: "https://json-schema.org/draft/2020-12/schema"
+description: >
+  BuscoClade configuration schema. Validates types and catches typos in config
+  keys (unknown keys are rejected). Resource/param/directory keys are matched by
+  family patterns, so adding a new tool's `<tool>_queue/_threads/_mem_mb/_time`,
+  `<tool>_params`, or a `<name>_dir` key needs no schema change.
+
+type: object
+
+properties:
+  # ---- Conda ----
+  conda:
+    type: object
+  use_existing_envs:
+    type: boolean
+
+  # ---- Route toggles ----
+  vcf2phylip:
+    type: boolean
+  quastcore:
+    type: boolean
+  alignment:
+    type: string
+    enum: [mafft, muscle, prank]
+  filtration:
+    type: string
+    enum: [clipkit, trimal, gblocks]
+  iqtree:
+    type: boolean
+  astral:
+    type: boolean
+  rapidnj:
+    type: boolean
+  phylip:
+    type: boolean
+  raxml:
+    type: boolean
+  mrbayes:
+    type: boolean
+  draw_phylotrees:
+    type: boolean
+
+  # ---- BUSCO ----
+  busco_dataset_path:
+    type: string
+  busco_options:
+    type: string
+  busco_mode:
+    type: string
+  busco_blacklist:
+    type: string
+  busco_histogram_colors:
+    type: string
+
+  # ---- Reconstruction ----
+  apply_vcf_iupac:
+    type: boolean
+  reconstruct_refs_as_species:
+    type: boolean
+  altref_gapaware_insertion:
+    type: boolean
+
+  # ---- Misc scalar params ----
+  alignment_file_prefix:
+    type: string
+  nodes_filtration_by_support:
+    type: integer
+  mrbayes_block:
+    type: string
+  mrbayes_path:
+    type: string
+
+  # ---- Optional explicit species list ----
+  species_list:
+    type: array
+    items:
+      type: string
+
+patternProperties:
+  # Directory keys: e.g. genome_dir, reconstruct_dir, output_dir, log_dir, *_dir
+  "_dir$":
+    type: string
+  # Tool parameter strings: e.g. mafft_params, iqtree_params, raxml_params
+  "_params$":
+    type: string
+  # Per-tool Slurm/resource keys
+  "_queue$":
+    type: string
+  "_threads$":
+    type: integer
+  "_mem_mb$":
+    type: integer
+  "_time$":
+    type: string
+
+additionalProperties: false
+
+required:
+  - output_dir
+  - genome_dir
+  - reconstruct_dir
+  - vcf2phylip_dir
+  - alignment
+  - filtration
