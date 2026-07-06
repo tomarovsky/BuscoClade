@@ -7,6 +7,10 @@ pyproject.toml
 # zed
 .zed/
 
+#claude
+.claude/
+CLAUDE.md
+
 # Test directory
 tests/
 
