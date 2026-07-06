@@ -1,1 +1,1 @@
-dir for resulting files of whole pipeline
+All pipeline outputs (BUSCO, alignments, concatenated matrices, phylogenies, logs, benchmarks). Gitignored; do not edit by hand. See docs/Usage.md for the full output layout.

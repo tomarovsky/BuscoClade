@@ -1,1 +1,1 @@
-Here should be placed multisample .vcf.gz
+Exactly one multi-sample .vcf.gz for the vcf2phylip route, which bypasses BUSCO and alignment. Requires vcf2phylip: True in the config.

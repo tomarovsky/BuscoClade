@@ -1,1 +1,1 @@
-Here should be placed .fasta files
+Genome assemblies (.fasta, .fna, .fa, optionally gzipped). The file prefix is used as the sample name in the output phylogeny.

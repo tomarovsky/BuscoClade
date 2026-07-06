@@ -1,1 +1,1 @@
-Input directory for files other than genomes, i.e. blacklists, etc
+Input data for the pipeline, split by route: genomes/ (FASTA assemblies), reconstruct/ (reference + per-sample VCFs/consensus FASTAs for the reconstruction route), vcf2phylip/ (single multi-sample VCF for the BUSCO-free route). See docs/Usage.md.
