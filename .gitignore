@@ -11,8 +11,9 @@ pyproject.toml
 .claude/
 CLAUDE.md
 
-# Test directory
-tests/
+# Test directory (integration fixtures are local; unit tests are tracked)
+tests/*
+!tests/unit/
 
 # apptainer dev
 apptainer/buscoclade_dev*
@@ -21,8 +22,8 @@ apptainer/buscoclade_dev*
 .snakemake/
 
 # genomes dir
-input/genomes/*.fasta
-input/vcf_reconstruct/1/*
+input/genomes/*
+input/reconstruct/*
 
 # results dir
 results/
