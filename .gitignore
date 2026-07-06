@@ -10,6 +10,7 @@ pyproject.toml
 #claude
 .claude/
 CLAUDE.md
+pipeline-overview.md
 
 # Test directory (integration fixtures are local; unit tests are tracked)
 tests/*
