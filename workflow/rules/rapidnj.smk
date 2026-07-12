@@ -6,6 +6,7 @@ rule rapidnj:
         matrix=rapidnj_dir_path / rapidnj_matrix,
     params:
         config["rapidnj_params"],
+        outdir=rapidnj_dir_path,
     log:
         std=log_dir_path / "rapidnj_tree.log",
         cluster_log=cluster_log_dir_path / "rapidnj_tree.cluster.log",
@@ -20,6 +21,10 @@ rule rapidnj:
         mem_mb=config["rapidnj_mem_mb"],
     threads: config["rapidnj_threads"]
     shell:
+        " if [ -d {params.outdir} ]; then "
+        "   rm -rf {params.outdir}/*; "
+        " fi; "
+        " mkdir -p {params.outdir}; "
         " rapidnj -i sth -c {threads} -o m {input} > {output.matrix} 2>{log.std}; "
         " rapidnj -i sth -c {threads} {params} {input} > {output.tree} 2>>{log.std}; "
         " sed -i \"s/'//g\" {output.tree} "
