@@ -5,7 +5,7 @@ rule rapidnj:
         tree=rapidnj_dir_path / rapidnj_tree,
         matrix=rapidnj_dir_path / rapidnj_matrix,
     params:
-        config["rapidnj_params"],
+        rapidnj_params=config["rapidnj_params"],
         outdir=rapidnj_dir_path,
     log:
         std=log_dir_path / "rapidnj_tree.log",
@@ -26,5 +26,5 @@ rule rapidnj:
         " fi; "
         " mkdir -p {params.outdir}; "
         " rapidnj -i sth -c {threads} -o m {input} > {output.matrix} 2> {log.std}; "
-        " rapidnj -i sth -c {threads} {params} {input} > {output.tree} 2>> {log.std}; "
+        " rapidnj -i sth -c {threads} {params.rapidnj_params} {input} > {output.tree} 2>> {log.std}; "
         " sed -i \"s/'//g\" {output.tree} "
